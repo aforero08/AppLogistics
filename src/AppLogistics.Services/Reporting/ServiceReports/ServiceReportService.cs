@@ -1,12 +1,11 @@
-﻿using AppLogistics.Components.ExcelReports;
+﻿using System.Collections.Generic;
+using System.Linq;
+using AppLogistics.Components.ExcelReports;
 using AppLogistics.Components.Extensions.Native;
 using AppLogistics.Data.Core;
 using AppLogistics.Objects;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
-namespace AppLogistics.Services
+namespace AppLogistics.Services.Reporting.ServiceReports
 {
     public class ServiceReportService : BaseService, IServiceReportService
     {
@@ -46,10 +45,12 @@ namespace AppLogistics.Services
 
         private IQuery<Service> FilterServices(ServiceReportQueryView query)
         {
+            query = FormatQueryFilters(query);
+
             var services = UnitOfWork.Select<Service>()
                             .Where(s => !query.ServiceId.HasValue || s.Id == query.ServiceId.Value)
                             .Where(s => !query.StartDate.HasValue || s.CreationDate >= query.StartDate.Value)
-                            .Where(s => !query.EndDate.HasValue || (s.EndDate.HasValue && s.EndDate.Value <= query.EndDate.Value))
+                            .Where(s => !query.EndDate.HasValue || s.CreationDate <= query.EndDate.Value)
                             .Where(s => query.ClientIds == null || query.ClientIds.Contains(s.Rate.ClientId.ToString()))
                             .Where(s => query.ActivityIds == null || query.ActivityIds.Contains(s.Rate.ActivityId))
                             .Where(s => query.VehicleTypeIds == null
@@ -81,6 +82,16 @@ namespace AppLogistics.Services
             }
 
             return services;
+        }
+
+        private ServiceReportQueryView FormatQueryFilters(ServiceReportQueryView query)
+        {
+            if (query.EndDate.HasValue)
+            {
+                query.EndDate = query.EndDate.Value.AddDays(1).AddMilliseconds(-1);
+            }
+
+            return query;
         }
 
         public byte[] GetExcelReport(ServiceReportQueryView query)

@@ -61,7 +61,7 @@ namespace AppLogistics.Controllers.Reporting
             }
             else
             {
-                Alerts.AddWarning("Please do your query from here!!!");
+                Alerts.AddWarning("Please do your query from the reports menu");
                 return RedirectToAction("Query");
             }
         }
