@@ -1,3 +1,4 @@
+using System;
 using AppLogistics.Components.Mvc;
 using AppLogistics.Objects;
 using AppLogistics.Services;
@@ -23,7 +24,8 @@ namespace AppLogistics.Controllers.Configuration
         [HttpGet]
         public ViewResult Create()
         {
-            return View();
+            throw new Exception("test error");
+            //return View();
         }
 
         [HttpPost]

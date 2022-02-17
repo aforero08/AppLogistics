@@ -132,7 +132,7 @@ namespace AppLogistics.Web
         {
             //if (Config["Application:Env"] != EnvironmentName.Development)
             //{
-            //    services.AddLogging(builder => builder.AddProvider(new FileLoggerProvider(Config)));
+                services.AddLogging(builder => builder.AddProvider(new FileLoggerProvider(Config)));
             //}
             //else
             //{

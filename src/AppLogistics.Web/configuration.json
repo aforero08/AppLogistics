@@ -40,7 +40,7 @@
       "Path": "Logs/log.txt",
       "RollSize": 5242880,
       "LogLevel": {
-        "Default": "Error"
+        "Default": "Debug"
       }
     }
   },
