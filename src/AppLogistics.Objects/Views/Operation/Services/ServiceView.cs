@@ -12,7 +12,7 @@ namespace AppLogistics.Objects
 
         public string RateProductName { get; set; }
 
-        public int Quantity { get; set; }
+        public double Quantity { get; set; }
 
         public int[] SelectedEmployees { get; set; }
 
