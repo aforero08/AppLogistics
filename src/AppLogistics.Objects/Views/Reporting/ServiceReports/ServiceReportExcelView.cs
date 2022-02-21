@@ -40,7 +40,7 @@ namespace AppLogistics.Objects
         public string ProductName { get; set; }
 
         [ExcelReportDisplayName("ExcelServiceReport", nameof(Quantity))]
-        public int Quantity { get; set; }
+        public double Quantity { get; set; }
 
         [ExcelReportDisplayName("ExcelServiceReport", nameof(RatePrice))]
         public decimal RatePrice { get; set; }

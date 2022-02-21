@@ -99,7 +99,7 @@ namespace AppLogistics.Services
 
         private ServicePrices CalculateServicePrices(Rate rate, ServiceCreateEditView view)
         {
-            var fullPrice = rate.Price * view.Quantity * view.SelectedEmployees.Length;
+            var fullPrice = rate.Price * (decimal)view.Quantity * view.SelectedEmployees.Length;
             var holdingPrice = fullPrice * (decimal)rate.EmployeePercentage / 100;
 
             if (rate.SplitFare)
