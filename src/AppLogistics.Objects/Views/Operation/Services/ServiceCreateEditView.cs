@@ -15,8 +15,8 @@ namespace AppLogistics.Objects
 
         public int? VehicleTypeId { get; set; }
 
-        [MinValue(1)]
-        public int Quantity { get; set; }
+        [MinValue(0.01)]
+        public double Quantity { get; set; }
 
         [Required]
         public int[] SelectedEmployees { get; set; }

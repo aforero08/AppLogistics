@@ -9,7 +9,7 @@ namespace AppLogistics.Objects
         public int RateId { get; set; }
         public virtual Rate Rate { get; set; }
 
-        public int Quantity { get; set; }
+        public double Quantity { get; set; }
 
         public int? SectorId { get; set; }
         public virtual Sector Sector { get; set; }
