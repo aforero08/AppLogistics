@@ -48,11 +48,13 @@ namespace AppLogistics.Components.ExcelReports
             worksheet.Cells[1, 18].Value = GetMessageFromResource("ExcelServiceReport", nameof(ServiceReportExcelView.ServiceHoldingPrice));
             worksheet.Cells[1, 19].Value = GetMessageFromResource("ExcelServiceReport", nameof(ServiceReportExcelView.SectorName));
             worksheet.Cells[1, 20].Value = GetMessageFromResource("ExcelServiceReport", nameof(ServiceReportExcelView.CustomsInformation));
-            worksheet.Cells[1, 21].Value = GetMessageFromResource("ExcelServiceReport", nameof(ServiceReportExcelView.Location));
-            worksheet.Cells[1, 22].Value = GetMessageFromResource("ExcelServiceReport", nameof(ServiceReportExcelView.Comments));
-            worksheet.Cells[1, 23].Value = GetMessageFromResource("ExcelServiceReport", nameof(ServiceReportEmployeeExcelView.EmployeeInternalCode));
-            worksheet.Cells[1, 24].Value = GetMessageFromResource("ExcelServiceReport", nameof(ServiceReportEmployeeExcelView.EmployeeName));
-            worksheet.Cells[1, 25].Value = GetMessageFromResource("ExcelServiceReport", nameof(ServiceReportEmployeeExcelView.EmployeeHoldingPrice));
+            worksheet.Cells[1, 21].Value = GetMessageFromResource("ExcelServiceReport", nameof(ServiceReportExcelView.InternalDocument));
+            worksheet.Cells[1, 22].Value = GetMessageFromResource("ExcelServiceReport", nameof(ServiceReportExcelView.ExternalDocument));
+            worksheet.Cells[1, 23].Value = GetMessageFromResource("ExcelServiceReport", nameof(ServiceReportExcelView.Location));
+            worksheet.Cells[1, 24].Value = GetMessageFromResource("ExcelServiceReport", nameof(ServiceReportExcelView.Comments));
+            worksheet.Cells[1, 25].Value = GetMessageFromResource("ExcelServiceReport", nameof(ServiceReportEmployeeExcelView.EmployeeInternalCode));
+            worksheet.Cells[1, 26].Value = GetMessageFromResource("ExcelServiceReport", nameof(ServiceReportEmployeeExcelView.EmployeeName));
+            worksheet.Cells[1, 27].Value = GetMessageFromResource("ExcelServiceReport", nameof(ServiceReportEmployeeExcelView.EmployeeHoldingPrice));
         }
 
         private string GetMessageFromResource(string reportName, string attribute)
@@ -86,24 +88,26 @@ namespace AppLogistics.Components.ExcelReports
                 worksheet.Cells[rowNumber, 18].Value = mappedServices[i].ServiceHoldingPrice;
                 worksheet.Cells[rowNumber, 19].Value = mappedServices[i].SectorName;
                 worksheet.Cells[rowNumber, 20].Value = mappedServices[i].CustomsInformation;
-                worksheet.Cells[rowNumber, 21].Value = mappedServices[i].Location;
-                worksheet.Cells[rowNumber, 22].Value = mappedServices[i].Comments;
+                worksheet.Cells[rowNumber, 21].Value = mappedServices[i].InternalDocument;
+                worksheet.Cells[rowNumber, 22].Value = mappedServices[i].ExternalDocument;
+                worksheet.Cells[rowNumber, 23].Value = mappedServices[i].Location;
+                worksheet.Cells[rowNumber, 24].Value = mappedServices[i].Comments;
 
                 foreach (var employeeData in mappedServices[i].EmployeesInfo)
                 {
-                    worksheet.Cells[rowNumber, 23].Value = employeeData.EmployeeInternalCode;
-                    worksheet.Cells[rowNumber, 24].Value = employeeData.EmployeeName;
-                    worksheet.Cells[rowNumber, 25].Value = employeeData.EmployeeHoldingPrice;
+                    worksheet.Cells[rowNumber, 25].Value = employeeData.EmployeeInternalCode;
+                    worksheet.Cells[rowNumber, 26].Value = employeeData.EmployeeName;
+                    worksheet.Cells[rowNumber, 27].Value = employeeData.EmployeeHoldingPrice;
 
                     // Set intercalated fill colors
-                    worksheet.Cells[rowNumber, 1, rowNumber, 25].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                    worksheet.Cells[rowNumber, 1, rowNumber, 27].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
                     if (i % 2 == 0)
                     {
-                        worksheet.Cells[rowNumber, 1, rowNumber, 25].Style.Fill.BackgroundColor.SetColor(Color.LightGray);
+                        worksheet.Cells[rowNumber, 1, rowNumber, 27].Style.Fill.BackgroundColor.SetColor(Color.LightGray);
                     }
                     else
                     {
-                        worksheet.Cells[rowNumber, 1, rowNumber, 25].Style.Fill.BackgroundColor.SetColor(Color.White);
+                        worksheet.Cells[rowNumber, 1, rowNumber, 27].Style.Fill.BackgroundColor.SetColor(Color.White);
                     }
 
                     rowNumber++;
@@ -124,8 +128,8 @@ namespace AppLogistics.Components.ExcelReports
             worksheet.Cells[rowNumber, 18].Style.Font.Bold = true;
 
             // EmployeeHoldingPrice
-            worksheet.Cells[rowNumber, 25].Formula = GetFormulaColumnSum(25, 2, rowNumber - 1);
-            worksheet.Cells[rowNumber, 25].Style.Font.Bold = true;
+            worksheet.Cells[rowNumber, 27].Formula = GetFormulaColumnSum(27, 2, rowNumber - 1);
+            worksheet.Cells[rowNumber, 27].Style.Font.Bold = true;
         }
 
         private string GetFormulaColumnSum(int columnNumber, int initialRow, int lastRow)
@@ -135,15 +139,18 @@ namespace AppLogistics.Components.ExcelReports
 
         private string GetExcelColumnName(int columnNumber)
         {
+            const int lettersInAlphabet = 26;
+            const int letterAInUnicode = 65;
+
             int dividend = columnNumber;
             string columnName = string.Empty;
             int modulo;
 
             while (dividend > 0)
             {
-                modulo = (dividend - 1) % 26;
-                columnName = Convert.ToChar(65 + modulo).ToString() + columnName;
-                dividend = (dividend - modulo) / 26;
+                modulo = (dividend - 1) % lettersInAlphabet;
+                columnName = Convert.ToChar(letterAInUnicode + modulo).ToString() + columnName;
+                dividend = (dividend - modulo) / lettersInAlphabet;
             }
 
             return columnName;
@@ -176,10 +183,10 @@ namespace AppLogistics.Components.ExcelReports
             worksheet.Column(18).Style.Numberformat.Format = "$ #,##0.00";
             
             // EmployeeHoldingPrice
-            worksheet.Column(25).Style.Numberformat.Format = "$ #,##0.00";
+            worksheet.Column(27).Style.Numberformat.Format = "$ #,##0.00";
 
             worksheet.Row(1).Style.Font.Bold = true;
-            worksheet.Cells[1, 1, 1, 25].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+            worksheet.Cells[1, 1, 1, 27].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
             worksheet.View.FreezePanes(2, 2);
             worksheet.View.ZoomScale = 90;
 

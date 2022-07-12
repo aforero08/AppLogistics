@@ -5,6 +5,8 @@
         "CustomsInformation": "Información aduanera",
         "EndDate": "Fecha de Finalización",
         "ExecutionDate": "Fecha de ejecución",
+        "ExternalDocument": "Documento externo",
+        "InternalDocument": "Documento interno",
         "Location": "Ubicación",
         "Quantity": "Cantidad",
         "RateClientId": "Cliente",
