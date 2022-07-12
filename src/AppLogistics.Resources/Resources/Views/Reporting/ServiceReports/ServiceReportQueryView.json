@@ -7,6 +7,8 @@
         "CustomsInformation": "Customs information",
         "EmployeeIds": "Employees",
         "EndDate": "End date",
+        "ExternalDocument": "External document",
+        "InternalDocument": "Internal document",
         "Location": "Location",
         "NoveltyIds": "Novelties",
         "ProductIds": "Products",

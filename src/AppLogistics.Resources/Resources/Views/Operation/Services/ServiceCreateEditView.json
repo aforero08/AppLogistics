@@ -5,6 +5,8 @@
         "CustomsInformation": "Customs information",
         "EndDate": "End date",
         "ExecutionDate": "Execution date",
+        "ExternalDocument": "External document",
+        "InternalDocument": "Internal document",
         "Location": "Location",
         "Quantity": "Quantity",
         "RateClientId": "Client",

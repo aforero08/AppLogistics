@@ -35,6 +35,12 @@ namespace AppLogistics.Objects
         [StringLength(32)]
         public string CustomsInformation { get; set; }
 
+        [StringLength(32)]
+        public string InternalDocument { get; set; }
+
+        [StringLength(32)]
+        public string ExternalDocument { get; set; }
+
         public int[] SelectedNovelties { get; set; }
 
         [StringLength(128)]

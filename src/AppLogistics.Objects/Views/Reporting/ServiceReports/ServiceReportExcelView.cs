@@ -66,6 +66,12 @@ namespace AppLogistics.Objects
         [ExcelReportDisplayName("ExcelServiceReport", nameof(CustomsInformation))]
         public string CustomsInformation { get; set; }
 
+        [ExcelReportDisplayName("ExcelServiceReport", nameof(InternalDocument))]
+        public string InternalDocument { get; set; }
+
+        [ExcelReportDisplayName("ExcelServiceReport", nameof(ExternalDocument))]
+        public string ExternalDocument { get; set; }
+
         [ExcelReportDisplayName("ExcelServiceReport", nameof(Location))]
         public string Location { get; set; }
 

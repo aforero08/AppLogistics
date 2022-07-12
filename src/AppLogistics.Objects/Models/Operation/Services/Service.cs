@@ -39,6 +39,12 @@ namespace AppLogistics.Objects
 
         public DateTime? EndDate { get; set; }
 
+        [StringLength(32)]
+        public string InternalDocument { get; set; }
+
+        [StringLength(32)]
+        public string ExternalDocument { get; set; }
+
         public virtual ICollection<Holding> Holdings { get; set; }
 
         public virtual ICollection<ServiceNovelty> ServiceNovelties { get; set; }
