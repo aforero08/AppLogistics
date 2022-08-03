@@ -61,6 +61,8 @@ namespace AppLogistics.Services.Reporting.ServiceReports
                             .Where(s => string.IsNullOrWhiteSpace(query.VehicleNumber) || s.VehicleNumber.Contains(query.VehicleNumber))
                             .Where(s => string.IsNullOrWhiteSpace(query.Location) || s.Location.Contains(query.Location))
                             .Where(s => string.IsNullOrWhiteSpace(query.CustomsInformation) || s.CustomsInformation.Contains(query.CustomsInformation))
+                            .Where(s => string.IsNullOrWhiteSpace(query.InternalDocument) || s.InternalDocument.Contains(query.InternalDocument))
+                            .Where(s => string.IsNullOrWhiteSpace(query.ExternalDocument) || s.ExternalDocument.Contains(query.ExternalDocument))
                             .Where(s => string.IsNullOrWhiteSpace(query.Comments) || s.Comments.Contains(query.Comments));
 
             if (!query.EmployeeIds.IsNullOrEmpty())
@@ -116,6 +118,8 @@ namespace AppLogistics.Services.Reporting.ServiceReports
                 EmployeePercentage = s.Rate.EmployeePercentage,
                 EndDate = s.EndDate,
                 EndTime = s.EndDate,
+                ExternalDocument = s.ExternalDocument,
+                InternalDocument = s.InternalDocument,
                 Location = s.Location,
                 Quantity = s.Quantity,
                 ProductName = s.Rate.Product.Name,
@@ -140,7 +144,7 @@ namespace AppLogistics.Services.Reporting.ServiceReports
                 row.EmployeesInfo = holdingXemployees.Where(x => x.hold.ServiceId == row.ServiceId)
                     .Select(empRep => new ServiceReportEmployeeExcelView
                     {
-                        EmployeeName = empRep.emp.Name,
+                        EmployeeName = $"{empRep.emp.Name} {empRep.emp.Surname}",
                         EmployeeInternalCode = empRep.emp.InternalCode,
                         EmployeeHoldingPrice = empRep.hold.Price
                     });

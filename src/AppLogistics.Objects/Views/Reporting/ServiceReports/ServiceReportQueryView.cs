@@ -32,6 +32,10 @@ namespace AppLogistics.Objects
 
         public string CustomsInformation { get; set; }
 
+        public string InternalDocument { get; set; }
+
+        public string ExternalDocument { get; set; }
+
         public string Comments { get; set; }
     }
 }

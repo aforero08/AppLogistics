@@ -7,6 +7,8 @@
         "CustomsInformation": "Información aduanera",
         "EmployeeIds": "Operarios",
         "EndDate": "Fecha final",
+        "ExternalDocument": "Documento externo",
+        "InternalDocument": "Documento interno",
         "Location": "Ubicación",
         "NoveltyIds": "Novedades",
         "ProductIds": "Productos",
