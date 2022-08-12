@@ -30,6 +30,8 @@
     <None Remove="Resources\Views\BaseView.es.json" />
     <None Remove="Resources\Views\Configuration\Clients\ClientCreateEditView.es.json" />
     <None Remove="Resources\Views\Configuration\Clients\ClientCreateEditView.json" />
+    <None Remove="Resources\Views\Configuration\Sectors\SectorCreateEditView.es.json" />
+    <None Remove="Resources\Views\Configuration\Sectors\SectorCreateEditView.json" />
     <None Remove="Resources\Views\Operation\Employees\EmployeeCreateEditView.es.json" />
     <None Remove="Resources\Views\Operation\Employees\EmployeeCreateEditView.json" />
     <None Remove="Resources\Views\Operation\Rates\RateCreateEditView.es.json" />

@@ -23,6 +23,7 @@
                     columns.AddAction("Delete", "fa fa-times");
 
                     columns.AddProperty(model => model.Name);
+                    columns.AddProperty(model => model.ClientName);
                 })
                 .ApplyDefaults()
             )

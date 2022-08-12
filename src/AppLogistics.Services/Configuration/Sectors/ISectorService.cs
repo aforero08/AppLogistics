@@ -8,8 +8,8 @@ namespace AppLogistics.Services
         TView Get<TView>(int id) where TView : BaseView;
         IQueryable<SectorView> GetViews();
 
-        void Create(SectorView view);
-        void Edit(SectorView view);
+        void Create(SectorCreateEditView view);
+        void Edit(SectorCreateEditView view);
         void Delete(int id);
     }
 }

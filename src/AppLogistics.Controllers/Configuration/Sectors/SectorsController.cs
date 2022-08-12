@@ -27,7 +27,7 @@ namespace AppLogistics.Controllers.Configuration
         }
 
         [HttpPost]
-        public ActionResult Create([BindExcludeId] SectorView sector)
+        public ActionResult Create([BindExcludeId] SectorCreateEditView sector)
         {
             if (!Validator.CanCreate(sector))
             {
@@ -48,11 +48,11 @@ namespace AppLogistics.Controllers.Configuration
         [HttpGet]
         public ActionResult Edit(int id)
         {
-            return NotEmptyView(Service.Get<SectorView>(id));
+            return NotEmptyView(Service.Get<SectorCreateEditView>(id));
         }
 
         [HttpPost]
-        public ActionResult Edit(SectorView sector)
+        public ActionResult Edit(SectorCreateEditView sector)
         {
             if (!Validator.CanEdit(sector))
             {

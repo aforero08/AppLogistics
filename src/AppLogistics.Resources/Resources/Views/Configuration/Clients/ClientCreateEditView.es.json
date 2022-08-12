@@ -8,6 +8,7 @@
     },
     "Validations": {
         "AssociatedRates": "Existen tarifas asociadas a este Cliente. Para eliminar este Cliente, debe eliminar primero esas tarifas o asociarles un Cliente diferente.",
+        "AssociatedSectors": "Existen áreas asociadas a este Cliente. Para eliminar este Cliente, debe eliminar primero esas áreas o asociarles un Cliente diferente.",
         "NotUniqueNit": "Ya existe un cliente con ese NIT"
     }
 }

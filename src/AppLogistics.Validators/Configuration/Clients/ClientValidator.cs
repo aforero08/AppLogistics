@@ -34,6 +34,16 @@ namespace AppLogistics.Validators
                 return false;
             }
 
+            var hasReferencedSectors = UnitOfWork.Select<Sector>()
+                .Where(c => c.ClientId.HasValue && c.ClientId.Value.Equals(id))
+                .Any();
+
+            if (hasReferencedSectors)
+            {
+                Alerts.AddError(Validation.For<ClientCreateEditView>("AssociatedSectors"));
+                return false;
+            }
+
             return ModelState.IsValid;
         }
 

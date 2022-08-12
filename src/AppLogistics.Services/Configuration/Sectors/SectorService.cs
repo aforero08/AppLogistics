@@ -24,7 +24,7 @@ namespace AppLogistics.Services
                 .OrderByDescending(sector => sector.Id);
         }
 
-        public void Create(SectorView view)
+        public void Create(SectorCreateEditView view)
         {
             Sector sector = UnitOfWork.To<Sector>(view);
 
@@ -32,7 +32,7 @@ namespace AppLogistics.Services
             UnitOfWork.Commit();
         }
 
-        public void Edit(SectorView view)
+        public void Edit(SectorCreateEditView view)
         {
             Sector sector = UnitOfWork.To<Sector>(view);
 

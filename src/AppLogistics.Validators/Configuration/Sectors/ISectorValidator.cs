@@ -4,8 +4,8 @@ namespace AppLogistics.Validators
 {
     public interface ISectorValidator : IValidator
     {
-        bool CanCreate(SectorView view);
-        bool CanEdit(SectorView view);
+        bool CanCreate(SectorCreateEditView view);
+        bool CanEdit(SectorCreateEditView view);
         bool CanDelete(int id);
     }
 }

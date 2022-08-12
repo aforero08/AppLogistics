@@ -9,6 +9,9 @@ namespace AppLogistics.Objects
         [StringLength(32)]
         public string Name { get; set; }
 
+        public int? ClientId { get; set; }
+        public virtual Client Client { get; set; }
+
         public virtual ICollection<Service> Services { get; set; }
     }
 }

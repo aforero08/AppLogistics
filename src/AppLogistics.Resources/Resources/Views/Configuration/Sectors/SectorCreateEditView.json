@@ -1,7 +1,7 @@
 {
     "Titles": {
         "Name": "Name",
-        "ClientName": "Client"
+        "ClientId": "Client"
     },
     "Validations": {
         "AssociatedServices": "There are services associated to this Area. To delete this Area, you should delete those services first or associate them a different Area."

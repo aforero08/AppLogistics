@@ -27,5 +27,7 @@ namespace AppLogistics.Objects
         public string Contact { get; set; }
 
         public virtual ICollection<Rate> Rates { get; set; }
+
+        public virtual ICollection<Sector> Sectors { get; set; }
     }
 }
