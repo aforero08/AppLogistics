@@ -161,14 +161,14 @@ namespace AppLogistics.Services.Reporting.ServiceReports
                 row.EmployeesQuantity = row.EmployeesInfo.Count();
 
                 // Novelties
-                var concatenatedNovelties = UnitOfWork.Select<ServiceNovelty>()
+                var serviceNoveltyNames = UnitOfWork.Select<ServiceNovelty>()
                     .Where(sn => sn.ServiceId == row.ServiceId)
                     .Select(sn => sn.Novelty.Name)
                     .ToList();
                 
-                if (!concatenatedNovelties.IsNullOrEmpty())
+                if (!serviceNoveltyNames.IsNullOrEmpty())
                 {
-                    row.Novelties = string.Join(";", concatenatedNovelties);
+                    row.Novelties = string.Join(";", serviceNoveltyNames);
                 }
             }
 
