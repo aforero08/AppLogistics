@@ -26,12 +26,19 @@ namespace AppLogistics.Services.Reporting.ServiceReports
                 return null;
             }
 
+            // Employees
             var employees = UnitOfWork.Select<Holding>()
                 .Where(h => h.ServiceId == id)
                 .Select(h => h.EmployeeId)
                 .ToList();
-
             serviceDetail.SelectedEmployees = employees.ToArray();
+
+            // Novelties
+            var novelties = UnitOfWork.Select<ServiceNovelty>()
+                .Where(sn => sn.ServiceId == id)
+                .Select(sn => sn.NoveltyId)
+                .ToList();
+            serviceDetail.SelectedNovelties = novelties.ToArray();
 
             return serviceDetail;
         }
@@ -65,6 +72,7 @@ namespace AppLogistics.Services.Reporting.ServiceReports
                             .Where(s => string.IsNullOrWhiteSpace(query.ExternalDocument) || s.ExternalDocument.Contains(query.ExternalDocument))
                             .Where(s => string.IsNullOrWhiteSpace(query.Comments) || s.Comments.Contains(query.Comments));
 
+            // Employees
             if (!query.EmployeeIds.IsNullOrEmpty())
             {
                 var serviceIds = UnitOfWork.Select<Holding>()
@@ -74,6 +82,7 @@ namespace AppLogistics.Services.Reporting.ServiceReports
                 services = services.Where(s => serviceIds.Contains(s.Id));
             }
 
+            // Novelties
             if (!query.NoveltyIds.IsNullOrEmpty())
             {
                 var serviceIds = UnitOfWork.Select<ServiceNovelty>()
@@ -138,6 +147,7 @@ namespace AppLogistics.Services.Reporting.ServiceReports
 
             foreach (var row in reportRows)
             {
+                // Employees
                 var holdingXemployees = UnitOfWork.Select<Holding>()
                     .Join(UnitOfWork.Select<Employee>(), hold => hold.EmployeeId, emp => emp.Id, (hold, emp) => new { hold, emp });
 
@@ -149,6 +159,17 @@ namespace AppLogistics.Services.Reporting.ServiceReports
                         EmployeeHoldingPrice = empRep.hold.Price
                     });
                 row.EmployeesQuantity = row.EmployeesInfo.Count();
+
+                // Novelties
+                var serviceNoveltyNames = UnitOfWork.Select<ServiceNovelty>()
+                    .Where(sn => sn.ServiceId == row.ServiceId)
+                    .Select(sn => sn.Novelty.Name)
+                    .ToList();
+                
+                if (!serviceNoveltyNames.IsNullOrEmpty())
+                {
+                    row.Novelties = string.Join(";", serviceNoveltyNames);
+                }
             }
 
             return reportRows;

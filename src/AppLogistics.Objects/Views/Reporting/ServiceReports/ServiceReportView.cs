@@ -32,6 +32,8 @@
 
         public decimal HoldingPrice { get; set; }
 
+        public int[] SelectedNovelties { get; set; }
+
         public string Comments { get; set; }
     }
 }
