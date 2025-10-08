@@ -16,7 +16,6 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.DataAnnotations;
-using Microsoft.AspNetCore.Mvc.ViewFeatures; // CookieTempDataProviderOptions
 using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -112,7 +111,8 @@ namespace AppLogistics.Web
                 o.ClientModelValidatorProviders.Add(new DateValidatorProvider());
                 o.ClientModelValidatorProviders.Add(new NumberValidatorProvider());
             })
-            .AddMvcOptions(o => o.ModelMetadataDetailsProviders.Add(new DisplayMetadataProvider()));
+            .AddMvcOptions(o => o.ModelMetadataDetailsProviders.Add(new DisplayMetadataProvider()))
+            .AddSessionStateTempDataProvider(); // Use session-backed TempData (custom session cookie name retained)
 
             services.AddAuthentication("Cookies").AddCookie(authentication =>
             {
@@ -172,7 +172,6 @@ namespace AppLogistics.Web
         public void RegisterSecureResponse(IServiceCollection services)
         {
             // Keep custom cookie names
-            services.Configure<CookieTempDataProviderOptions>(o => o.Cookie.Name = Config["Cookies:TempData:Name"]);
             services.Configure<SessionOptions>(session => session.Cookie.Name = Config["Cookies:Session:Name"]);
             services.Configure<AntiforgeryOptions>(antiforgery =>
             {
