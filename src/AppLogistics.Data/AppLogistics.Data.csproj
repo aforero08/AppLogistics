@@ -6,16 +6,13 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <GenerateFullPaths>true</GenerateFullPaths>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <TargetFrameworks>netcoreapp2.2;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>netcoreapp2.2;netstandard2.0;net6.0</TargetFrameworks>
     <DebugType Condition="'$(Configuration)'=='Debug'">portable</DebugType>
     <DebugSymbols Condition="'$(Configuration)'=='Debug'">true</DebugSymbols>
   </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\AppLogistics.Objects\AppLogistics.Objects.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="AutoMapper" Version="8.0.0" />
     <PackageReference Include="Microsoft.NETCore.Platforms" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Hosting" Version="2.2.0" />
