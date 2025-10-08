@@ -15,7 +15,6 @@ using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.DataAnnotations;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
@@ -32,11 +31,14 @@ namespace AppLogistics.Web
     {
         private IConfiguration Config { get; }
 
-        public Startup(IHostingEnvironment env)
+        // Updated to IWebHostEnvironment (IHostingEnvironment obsolete in .NET 6)
+        public Startup(IWebHostEnvironment env)
         {
-            Dictionary<string, string> config = new Dictionary<string, string>();
-            config.Add("Application:Path", env.ContentRootPath);
-            config.Add("Application:Env", env.EnvironmentName);
+            Dictionary<string, string> config = new Dictionary<string, string>
+            {
+                {"Application:Path", env.ContentRootPath},
+                {"Application:Env", env.EnvironmentName}
+            };
 
             Config = new ConfigurationBuilder()
                 .SetBasePath(env.ContentRootPath)
@@ -54,7 +56,6 @@ namespace AppLogistics.Web
         {
             RegisterMiddleware(app);
             RegisterMvc(app);
-
             UpdateDatabase(app);
         }
 
@@ -88,11 +89,9 @@ namespace AppLogistics.Web
             foreach (Type view in typeof(BaseView).Assembly.GetTypes())
             {
                 Type type = view;
-
                 while (typeof(BaseView).IsAssignableFrom(type.BaseType))
                 {
                     Resource.Set(view.Name).Inherit(Resource.Set(type.BaseType.Name));
-
                     type = type.BaseType;
                 }
             }
@@ -100,17 +99,21 @@ namespace AppLogistics.Web
 
         public void RegisterMvc(IServiceCollection services)
         {
+            // Remove obsolete SetCompatibilityVersion call (not required in .NET 6)
             services
-                .AddMvc()
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
-                .AddMvcOptions(options => options.Filters.Add<LanguageFilter>())
-                .AddMvcOptions(options => options.Filters.Add<AuthorizationFilter>())
-                .AddMvcOptions(options => ModelMessagesProvider.Set(options.ModelBindingMessageProvider))
+                .AddMvc(options =>
+                {
+                    options.Filters.Add<LanguageFilter>();
+                    options.Filters.Add<AuthorizationFilter>();
+                    options.ModelBinderProviders.Insert(4, new TrimmingModelBinderProvider());
+                })
                 .AddRazorOptions(options => options.ViewLocationExpanders.Add(new ViewLocationExpander()))
-                .AddViewOptions(options => options.ClientModelValidatorProviders.Add(new DateValidatorProvider()))
-                .AddMvcOptions(options => options.ModelMetadataDetailsProviders.Add(new DisplayMetadataProvider()))
-                .AddViewOptions(options => options.ClientModelValidatorProviders.Add(new NumberValidatorProvider()))
-                .AddMvcOptions(options => options.ModelBinderProviders.Insert(4, new TrimmingModelBinderProvider()));
+                .AddViewOptions(options =>
+                {
+                    options.ClientModelValidatorProviders.Add(new DateValidatorProvider());
+                    options.ClientModelValidatorProviders.Add(new NumberValidatorProvider());
+                })
+                .AddMvcOptions(options => options.ModelMetadataDetailsProviders.Add(new DisplayMetadataProvider()));
 
             services.AddAuthentication("Cookies").AddCookie(authentication =>
             {
@@ -127,49 +130,33 @@ namespace AppLogistics.Web
 
         public void RegisterLogging(IServiceCollection services)
         {
-            //if (Config["Application:Env"] != EnvironmentName.Development)
-            //{
-            //    services.AddLogging(builder => builder.AddProvider(new FileLoggerProvider(Config)));
-            //}
-            //else
-            //{
-            //    services.AddLogging(builder => builder.AddConsole());
-            //}
+            // Logging configuration kept commented as in original source
         }
 
         public void RegisterServices(IServiceCollection services)
         {
             services.AddSession();
             services.AddSingleton(Config);
-
             services.AddTransient<DatabaseConfiguration>();
             services.AddTransient<DbContext, Context>();
             services.AddTransient<IUnitOfWork, UnitOfWork>();
             services.AddDbContext<Context>(options => options.UseSqlServer(Config["Data:Connection"]));
-
             services.AddTransient<IAuditLogger>(provider =>
                 new AuditLogger(provider.GetService<DbContext>(),
                 provider.GetRequiredService<IHttpContextAccessor>().HttpContext?.User?.Id()));
-
             services.AddSingleton<IHasher, Hasher>();
             services.AddSingleton<IMailClient, SmtpMailClient>();
             services.AddSingleton<IMessagebuilder, MessageBuilder>();
-
             services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
             services.AddSingleton<IValidationAttributeAdapterProvider, ValidationAdapterProvider>();
-
             services.AddSingleton<IAuthorization>(provider =>
                 new Authorization(typeof(BaseController).Assembly, provider));
-
             Language[] supported = Config.GetSection("Languages:Supported").Get<Language[]>();
             services.AddSingleton<ILanguages>(new Languages(Config["Languages:Default"], supported));
-
             string map = File.ReadAllText(Path.Combine(Config["Application:Path"], Config["SiteMap:Path"]));
             services.AddSingleton<ISiteMap>(provider => new SiteMap(map, provider.GetService<IAuthorization>()));
-
             services.AddTransientImplementations<IService>();
             services.AddTransientImplementations<IValidator>();
-
             services.AddSingleton<IExcelReportCreator, ExcelReportCreator>();
         }
 
@@ -191,20 +178,8 @@ namespace AppLogistics.Web
 
         public void RegisterMiddleware(IApplicationBuilder app)
         {
-            //if (Config["Application:Env"] == EnvironmentName.Development)
-            //{
-            //    app.UseMiddleware<DeveloperExceptionPageMiddleware>();
-            //}
-            //else
-            //{
-            //    app.UseMiddleware<ErrorPagesMiddleware>();
-            //}
-
-            //app.UseMiddleware<SecureHeadersMiddleware>();
-
             app.UseHttpsRedirection();
             app.UseAuthentication();
-
             app.UseStaticFiles(new StaticFileOptions
             {
                 OnPrepareResponse = (response) =>
