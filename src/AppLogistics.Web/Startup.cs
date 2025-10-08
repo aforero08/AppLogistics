@@ -16,6 +16,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.DataAnnotations;
+using Microsoft.AspNetCore.Mvc.ViewFeatures; // CookieTempDataProviderOptions
 using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -31,10 +32,10 @@ namespace AppLogistics.Web
     {
         private IConfiguration Config { get; }
 
-        // Updated to IWebHostEnvironment (IHostingEnvironment obsolete in .NET 6)
+        // Updated to IWebHostEnvironment (IHostingEnvironment obsolete in .NET 6+)
         public Startup(IWebHostEnvironment env)
         {
-            Dictionary<string, string> config = new Dictionary<string, string>
+            var config = new Dictionary<string, string>
             {
                 {"Application:Path", env.ContentRootPath},
                 {"Application:Env", env.EnvironmentName}
@@ -80,7 +81,6 @@ namespace AppLogistics.Web
                         string type = Path.GetFileNameWithoutExtension(resource);
                         string language = Path.GetExtension(type).TrimStart('.');
                         type = Path.GetFileNameWithoutExtension(type);
-
                         Resource.Set(type).Override(language, File.ReadAllText(resource));
                     }
                 }
@@ -99,24 +99,24 @@ namespace AppLogistics.Web
 
         public void RegisterMvc(IServiceCollection services)
         {
-            // Remove obsolete SetCompatibilityVersion call (not required in .NET 6)
-            services
-                .AddMvc(options =>
-                {
-                    options.Filters.Add<LanguageFilter>();
-                    options.Filters.Add<AuthorizationFilter>();
-                    options.ModelBinderProviders.Insert(4, new TrimmingModelBinderProvider());
-                })
-                .AddRazorOptions(options => options.ViewLocationExpanders.Add(new ViewLocationExpander()))
-                .AddViewOptions(options =>
-                {
-                    options.ClientModelValidatorProviders.Add(new DateValidatorProvider());
-                    options.ClientModelValidatorProviders.Add(new NumberValidatorProvider());
-                })
-                .AddMvcOptions(options => options.ModelMetadataDetailsProviders.Add(new DisplayMetadataProvider()));
+            services.AddControllersWithViews(options =>
+            {
+                options.Filters.Add<LanguageFilter>();
+                options.Filters.Add<AuthorizationFilter>();
+                // Insert custom trimming binder at a stable index
+                options.ModelBinderProviders.Insert(4, new TrimmingModelBinderProvider());
+            })
+            .AddRazorOptions(o => o.ViewLocationExpanders.Add(new ViewLocationExpander()))
+            .AddViewOptions(o =>
+            {
+                o.ClientModelValidatorProviders.Add(new DateValidatorProvider());
+                o.ClientModelValidatorProviders.Add(new NumberValidatorProvider());
+            })
+            .AddMvcOptions(o => o.ModelMetadataDetailsProviders.Add(new DisplayMetadataProvider()));
 
             services.AddAuthentication("Cookies").AddCookie(authentication =>
             {
+                // Keep custom cookie naming per user preference
                 authentication.Cookie.Name = Config["Cookies:Auth:Name"];
                 authentication.Events = new AuthenticationEvents();
             });
@@ -130,7 +130,7 @@ namespace AppLogistics.Web
 
         public void RegisterLogging(IServiceCollection services)
         {
-            // Logging configuration kept commented as in original source
+            // Original logging left commented; keep placeholder
         }
 
         public void RegisterServices(IServiceCollection services)
@@ -141,20 +141,24 @@ namespace AppLogistics.Web
             services.AddTransient<DbContext, Context>();
             services.AddTransient<IUnitOfWork, UnitOfWork>();
             services.AddDbContext<Context>(options => options.UseSqlServer(Config["Data:Connection"]));
+
             services.AddTransient<IAuditLogger>(provider =>
                 new AuditLogger(provider.GetService<DbContext>(),
                 provider.GetRequiredService<IHttpContextAccessor>().HttpContext?.User?.Id()));
+
             services.AddSingleton<IHasher, Hasher>();
             services.AddSingleton<IMailClient, SmtpMailClient>();
             services.AddSingleton<IMessagebuilder, MessageBuilder>();
             services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
             services.AddSingleton<IValidationAttributeAdapterProvider, ValidationAdapterProvider>();
-            services.AddSingleton<IAuthorization>(provider =>
-                new Authorization(typeof(BaseController).Assembly, provider));
+            services.AddSingleton<IAuthorization>(provider => new Authorization(typeof(BaseController).Assembly, provider));
+
             Language[] supported = Config.GetSection("Languages:Supported").Get<Language[]>();
             services.AddSingleton<ILanguages>(new Languages(Config["Languages:Default"], supported));
+
             string map = File.ReadAllText(Path.Combine(Config["Application:Path"], Config["SiteMap:Path"]));
             services.AddSingleton<ISiteMap>(provider => new SiteMap(map, provider.GetService<IAuthorization>()));
+
             services.AddTransientImplementations<IService>();
             services.AddTransientImplementations<IValidator>();
             services.AddSingleton<IExcelReportCreator, ExcelReportCreator>();
@@ -167,7 +171,8 @@ namespace AppLogistics.Web
 
         public void RegisterSecureResponse(IServiceCollection services)
         {
-            services.Configure<CookieTempDataProviderOptions>(provider => provider.Cookie.Name = Config["Cookies:TempData:Name"]);
+            // Keep custom cookie names
+            services.Configure<CookieTempDataProviderOptions>(o => o.Cookie.Name = Config["Cookies:TempData:Name"]);
             services.Configure<SessionOptions>(session => session.Cookie.Name = Config["Cookies:Session:Name"]);
             services.Configure<AntiforgeryOptions>(antiforgery =>
             {
@@ -192,21 +197,26 @@ namespace AppLogistics.Web
 
         public void RegisterMvc(IApplicationBuilder app)
         {
-            app.UseMvc(routes =>
+            app.UseRouting();
+
+            app.UseAuthentication();
+            app.UseAuthorization();
+
+            app.UseEndpoints(endpoints =>
             {
-                routes.MapRoute("MultiArea", "{language}/{area:exists}/{controller}/{action=Index}/{id:int?}");
-                routes.MapRoute("DefaultArea", "{area:exists}/{controller}/{action=Index}/{id:int?}");
-                routes.MapRoute("Multi", "{language}/{controller}/{action=Index}/{id:int?}");
-                routes.MapRoute("Default", "{controller}/{action=Index}/{id:int?}");
-                routes.MapRoute("Home", "{controller=Home}/{action=Index}");
+                endpoints.MapControllerRoute("MultiArea", "{language}/{area:exists}/{controller}/{action=Index}/{id:int?}");
+                endpoints.MapControllerRoute("DefaultArea", "{area:exists}/{controller}/{action=Index}/{id:int?}");
+                endpoints.MapControllerRoute("Multi", "{language}/{controller}/{action=Index}/{id:int?}");
+                endpoints.MapControllerRoute("Default", "{controller}/{action=Index}/{id:int?}");
+                endpoints.MapControllerRoute("Home", "{controller=Home}/{action=Index}");
             });
         }
 
         public void UpdateDatabase(IApplicationBuilder app)
         {
-            using (DatabaseConfiguration configuration = app.ApplicationServices.GetService<DatabaseConfiguration>())
+            using (var configuration = app.ApplicationServices.GetService<DatabaseConfiguration>())
             {
-                configuration.UpdateDatabase();
+                configuration?.UpdateDatabase();
             }
         }
     }
