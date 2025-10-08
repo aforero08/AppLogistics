@@ -1,5 +1,5 @@
 ﻿using AppLogistics.Resources;
-using AppLogistics.Tests;
+using AppLogistics.Components.Mvc;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
