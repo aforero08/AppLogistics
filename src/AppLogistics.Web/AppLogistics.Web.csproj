@@ -4,7 +4,7 @@
     <Version>0.1.0</Version>
     <OutputType>Exe</OutputType>
     <GenerateFullPaths>true</GenerateFullPaths>
-    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
     <DebugType Condition="'$(Configuration)'=='Debug'">portable</DebugType>
@@ -30,13 +30,6 @@
     <Content Update="wwwroot\Content\Private\**" CopyToPublishDirectory="Always" />
     <Content Update="wwwroot\Scripts\Application\**\*.min.js" CopyToPublishDirectory="Always" />
     <Content Update="wwwroot\Content\Application\**\*.min.css" CopyToPublishDirectory="Always" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\AppLogistics.Controllers\AppLogistics.Controllers.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Genny" Version="2.2.1" />
     <PackageReference Include="Humanizer.Core" Version="2.6.2" />
     <PackageReference Include="Microsoft.AspNetCore" Version="2.2.0" />
@@ -46,7 +39,6 @@
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Web.BrowserLink" Version="2.2.0" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.3" />
-
     <PackageReference Include="NonFactors.Grid.Mvc6" Version="4.1.1" />
     <PackageReference Include="NonFactors.Lookup.Mvc6" Version="3.2.1" />
     <PackageReference Include="Microsoft.AspNetCore.Session" Version="2.2.0" />
@@ -58,6 +50,10 @@
     <PackageReference Include="Microsoft.AspNetCore.Server.Kestrel" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Server.IISIntegration" Version="2.2.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\AppLogistics.Controllers\AppLogistics.Controllers.csproj" />
   </ItemGroup>
 
     <ItemGroup>
