@@ -11,7 +11,7 @@ namespace AppLogistics.Data
     {
         private IConfiguration Config { get; }
 
-        public Startup(IHostingEnvironment env)
+        public Startup(IWebHostEnvironment env)
         {
             Config = new ConfigurationBuilder()
                 .SetBasePath(env.ContentRootPath)

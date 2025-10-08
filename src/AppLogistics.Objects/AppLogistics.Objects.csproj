@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Version>0.1.0</Version>
     <GenerateFullPaths>true</GenerateFullPaths>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <DebugType Condition="'$(Configuration)'=='Debug'">portable</DebugType>
     <DebugSymbols Condition="'$(Configuration)'=='Debug'">true</DebugSymbols>
@@ -11,6 +11,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\AppLogistics.Components\AppLogistics.Components.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
 
 </Project>

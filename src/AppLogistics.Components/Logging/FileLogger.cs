@@ -1,7 +1,6 @@
 ﻿using AppLogistics.Components.Extensions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions.Internal;
 using System;
 using System.IO;
 using System.Text;
@@ -18,6 +17,8 @@ namespace AppLogistics.Components.Logging
         private string RollingFileFormat { get; }
         private static object LogWriting { get; } = new object();
 
+        private sealed class DisposableScope : IDisposable { public static readonly DisposableScope Instance = new DisposableScope(); public void Dispose() { } }
+
         public FileLogger(string path, LogLevel logLevel, long rollSize)
         {
             IHttpContextAccessor accessor = new HttpContextAccessor();
@@ -32,22 +33,14 @@ namespace AppLogistics.Components.Logging
             LogPath = path;
         }
 
-        public bool IsEnabled(LogLevel logLevel)
-        {
-            return Level <= logLevel;
-        }
+        public bool IsEnabled(LogLevel logLevel) => Level <= logLevel;
 
-        public IDisposable BeginScope<TState>(TState state)
-        {
-            return NullScope.Instance;
-        }
+        public IDisposable BeginScope<TState>(TState state) => DisposableScope.Instance;
 
         public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
         {
-            if (!IsEnabled(logLevel))
-            {
-                return;
-            }
+            if (!IsEnabled(logLevel)) return;
+            if (formatter == null) return;
 
             StringBuilder log = new StringBuilder();
             log.AppendLine($"{logLevel.ToString().PadRight(11)}: {DateTime.Now:yyyy-MM-dd HH:mm:ss.ffffff} [{AccountId()}]");
@@ -58,15 +51,16 @@ namespace AppLogistics.Components.Logging
                 log.AppendLine("Stack trace:");
             }
 
-            while (exception != null)
+            Exception current = exception;
+            while (current != null)
             {
-                log.AppendLine($"    {exception.GetType()}: {exception.Message}");
-                foreach (string line in exception.StackTrace.Split('\n'))
+                log.AppendLine($"    {current.GetType()}: {current.Message}");
+                if (!string.IsNullOrEmpty(current.StackTrace))
                 {
-                    log.AppendLine("     " + line.TrimEnd('\r'));
+                    foreach (string line in current.StackTrace.Split('\n'))
+                        log.AppendLine("     " + line.TrimEnd('\r'));
                 }
-
-                exception = exception.InnerException;
+                current = current.InnerException;
             }
 
             log.AppendLine();
@@ -75,8 +69,7 @@ namespace AppLogistics.Components.Logging
             {
                 Directory.CreateDirectory(LogDirectory);
                 File.AppendAllText(LogPath, log.ToString());
-
-                if (RollSize <= new FileInfo(LogPath).Length)
+                if (RollSize > 0 && new FileInfo(LogPath).Length >= RollSize)
                 {
                     File.Move(LogPath, Path.Combine(LogDirectory, string.Format(RollingFileFormat, DateTime.Now)));
                 }

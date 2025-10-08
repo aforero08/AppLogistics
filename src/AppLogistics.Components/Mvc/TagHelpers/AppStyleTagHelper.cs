@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 using Microsoft.AspNetCore.Routing;
+using Microsoft.Extensions.Hosting; // Added for IsDevelopment()
 using System.Collections.Concurrent;
 using System.IO;
 
@@ -13,15 +14,13 @@ namespace AppLogistics.Components.Mvc
     public class AppStyleTagHelper : TagHelper
     {
         public override int Order => -2000;
-
         public string Action { get; set; }
 
         [ViewContext]
         [HtmlAttributeNotBound]
         public ViewContext ViewContext { get; set; }
 
-        private readonly IHostingEnvironment _environment;
-
+        private readonly IWebHostEnvironment _environment;
         private static ConcurrentDictionary<string, string> Styles { get; }
 
         static AppStyleTagHelper()
@@ -29,7 +28,7 @@ namespace AppLogistics.Components.Mvc
             Styles = new ConcurrentDictionary<string, string>();
         }
 
-        public AppStyleTagHelper(IHostingEnvironment environment)
+        public AppStyleTagHelper(IWebHostEnvironment environment)
         {
             _environment = environment;
         }
@@ -41,7 +40,6 @@ namespace AppLogistics.Components.Mvc
             if (!Styles.ContainsKey(path))
             {
                 Styles[path] = null;
-
                 if (ScriptsAvailable(path))
                 {
                     Styles[path] = new UrlHelper(ViewContext).Content("~/content/application/" + path);
@@ -67,7 +65,6 @@ namespace AppLogistics.Components.Mvc
         {
             RouteValueDictionary route = ViewContext.RouteData.Values;
             string extension = _environment.IsDevelopment() ? ".css" : ".min.css";
-
             return ((route["Area"] == null ? null : route["Area"] + "/") + route["controller"] + "/" + Action + extension).ToLower();
         }
     }

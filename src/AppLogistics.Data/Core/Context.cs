@@ -1,5 +1,4 @@
-﻿using AppLogistics.Components.Mvc;
-using AppLogistics.Data.Mapping;
+﻿using AppLogistics.Components.Mvc; // custom IndexAttribute
 using AppLogistics.Objects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
@@ -11,16 +10,13 @@ namespace AppLogistics.Data.Core
     public class Context : DbContext
     {
         #region Administration
-
         protected DbSet<Role> Role { get; set; }
         protected DbSet<Account> Account { get; set; }
         protected DbSet<Permission> Permission { get; set; }
         protected DbSet<RolePermission> RolePermission { get; set; }
-
-        #endregion Administration
+        #endregion
 
         #region Configuration
-
         protected DbSet<Activity> Activity { get; set; }
         protected DbSet<Afp> Afp { get; set; }
         protected DbSet<BranchOffice> BranchOffice { get; set; }
@@ -38,36 +34,25 @@ namespace AppLogistics.Data.Core
         protected DbSet<Sector> Sector { get; set; }
         protected DbSet<Sex> Sex { get; set; }
         protected DbSet<VehicleType> VehicleType { get; set; }
-
-        #endregion Configuration
+        #endregion
 
         #region Operation
-
         protected DbSet<Employee> Employee { get; set; }
         protected DbSet<Rate> Rate { get; set; }
         protected DbSet<Service> Service { get; set; }
-
-        #endregion Operation
+        #endregion
 
         #region System
-
         protected DbSet<AuditLog> AuditLog { get; set; }
-
-        #endregion System
+        #endregion
 
         static Context()
         {
-            ObjectMapper.MapObjects();
+            // Explicit object mappings now configured in LegacyMapper; no action required here.
         }
 
-        protected Context()
-        {
-        }
-
-        public Context(DbContextOptions<Context> options)
-            : base(options)
-        {
-        }
+        protected Context() { }
+        public Context(DbContextOptions<Context> options) : base(options) { }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -75,7 +60,7 @@ namespace AppLogistics.Data.Core
             {
                 foreach (PropertyInfo property in entity.ClrType.GetProperties())
                 {
-                    if (property.GetCustomAttribute<IndexAttribute>(false) is IndexAttribute index)
+                    if (property.GetCustomAttribute<AppLogistics.Components.Mvc.IndexAttribute>(false) is AppLogistics.Components.Mvc.IndexAttribute index)
                     {
                         modelBuilder.Entity(entity.ClrType).HasIndex(property.Name).IsUnique(index.IsUnique);
                     }

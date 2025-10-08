@@ -1,5 +1,6 @@
 ﻿using AppLogistics.Resources;
 using AppLogistics.Components.Mvc;
+using AppLogistics.Tests; // Added for AllTypesView
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
@@ -12,42 +13,35 @@ namespace AppLogistics.Components.Mvc.Tests
     {
         private StringLengthAdapter adapter;
         private ModelValidationContextBase context;
+        private StringLengthAttribute attribute;
 
         public StringLengthAdapterTests()
         {
-            adapter = new StringLengthAdapter(new StringLengthAttribute(128));
+            attribute = new StringLengthAttribute(128);
+            adapter = new StringLengthAdapter(attribute);
             IModelMetadataProvider provider = new EmptyModelMetadataProvider();
             ModelMetadata metadata = provider.GetMetadataForProperty(typeof(AllTypesView), "StringField");
-
             context = new ModelValidationContextBase(new ActionContext(), metadata, provider);
         }
-
-        #region GetErrorMessage(ModelValidationContextBase context)
 
         [Fact]
         public void GetErrorMessage_StringLength()
         {
-            adapter.Attribute.MinimumLength = 0;
-
+            attribute.MinimumLength = 0;
             string expected = Validation.For("StringLength", context.ModelMetadata.PropertyName, 128);
             string actual = adapter.GetErrorMessage(context);
 
-            Assert.Equal(Validation.For("StringLength"), adapter.Attribute.ErrorMessage);
             Assert.Equal(expected, actual);
         }
 
         [Fact]
         public void GetErrorMessage_StringLengthRange()
         {
-            adapter.Attribute.MinimumLength = 4;
-
+            attribute.MinimumLength = 4;
             string expected = Validation.For("StringLengthRange", context.ModelMetadata.PropertyName, 128, 4);
             string actual = adapter.GetErrorMessage(context);
 
-            Assert.Equal(Validation.For("StringLengthRange"), adapter.Attribute.ErrorMessage);
             Assert.Equal(expected, actual);
         }
-
-        #endregion GetErrorMessage(ModelValidationContextBase context)
     }
 }

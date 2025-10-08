@@ -2,6 +2,7 @@
 using AppLogistics.Resources;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Metadata;
+using System.Reflection;
 using Xunit;
 
 namespace AppLogistics.Components.Mvc.Tests
@@ -14,8 +15,9 @@ namespace AppLogistics.Components.Mvc.Tests
         public void CreateDisplayMetadata_SetsDisplayName()
         {
             DisplayMetadataProvider provider = new DisplayMetadataProvider();
+            PropertyInfo titleProp = typeof(RoleView).GetProperty("Title");
             DisplayMetadataProviderContext context = new DisplayMetadataProviderContext(
-                ModelMetadataIdentity.ForProperty(typeof(string), "Title", typeof(RoleView)),
+                ModelMetadataIdentity.ForProperty(titleProp, typeof(RoleView), typeof(RoleView)),
                 ModelAttributes.GetAttributesForType(typeof(RoleView)));
 
             provider.CreateDisplayMetadata(context);

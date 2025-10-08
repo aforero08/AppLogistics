@@ -1,7 +1,6 @@
 ﻿using AppLogistics.Data.Logging;
 using AppLogistics.Objects;
-using AutoMapper;
-using AutoMapper.QueryableExtensions;
+using AppLogistics.Mapping; // added for LegacyMapper + ProjectTo extension
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System.Collections.Generic;
@@ -23,7 +22,7 @@ namespace AppLogistics.Data.Core
         public TDestination GetAs<TModel, TDestination>(int? id) where TModel : BaseModel
         {
             return id == null
-                ? default(TDestination)
+                ? default
                 : _context.Set<TModel>().Where(model => model.Id == id).ProjectTo<TDestination>().FirstOrDefault();
         }
 
@@ -39,12 +38,12 @@ namespace AppLogistics.Data.Core
 
         public TDestination To<TDestination>(object source)
         {
-            return Mapper.Map<TDestination>(source);
+            return LegacyMapper.Map<TDestination>(source);
         }
 
         public TDestination Map<Tsource, TDestination>(Tsource source, TDestination destination)
         {
-            return Mapper.Map<Tsource, TDestination>(source, destination);
+            return LegacyMapper.Instance.Map(source, destination);
         }
 
         public IQuery<TModel> Select<TModel>() where TModel : BaseModel

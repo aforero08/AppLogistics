@@ -1,7 +1,7 @@
 ﻿using AppLogistics.Data.Logging;
 using AppLogistics.Objects;
 using AppLogistics.Tests;
-using AutoMapper;
+using AppLogistics.Mapping; // added
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using NSubstitute;
@@ -47,7 +47,7 @@ namespace AppLogistics.Data.Core.Tests
             context.Add(model);
             context.SaveChanges();
 
-            TestView expected = Mapper.Map<TestView>(model);
+            TestView expected = LegacyMapper.Map<TestView>(model);
             TestView actual = unitOfWork.GetAs<TestModel, TestView>(model.Id);
 
             Assert.Equal(expected.CreationDate, actual.CreationDate);
@@ -93,7 +93,7 @@ namespace AppLogistics.Data.Core.Tests
         public void To_ConvertsSourceToDestination()
         {
             TestView actual = unitOfWork.To<TestView>(model);
-            TestView expected = Mapper.Map<TestView>(model);
+            TestView expected = LegacyMapper.Map<TestView>(model);
 
             Assert.Equal(expected.CreationDate, actual.CreationDate);
             Assert.Equal(expected.Title, actual.Title);

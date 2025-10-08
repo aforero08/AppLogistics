@@ -1,4 +1,4 @@
-﻿using AutoMapper.QueryableExtensions;
+﻿using AppLogistics.Mapping; // for ProjectTo extension
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -35,14 +35,7 @@ namespace AppLogistics.Data.Core
             return _set.ProjectTo<TView>();
         }
 
-        public IEnumerator<TModel> GetEnumerator()
-        {
-            return _set.GetEnumerator();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
-        }
+        public IEnumerator<TModel> GetEnumerator() => _set.GetEnumerator();
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }
 }
