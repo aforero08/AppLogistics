@@ -19,7 +19,9 @@ namespace AppLogistics.Controllers
         }
 
         [NonAction]
-        public virtual JsonResult GetData(MvcLookup lookup, LookupFilter filter)
+        public virtual JsonResult GetData<TModel, TView>(MvcLookup<TModel, TView> lookup, LookupFilter filter)
+            where TModel : BaseModel
+            where TView : BaseView
         {
             lookup.Filter = filter;
 

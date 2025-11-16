@@ -31,23 +31,32 @@ namespace AppLogistics.Web
     {
         private IConfiguration Config { get; }
 
-        // Updated to IWebHostEnvironment (IHostingEnvironment obsolete in .NET 6+)
         public Startup(IWebHostEnvironment env)
         {
-            var config = new Dictionary<string, string>
+            var inMemory = new Dictionary<string, string>
             {
-                {"Application:Path", env.ContentRootPath},
-                {"Application:Env", env.EnvironmentName}
+                { "Application:Path", env.ContentRootPath },
+                { "Application:Env", env.EnvironmentName }
             };
 
-            Config = new ConfigurationBuilder()
+            var builder = new ConfigurationBuilder()
                 .SetBasePath(env.ContentRootPath)
+                .AddJsonFile("configuration.json", optional: false, reloadOnChange: true)
+                .AddJsonFile($"configuration.{env.EnvironmentName.ToLower()}.json", optional: true, reloadOnChange: true);
+
+            // Load user secrets only in Development
+            if (env.EnvironmentName.Equals("Development", StringComparison.OrdinalIgnoreCase))
+            {
+                builder.AddUserSecrets<Startup>(optional: true, reloadOnChange: true);
+            }
+
+            // Let environment variables override secrets if present
+            builder
                 .AddEnvironmentVariables("ASPNETCORE_")
                 .AddEnvironmentVariables("APPLOGISTICS_")
-                .AddInMemoryCollection(config)
-                .AddJsonFile("configuration.json")
-                .AddJsonFile($"configuration.{env.EnvironmentName.ToLower()}.json", optional: true)
-                .Build();
+                .AddInMemoryCollection(inMemory);
+
+            Config = builder.Build();
 
             RegisterViewResources();
         }
@@ -102,7 +111,6 @@ namespace AppLogistics.Web
             {
                 options.Filters.Add<LanguageFilter>();
                 options.Filters.Add<AuthorizationFilter>();
-                // Insert custom trimming binder at a stable index
                 options.ModelBinderProviders.Insert(4, new TrimmingModelBinderProvider());
             })
             .AddRazorOptions(o => o.ViewLocationExpanders.Add(new ViewLocationExpander()))
@@ -112,11 +120,10 @@ namespace AppLogistics.Web
                 o.ClientModelValidatorProviders.Add(new NumberValidatorProvider());
             })
             .AddMvcOptions(o => o.ModelMetadataDetailsProviders.Add(new DisplayMetadataProvider()))
-            .AddSessionStateTempDataProvider(); // Use session-backed TempData (custom session cookie name retained)
+            .AddSessionStateTempDataProvider();
 
             services.AddAuthentication("Cookies").AddCookie(authentication =>
             {
-                // Keep custom cookie naming per user preference
                 authentication.Cookie.Name = Config["Cookies:Auth:Name"];
                 authentication.Events = new AuthenticationEvents();
             });
@@ -130,20 +137,34 @@ namespace AppLogistics.Web
 
         public void RegisterLogging(IServiceCollection services)
         {
-            // Original logging left commented; keep placeholder
         }
 
         public void RegisterServices(IServiceCollection services)
         {
             services.AddSession();
             services.AddSingleton(Config);
-            services.AddTransient<DatabaseConfiguration>();
-            services.AddTransient<DbContext, Context>();
-            services.AddTransient<IUnitOfWork, UnitOfWork>();
-            services.AddDbContext<Context>(options => options.UseSqlServer(Config["Data:Connection"]));
 
-            services.AddTransient<IAuditLogger>(provider =>
-                new AuditLogger(provider.GetService<DbContext>(),
+            var conn = Config["Data:Connection"];
+            if (string.IsNullOrEmpty(conn))
+            {
+                throw new InvalidOperationException("Database connection string is not configured.");
+            }
+
+            services.AddDbContext<DbContext, Context>(options =>
+            {
+                options.UseSqlServer(conn);
+                options.UseLazyLoadingProxies();
+                options.EnableDetailedErrors();
+                //options.EnableSensitiveDataLogging();
+                //options.LogTo(Console.WriteLine);
+            });
+
+            services.AddScoped<DatabaseConfiguration>();
+
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+            services.AddScoped<IAuditLogger>(provider =>
+                new AuditLogger(provider.GetRequiredService<Context>(),
                 provider.GetRequiredService<IHttpContextAccessor>().HttpContext?.User?.Id()));
 
             services.AddSingleton<IHasher, Hasher>();
@@ -157,7 +178,7 @@ namespace AppLogistics.Web
             services.AddSingleton<ILanguages>(new Languages(Config["Languages:Default"], supported));
 
             string map = File.ReadAllText(Path.Combine(Config["Application:Path"], Config["SiteMap:Path"]));
-            services.AddSingleton<ISiteMap>(provider => new SiteMap(map, provider.GetService<IAuthorization>()));
+            services.AddSingleton<ISiteMap>(provider => new SiteMap(map, provider.GetRequiredService<IAuthorization>()));
 
             services.AddTransientImplementations<IService>();
             services.AddTransientImplementations<IValidator>();
@@ -171,7 +192,6 @@ namespace AppLogistics.Web
 
         public void RegisterSecureResponse(IServiceCollection services)
         {
-            // Keep custom cookie names
             services.Configure<SessionOptions>(session => session.Cookie.Name = Config["Cookies:Session:Name"]);
             services.Configure<AntiforgeryOptions>(antiforgery =>
             {
@@ -186,7 +206,7 @@ namespace AppLogistics.Web
             app.UseAuthentication();
             app.UseStaticFiles(new StaticFileOptions
             {
-                OnPrepareResponse = (response) =>
+                OnPrepareResponse = response =>
                 {
                     response.Context.Response.Headers["Cache-Control"] = "max-age=8640000";
                 }
@@ -197,10 +217,8 @@ namespace AppLogistics.Web
         public void RegisterMvc(IApplicationBuilder app)
         {
             app.UseRouting();
-
             app.UseAuthentication();
             app.UseAuthorization();
-
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute("MultiArea", "{language}/{area:exists}/{controller}/{action=Index}/{id:int?}");
@@ -211,12 +229,25 @@ namespace AppLogistics.Web
             });
         }
 
+        // Safer migration pattern
         public void UpdateDatabase(IApplicationBuilder app)
         {
-            using (var configuration = app.ApplicationServices.GetService<DatabaseConfiguration>())
+            using var scope = app.ApplicationServices.CreateScope();
+            var db = scope.ServiceProvider.GetRequiredService<Context>();
+
+            // Diagnostic logging before migrate
+            if (!db.Database.CanConnect())
             {
-                configuration?.UpdateDatabase();
+                // Replace with your logger
+                Console.WriteLine("Cannot connect with: " + db.Database.GetDbConnection().ConnectionString);
+                return;
             }
+
+            db.Database.Migrate();
+
+            // Resolve seeding abstraction if needed
+            var config = scope.ServiceProvider.GetRequiredService<DatabaseConfiguration>();
+            config.SeedData();
         }
     }
 }

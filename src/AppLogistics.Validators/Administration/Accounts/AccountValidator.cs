@@ -82,12 +82,11 @@ namespace AppLogistics.Validators
                 .Select<Account>()
                 .Any(account =>
                     account.Id != accountId
-                    && string.Equals(account.Username, username ?? "", StringComparison.OrdinalIgnoreCase));
+                    && account.Username == username);
 
             if (!isUnique)
             {
-                ModelState.AddModelError<AccountView>(model => model.Username,
-                    Validation.For<AccountView>("UniqueUsername"));
+                ModelState.AddModelError<AccountView>(model => model.Username, Validation.For<AccountView>("UniqueUsername"));
             }
 
             return isUnique;
@@ -99,7 +98,7 @@ namespace AppLogistics.Validators
                 .Select<Account>()
                 .Any(account =>
                     account.Id != accountId
-                    && string.Equals(account.Email, email ?? "", StringComparison.OrdinalIgnoreCase));
+                    && account.Email == email);
 
             if (!isUnique)
             {
@@ -112,13 +111,13 @@ namespace AppLogistics.Validators
 
         private bool IsAuthenticated(string username, string password)
         {
-            string passhash = UnitOfWork
+            string passHash = UnitOfWork
                 .Select<Account>()
-                .Where(account => string.Equals(account.Username, username ?? "", StringComparison.OrdinalIgnoreCase))
+                .Where(account => account.Username == username)
                 .Select(account => account.Passhash)
                 .SingleOrDefault();
 
-            bool isCorrect = _hasher.VerifyPassword(password, passhash);
+            bool isCorrect = _hasher.VerifyPassword(password, passHash);
             if (!isCorrect)
             {
                 Alerts.AddError(Validation.For<AccountView>("IncorrectAuthentication"));
@@ -129,13 +128,13 @@ namespace AppLogistics.Validators
 
         private bool IsCorrectPassword(int accountId, string password)
         {
-            string passhash = UnitOfWork
+            string passHash = UnitOfWork
                 .Select<Account>()
                 .Where(account => account.Id == accountId)
                 .Select(account => account.Passhash)
                 .Single();
 
-            bool isCorrect = _hasher.VerifyPassword(password, passhash);
+            bool isCorrect = _hasher.VerifyPassword(password, passHash);
             if (!isCorrect)
             {
                 ModelState.AddModelError<ProfileEditView>(account => account.Password,
@@ -167,7 +166,7 @@ namespace AppLogistics.Validators
                 .Select<Account>()
                 .Any(account =>
                     !account.IsLocked
-                    && string.Equals(account.Username, username ?? "", StringComparison.OrdinalIgnoreCase));
+                    && account.Username == username);
 
             if (!isActive)
             {

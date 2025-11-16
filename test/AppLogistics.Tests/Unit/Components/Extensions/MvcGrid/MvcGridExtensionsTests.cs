@@ -53,7 +53,7 @@ namespace AppLogistics.Components.Extensions.Tests
             columns.Grid.ViewContext.RouteData.Routers.Add(router);
 
             IGridColumn<AllTypesView, IHtmlContent> column = columns.AddAction("Details", "fa fa-info");
-            column.ValueFor(new GridRow<AllTypesView>(view)).WriteTo(writer, HtmlEncoder.Default);
+            column.ValueFor(new GridRow<AllTypesView>(new AllTypesView(), 0)).WriteTo(writer, HtmlEncoder.Default);
 
             string expected = "<a class=\"fa fa-info details-action\" href=\"/test\"></a>";
             string actual = writer.ToString();
@@ -73,7 +73,7 @@ namespace AppLogistics.Components.Extensions.Tests
             columns.Grid.ViewContext.RouteData.Routers.Add(router);
 
             IGridColumn<AllTypesView, IHtmlContent> column = columns.AddAction("Details", "fa fa-info");
-            column.ValueFor(new GridRow<AllTypesView>(view)).WriteTo(writer, HtmlEncoder.Default);
+            column.ValueFor(new GridRow<AllTypesView>(new AllTypesView(), 0)).WriteTo(writer, HtmlEncoder.Default);
 
             string expected = "<a class=\"fa fa-info details-action\" href=\"/test\"></a>";
             string actual = writer.ToString();
@@ -90,7 +90,7 @@ namespace AppLogistics.Components.Extensions.Tests
 
             IGridColumn<object, IHtmlContent> column = gridColumns.AddAction("Delete", "fa fa-times");
 
-            string actual = Assert.Throws<Exception>(() => column.ValueFor(new GridRow<object>(new object()))).Message;
+            String actual = Assert.Throws<Exception>(() => column.ValueFor(new GridRow<Object>(new Object(), 0))).Message;
             string expected = "Object type does not have an id.";
 
             Assert.Equal(expected, actual);
@@ -157,7 +157,6 @@ namespace AppLogistics.Components.Extensions.Tests
             Assert.Equal("text-center", actual.CssClasses);
             Assert.Equal(expression, actual.Expression);
             Assert.Empty(actual.Title.ToString());
-            Assert.False(actual.Filter.IsMulti);
             Assert.Single(columns);
         }
 
@@ -165,7 +164,7 @@ namespace AppLogistics.Components.Extensions.Tests
         public void AddBoolean_True()
         {
             IGridColumn<AllTypesView, bool> column = columns.AddBoolean(model => model.BooleanField);
-            GridRow<AllTypesView> row = new GridRow<AllTypesView>(new AllTypesView { BooleanField = true });
+            GridRow<AllTypesView> row = new GridRow<AllTypesView>(new AllTypesView { BooleanField = true }, 0);
 
             string actual = column.ValueFor(row).ToString();
             string expected = Resource.ForString("Yes");
@@ -176,7 +175,7 @@ namespace AppLogistics.Components.Extensions.Tests
         [Fact]
         public void AddBoolean_False()
         {
-            GridRow<AllTypesView> row = new GridRow<AllTypesView>(new AllTypesView { BooleanField = false });
+            GridRow<AllTypesView> row = new GridRow<AllTypesView>(new AllTypesView { BooleanField = false }, 0);
             IGridColumn<AllTypesView, bool> column = columns.AddBoolean(model => model.BooleanField);
 
             string actual = column.ValueFor(row).ToString();
@@ -199,7 +198,6 @@ namespace AppLogistics.Components.Extensions.Tests
             Assert.Equal("text-center", actual.CssClasses);
             Assert.Equal(expression, actual.Expression);
             Assert.Empty(actual.Title.ToString());
-            Assert.False(actual.Filter.IsMulti);
             Assert.Single(columns);
         }
 
@@ -207,7 +205,7 @@ namespace AppLogistics.Components.Extensions.Tests
         public void AddBoolean_Nullable()
         {
             IGridColumn<AllTypesView, bool?> column = columns.AddBoolean(model => model.NullableBooleanField);
-            GridRow<AllTypesView> row = new GridRow<AllTypesView>(new AllTypesView { NullableBooleanField = null });
+            GridRow<AllTypesView> row = new GridRow<AllTypesView>(new AllTypesView { NullableBooleanField = null }, 0);
 
             string actual = column.ValueFor(row).ToString();
 
@@ -218,7 +216,7 @@ namespace AppLogistics.Components.Extensions.Tests
         public void AddBoolean_Nullable_True()
         {
             IGridColumn<AllTypesView, bool?> column = columns.AddBoolean(model => model.NullableBooleanField);
-            GridRow<AllTypesView> row = new GridRow<AllTypesView>(new AllTypesView { NullableBooleanField = true });
+            GridRow<AllTypesView> row = new GridRow<AllTypesView>(new AllTypesView { NullableBooleanField = true }, 0);
 
             string actual = column.ValueFor(row).ToString();
             string expected = Resource.ForString("Yes");
@@ -230,7 +228,7 @@ namespace AppLogistics.Components.Extensions.Tests
         public void AddBoolean_Nullable_False()
         {
             IGridColumn<AllTypesView, bool?> column = columns.AddBoolean(model => model.NullableBooleanField);
-            GridRow<AllTypesView> row = new GridRow<AllTypesView>(new AllTypesView { NullableBooleanField = false });
+            GridRow<AllTypesView> row = new GridRow<AllTypesView>(new AllTypesView { NullableBooleanField = false }, 0);
 
             string actual = column.ValueFor(row).ToString();
             string expected = Resource.ForString("No");

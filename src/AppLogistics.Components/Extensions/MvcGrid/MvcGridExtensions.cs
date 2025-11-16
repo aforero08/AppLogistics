@@ -17,14 +17,17 @@ namespace AppLogistics.Components.Extensions
     {
         public static IGridColumn<T, IHtmlContent> AddAction<T>(this IGridColumnsOf<T> columns, string action, string iconClass) where T : class
         {
-            if (!IsAuthorizedFor(columns.Grid.ViewContext, action))
-            {
-                return new GridColumn<T, IHtmlContent>(columns.Grid, model => null);
-            }
+            ViewContext context = columns.Grid.ViewContext!;
+
+            if (!IsAuthorizedFor(context, action))
+                return new GridColumn<T, IHtmlContent>(columns.Grid, _ => HtmlString.Empty);
+
+            IUrlHelperFactory factory = context.HttpContext.RequestServices.GetRequiredService<IUrlHelperFactory>();
+            IUrlHelper url = factory.GetUrlHelper(context);
 
             return columns
-                .Add(model => GenerateLink(columns.Grid.ViewContext, model, action, iconClass))
-                .Css("action-cell " + action.ToLower());
+                .Add(model => GenerateLink(model, url, action, iconClass))
+                .Css($"action-cell {action.ToLower()}");
         }
 
         public static IGridColumn<T, DateTime> AddDate<T>(this IGridColumnsOf<T> columns, Expression<Func<T, DateTime>> expression)
@@ -43,7 +46,6 @@ namespace AppLogistics.Components.Extensions
 
             return columns
                 .AddProperty(expression)
-                .MultiFilterable(false)
                 .RenderedAs(model => valueFor(model) ? Resource.ForString("Yes") : Resource.ForString("No"));
         }
 
@@ -53,7 +55,6 @@ namespace AppLogistics.Components.Extensions
 
             return columns
                 .AddProperty(expression)
-                .MultiFilterable(false)
                 .RenderedAs(model =>
                     valueFor(model) != null
                         ? valueFor(model) == true
@@ -90,11 +91,12 @@ namespace AppLogistics.Components.Extensions
                 .Sortable();
         }
 
-        private static IHtmlContent GenerateLink<T>(ViewContext context, T model, string action, string iconClass)
+        private static IHtmlContent GenerateLink<T>(T model, IUrlHelper url, string action, string iconClass)
         {
-            TagBuilder link = new TagBuilder("a");
-            link.AddCssClass(iconClass + " " + action.ToLower() + "-action");
-            link.Attributes["href"] = new UrlHelper(context).Action(action, RouteFor(model));
+            TagBuilder link = new("a");
+            link.Attributes["href"] = url.Action(action, RouteFor(model));
+            link.Attributes["title"] = Resource.ForAction(action);
+            link.AddCssClass(iconClass);
 
             return link;
         }

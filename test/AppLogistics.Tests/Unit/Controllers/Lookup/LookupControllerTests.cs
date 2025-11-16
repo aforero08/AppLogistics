@@ -13,14 +13,14 @@ namespace AppLogistics.Controllers.Tests
         private LookupController controller;
         private IUnitOfWork unitOfWork;
         private LookupFilter filter;
-        private MvcLookup lookup;
+        private MvcLookup<Role, RoleView> lookup;
 
         public LookupControllerTests()
         {
             unitOfWork = Substitute.For<IUnitOfWork>();
             controller = Substitute.ForPartsOf<LookupController>(unitOfWork);
 
-            lookup = Substitute.For<MvcLookup>();
+            lookup = Substitute.For<MvcLookup<Role, RoleView>>(unitOfWork);
             filter = new LookupFilter();
         }
 
@@ -84,12 +84,12 @@ namespace AppLogistics.Controllers.Tests
 
         #region Test helpers
 
-        private JsonResult GetData<TLookup>(LookupController lookupController) where TLookup : MvcLookup
+        private JsonResult GetData<TLookup>(LookupController lookupController) where TLookup : ALookup
         {
-            lookupController.When(sub => sub.GetData(Arg.Any<TLookup>(), filter)).DoNotCallBase();
-            lookupController.GetData(Arg.Any<TLookup>(), filter).Returns(new JsonResult("Test"));
+            lookupController.When(sub => sub.GetData<Role, RoleView>(Arg.Any<MvcLookup<Role, RoleView>>(), filter)).DoNotCallBase();
+            lookupController.GetData<Role, RoleView>(Arg.Any<MvcLookup<Role, RoleView>>(), filter).Returns(new JsonResult("Test"));
 
-            return lookupController.GetData(null, filter);
+            return lookupController.GetData<Role, RoleView>(null, filter);
         }
 
         #endregion Test helpers

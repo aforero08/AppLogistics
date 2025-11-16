@@ -47,7 +47,7 @@ namespace AppLogistics.Services
 
         public string Recover(AccountRecoveryView view)
         {
-            Account account = UnitOfWork.Select<Account>().SingleOrDefault(model => string.Equals(model.Email, view.Email, StringComparison.OrdinalIgnoreCase));
+            Account account = UnitOfWork.Select<Account>().SingleOrDefault(model => model.Email == view.Email);
             if (account == null)
             {
                 return null;
@@ -119,7 +119,7 @@ namespace AppLogistics.Services
 
         public async Task Login(HttpContext context, string username)
         {
-            Account account = UnitOfWork.Select<Account>().Single(model => string.Equals(model.Username, username, StringComparison.OrdinalIgnoreCase));
+            Account account = UnitOfWork.Select<Account>().Single(model => model.Username == username);
 
             await context.SignInAsync("Cookies", new ClaimsPrincipal(new ClaimsIdentity(new[]
             {

@@ -11,6 +11,7 @@
     <DebugSymbols Condition="'$(Configuration)'=='Debug'">true</DebugSymbols>
     <CopyLocalLockFileAssemblies Condition="'$(Configuration)'=='Debug'">true</CopyLocalLockFileAssemblies>
     <PreserveCompilationContext>true</PreserveCompilationContext>
+    <UserSecretsId>cc495ebc-d983-42ed-8b3c-2beb14443922</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
@@ -38,8 +39,8 @@
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Web.BrowserLink" Version="2.2.0" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.18" />
-    <PackageReference Include="NonFactors.Grid.Mvc6" Version="4.1.1" />
-    <PackageReference Include="NonFactors.Lookup.Mvc6" Version="3.2.1" />
+    <PackageReference Include="NonFactors.Grid.Mvc6" Version="7.0.0" />
+    <PackageReference Include="NonFactors.Lookup.Mvc6" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="6.0.1" />
   </ItemGroup>
 
