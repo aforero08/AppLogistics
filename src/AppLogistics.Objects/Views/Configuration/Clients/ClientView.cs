@@ -2,7 +2,7 @@ using NonFactors.Mvc.Lookup;
 
 namespace AppLogistics.Objects
 {
-    public class ClientView : BaseView
+    public class ClientView : BaseView<Client>
     {
         [LookupColumn]
         public string Name { get; set; }

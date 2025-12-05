@@ -2,7 +2,6 @@
 using AppLogistics.Objects;
 using AppLogistics.Resources;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
-using System;
 using System.Linq;
 
 namespace AppLogistics.Validators
@@ -32,16 +31,17 @@ namespace AppLogistics.Validators
 
         private bool IsUniqueTitle(RoleView view)
         {
+            var title = view.Title ?? string.Empty;
             bool isUnique = !UnitOfWork
                 .Select<Role>()
                 .Any(role =>
-                    role.Id != view.Id
-                    && string.Equals(role.Title, view.Title ?? "", StringComparison.OrdinalIgnoreCase));
+                    role.Id != view.Id &&
+                    role.Title != null &&
+                    role.Title.ToUpper() == title.ToUpper());
 
             if (!isUnique)
             {
-                ModelState.AddModelError<RoleView>(role => role.Title,
-                    Validation.For<RoleView>("UniqueTitle"));
+                ModelState.AddModelError<RoleView>(r => r.Title, Validation.For<RoleView>("UniqueTitle"));
             }
 
             return isUnique;

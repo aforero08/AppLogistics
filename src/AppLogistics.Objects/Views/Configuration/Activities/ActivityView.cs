@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace AppLogistics.Objects
 {
-    public class ActivityView : BaseView
+    public class ActivityView : BaseView<Activity>
     {
         [Required]
         [LookupColumn]

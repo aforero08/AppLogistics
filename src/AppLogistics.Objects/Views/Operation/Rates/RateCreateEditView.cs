@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace AppLogistics.Objects
 {
-    public class RateCreateEditView : BaseView
+    public class RateCreateEditView : BaseView<Rate>
     {
         [Required]
         [StringLength(32)]

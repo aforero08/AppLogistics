@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace AppLogistics.Objects
 {
-    public class DocumentTypeView : BaseView
+    public class DocumentTypeView : BaseView<DocumentType>
     {
         [Required]
         [LookupColumn]

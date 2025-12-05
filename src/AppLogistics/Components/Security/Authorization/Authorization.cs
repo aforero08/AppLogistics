@@ -57,26 +57,24 @@ namespace AppLogistics.Components.Security
 
         public void Refresh()
         {
-            using (IUnitOfWork unitOfWork = Services.GetRequiredService<IUnitOfWork>())
-            {
-                Permissions = unitOfWork
-                    .Select<Account>()
-                    .Where(account =>
-                        !account.IsLocked
-                        && account.RoleId != null)
-                    .Select(account => new
-                    {
-                        Id = account.Id,
-                        Permissions = account
-                            .Role
-                            .Permissions
-                            .Select(role => role.Permission)
-                            .Select(permission => (permission.Area ?? "") + "/" + permission.Controller + "/" + permission.Action)
-                    })
-                    .ToDictionary(
-                        account => account.Id,
-                        account => new HashSet<string>(account.Permissions, StringComparer.OrdinalIgnoreCase));
-            }
+            IUnitOfWork unitOfWork = Services.GetRequiredService<IUnitOfWork>();
+            Permissions = unitOfWork
+                .Select<Account>()
+                .Where(account =>
+                    !account.IsLocked
+                    && account.RoleId != null)
+                .Select(account => new
+                {
+                    Id = account.Id,
+                    Permissions = account
+                        .Role
+                        .Permissions
+                        .Select(role => role.Permission)
+                        .Select(permission => (permission.Area ?? "") + "/" + permission.Controller + "/" + permission.Action)
+                })
+                .ToDictionary(
+                    account => account.Id,
+                    account => new HashSet<string>(account.Permissions, StringComparer.OrdinalIgnoreCase));
         }
 
         private bool RequiresAuthorization(string action)

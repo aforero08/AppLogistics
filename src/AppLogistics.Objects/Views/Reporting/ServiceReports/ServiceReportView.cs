@@ -1,6 +1,6 @@
 ﻿namespace AppLogistics.Objects
 {
-    public class ServiceReportView : BaseView
+    public class ServiceReportView : BaseView<Service>
     {
         public string RateClientName { get; set; }
 

@@ -1,6 +1,7 @@
 ﻿using AppLogistics.Data.Logging;
 using AppLogistics.Objects;
-using AppLogistics.Mapping; // added for LegacyMapper + ProjectTo extension
+using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System.Collections.Generic;
@@ -11,11 +12,13 @@ namespace AppLogistics.Data.Core
     public class UnitOfWork : IUnitOfWork
     {
         private readonly DbContext _context;
+        protected IMapper _mapper { get; }
         private readonly IAuditLogger _logger;
 
-        public UnitOfWork(DbContext context, IAuditLogger logger = null)
+        public UnitOfWork(DbContext context, IMapper mapper, IAuditLogger logger = null)
         {
             _context = context;
+            _mapper = mapper;
             _logger = logger;
         }
 
@@ -23,7 +26,12 @@ namespace AppLogistics.Data.Core
         {
             return id == null
                 ? default
-                : _context.Set<TModel>().Where(model => model.Id == id).ProjectTo<TDestination>().FirstOrDefault();
+                : _context
+                    .Set<TModel>()
+                    .AsNoTracking()
+                    .Where(model => model.Id == id)
+                    .ProjectTo<TDestination>(_mapper.ConfigurationProvider)
+                    .FirstOrDefault();
         }
 
         public TModel Get<TModel>(int? id) where TModel : BaseModel
@@ -38,17 +46,17 @@ namespace AppLogistics.Data.Core
 
         public TDestination To<TDestination>(object source)
         {
-            return LegacyMapper.Map<TDestination>(source);
+            return _mapper.Map<TDestination>(source);
         }
 
         public TDestination Map<Tsource, TDestination>(Tsource source, TDestination destination)
         {
-            return LegacyMapper.Instance.Map(source, destination);
+            return _mapper.Map(source, destination);
         }
 
         public IQuery<TModel> Select<TModel>() where TModel : BaseModel
         {
-            return new Query<TModel>(_context.Set<TModel>());
+            return new Query<TModel>(_context.Set<TModel>(), _mapper.ConfigurationProvider);
         }
 
         public void InsertRange<TModel>(IEnumerable<TModel> models) where TModel : BaseModel

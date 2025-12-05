@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace AppLogistics.Objects
 {
-    public class EpsView : BaseView
+    public class EpsView : BaseView<Eps>
     {
         [Required]
         [LookupColumn]

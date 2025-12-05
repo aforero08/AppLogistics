@@ -2,7 +2,7 @@ using System;
 
 namespace AppLogistics.Objects
 {
-    public class ServiceView : BaseView
+    public class ServiceView : BaseView<Service>
     {
         public string RateClientName { get; set; }
 

@@ -2,7 +2,7 @@ using NonFactors.Mvc.Lookup;
 
 namespace AppLogistics.Objects
 {
-    public class RateView : BaseView
+    public class RateView : BaseView<Rate>
     {
         [LookupColumn]
         public string Name { get; set; }

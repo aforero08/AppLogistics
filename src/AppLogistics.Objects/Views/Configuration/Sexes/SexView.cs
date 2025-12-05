@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace AppLogistics.Objects
 {
-    public class SexView : BaseView
+    public class SexView : BaseView<Sex>
     {
         [Required]
         [LookupColumn]

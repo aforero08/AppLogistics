@@ -2,7 +2,7 @@
 
 namespace AppLogistics.Objects
 {
-    public class ClientCreateEditView : BaseView
+    public class ClientCreateEditView : BaseView<Client>
     {
         [Required]
         [StringLength(128)]

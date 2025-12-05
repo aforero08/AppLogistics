@@ -3,7 +3,7 @@ using System;
 
 namespace AppLogistics.Objects
 {
-    public class EmployeeView : BaseView
+    public class EmployeeView : BaseView<Employee>
     {
         [LookupColumn]
         public string InternalCode { get; set; }

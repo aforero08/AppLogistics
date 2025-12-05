@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace AppLogistics.Objects
 {
-    public class AccountResetView : BaseView
+    public class AccountResetView : BaseView<Account>
     {
         [Required]
         [StringLength(36)]

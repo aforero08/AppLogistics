@@ -11,6 +11,7 @@ using AppLogistics.Objects;
 using AppLogistics.Resources;
 using AppLogistics.Services;
 using AppLogistics.Validators;
+using AutoMapper;
 using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -173,6 +174,7 @@ namespace AppLogistics.Web
             services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
             services.AddSingleton<IValidationAttributeAdapterProvider, ValidationAdapterProvider>();
             services.AddSingleton<IAuthorization>(provider => new Authorization(typeof(BaseController).Assembly, provider));
+            services.AddSingleton(new MapperConfiguration(mapper => mapper.AddMaps(typeof(BaseView).Assembly)).CreateMapper());
 
             Language[] supported = Config.GetSection("Languages:Supported").Get<Language[]>();
             services.AddSingleton<ILanguages>(new Languages(Config["Languages:Default"], supported));

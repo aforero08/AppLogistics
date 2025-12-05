@@ -2,6 +2,7 @@
 using AppLogistics.Data.Core;
 using AppLogistics.Data.Logging;
 using AppLogistics.Objects;
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System;
@@ -18,9 +19,9 @@ namespace AppLogistics.Data.Migrations
 
         private readonly string roleTitleSysAdmin = "Sys_Admin";
 
-        public DatabaseConfiguration(DbContext context, DbContext audit, IConfiguration configuration, IHasher hasher)
+        public DatabaseConfiguration(DbContext context, IConfiguration configuration, IHasher hasher, IMapper mapper)
         {
-            UnitOfWork = new UnitOfWork(context, audit == null ? null : new AuditLogger(audit, 0));
+            UnitOfWork = new UnitOfWork(context, mapper, new AuditLogger(context, 0));
             _dbContext = context;
             _configuration = configuration;
             _hasher = hasher;

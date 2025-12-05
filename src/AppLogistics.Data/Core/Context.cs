@@ -1,5 +1,4 @@
-﻿using AppLogistics.Components.Mvc; // custom IndexAttribute
-using AppLogistics.Objects;
+﻿using AppLogistics.Objects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using System.Linq;
@@ -46,11 +45,6 @@ namespace AppLogistics.Data.Core
         protected DbSet<AuditLog> AuditLog { get; set; }
         #endregion
 
-        static Context()
-        {
-            // Explicit object mappings now configured in LegacyMapper; no action required here.
-        }
-
         protected Context() { }
         public Context(DbContextOptions<Context> options) : base(options) { }
 
@@ -60,7 +54,7 @@ namespace AppLogistics.Data.Core
             {
                 foreach (PropertyInfo property in entity.ClrType.GetProperties())
                 {
-                    if (property.GetCustomAttribute<AppLogistics.Components.Mvc.IndexAttribute>(false) is AppLogistics.Components.Mvc.IndexAttribute index)
+                    if (property.GetCustomAttribute<Components.Mvc.IndexAttribute>(false) is Components.Mvc.IndexAttribute index)
                     {
                         modelBuilder.Entity(entity.ClrType).HasIndex(property.Name).IsUnique(index.IsUnique);
                     }

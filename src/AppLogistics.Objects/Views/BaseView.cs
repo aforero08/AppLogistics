@@ -1,4 +1,5 @@
 ﻿using AppLogistics.Components.Extensions.Native;
+using AutoMapper;
 using System;
 
 namespace AppLogistics.Objects
@@ -39,6 +40,14 @@ namespace AppLogistics.Objects
         {
             get;
             set;
+        }
+    }
+
+    public abstract class BaseView<TModel> : BaseView
+    {
+        internal virtual void Map(Profile profile)
+        {
+            profile.CreateMap(typeof(TModel), GetType()).ReverseMap();
         }
     }
 }

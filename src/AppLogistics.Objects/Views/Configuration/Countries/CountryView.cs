@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace AppLogistics.Objects
 {
-    public class CountryView : BaseView
+    public class CountryView : BaseView<Country>
     {
         [Required]
         [LookupColumn]

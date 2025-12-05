@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace AppLogistics.Objects
 {
-    public class BranchOfficeView : BaseView
+    public class BranchOfficeView : BaseView<BranchOffice>
     {
         [Required]
         [LookupColumn]

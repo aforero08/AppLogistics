@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace AppLogistics.Objects
 {
-    public class EthnicGroupView : BaseView
+    public class EthnicGroupView : BaseView<EthnicGroup>
     {
         [Required]
         [LookupColumn]

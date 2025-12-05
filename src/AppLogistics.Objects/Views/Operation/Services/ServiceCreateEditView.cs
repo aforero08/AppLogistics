@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace AppLogistics.Objects
 {
-    public class ServiceCreateEditView : BaseView
+    public class ServiceCreateEditView : BaseView<Service>
     {
         [Required]
         public int RateClientId { get; set; }

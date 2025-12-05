@@ -2,7 +2,7 @@
 
 namespace AppLogistics.Objects
 {
-    public class AccountView : BaseView
+    public class AccountView : BaseView<Account>
     {
         [Required]
         [StringLength(32)]

@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace AppLogistics.Objects
 {
-    public class ProfileEditView : BaseView
+    public class ProfileEditView : BaseView<Account>
     {
         [Required]
         [StringLength(32)]

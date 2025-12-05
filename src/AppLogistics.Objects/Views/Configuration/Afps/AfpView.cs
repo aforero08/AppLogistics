@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace AppLogistics.Objects
 {
-    public class AfpView : BaseView
+    public class AfpView : BaseView<Afp>
     {
         [Required]
         [LookupColumn]

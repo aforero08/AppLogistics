@@ -2,7 +2,7 @@
 
 namespace AppLogistics.Objects
 {
-    public class AccountRecoveryView : BaseView
+    public class AccountRecoveryView : BaseView<Account>
     {
         [Required]
         [EmailAddress]
