@@ -6,7 +6,7 @@
         "Name": "Código",
         "Price": "Precio",
         "ProductId": "Producto",
-        "SplitFare": "Dividir tarifa",
+        "SplitFare": "Dividir tarifa entre operarios",
         "VehicleTypeId": "Tipo de vehículo"
     },
     "Validations": {

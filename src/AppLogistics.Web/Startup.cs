@@ -14,6 +14,7 @@ using AppLogistics.Validators;
 using AutoMapper;
 using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.DataAnnotations;
@@ -21,6 +22,7 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using NonFactors.Mvc.Grid;
 using System;
 using System.Collections.Generic;
@@ -31,9 +33,11 @@ namespace AppLogistics.Web
     public class Startup
     {
         private IConfiguration Config { get; }
+        private IHostEnvironment Environment { get; }
 
         public Startup(IWebHostEnvironment env)
         {
+            Environment = env;
             var inMemory = new Dictionary<string, string>
             {
                 { "Application:Path", env.ContentRootPath },
@@ -65,7 +69,6 @@ namespace AppLogistics.Web
         public void Configure(IApplicationBuilder app)
         {
             RegisterMiddleware(app);
-            RegisterMvc(app);
             UpdateDatabase(app);
         }
 
@@ -204,20 +207,20 @@ namespace AppLogistics.Web
 
         public void RegisterMiddleware(IApplicationBuilder app)
         {
+            if (Environment.IsDevelopment())
+                app.UseMiddleware<DeveloperExceptionPageMiddleware>();
+            else
+                app.UseMiddleware<ErrorResponseMiddleware>();
+
+            app.UseMiddleware<SecureHeadersMiddleware>();
+
             app.UseHttpsRedirection();
-            app.UseAuthentication();
             app.UseStaticFiles(new StaticFileOptions
             {
-                OnPrepareResponse = response =>
-                {
-                    response.Context.Response.Headers["Cache-Control"] = "max-age=8640000";
-                }
+                OnPrepareResponse = response => response.Context.Response.Headers.CacheControl = "max-age=8640000"
             });
+        
             app.UseSession();
-        }
-
-        public void RegisterMvc(IApplicationBuilder app)
-        {
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();

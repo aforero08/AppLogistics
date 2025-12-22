@@ -41,7 +41,7 @@ namespace AppLogistics.Validators
         private bool IsUniqueName(int rateId, string rateName)
         {
             var alreadyExists = UnitOfWork.Select<Rate>()
-                .Where(r => r.Name.Equals(rateName, StringComparison.OrdinalIgnoreCase) && r.Id != rateId)
+                .Where(r => r.Name ==rateName && r.Id != rateId)
                 .Any();
 
             if (alreadyExists)

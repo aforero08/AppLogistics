@@ -6,7 +6,7 @@
         "Name": "Code",
         "Price": "Price",
         "ProductId": "Product",
-        "SplitFare": "Split fare",
+        "SplitFare": "Split fare between operators",
         "VehicleTypeId": "Vehicle type"
     },
     "Validations": {
