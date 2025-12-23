@@ -15,7 +15,10 @@ namespace AppLogistics.Components.Extensions
 {
     public static class MvcGridExtensions
     {
-        public static IGridColumn<T, IHtmlContent> AddAction<T>(this IGridColumnsOf<T> columns, string action, string iconClass) where T : class
+        public static IGridColumn<T, IHtmlContent> AddAction<T>(this IGridColumnsOf<T> columns,
+                                                                string action,
+                                                                string iconClass,
+                                                                Expression<Func<T, bool>> condition = null) where T : class
         {
             ViewContext context = columns.Grid.ViewContext!;
 
@@ -24,6 +27,14 @@ namespace AppLogistics.Components.Extensions
 
             IUrlHelperFactory factory = context.HttpContext.RequestServices.GetRequiredService<IUrlHelperFactory>();
             IUrlHelper url = factory.GetUrlHelper(context);
+
+            if (condition != null)
+            {
+                Func<T, bool> predicate = condition.Compile();
+                return columns
+                    .Add(model => predicate(model) ? GenerateLink(model, url, action, iconClass) : HtmlString.Empty)
+                    .Css($"action-cell {action.ToLower()}");
+            }
 
             return columns
                 .Add(model => GenerateLink(model, url, action, iconClass))

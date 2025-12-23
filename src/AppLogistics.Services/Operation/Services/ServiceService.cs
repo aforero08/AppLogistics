@@ -89,6 +89,7 @@ namespace AppLogistics.Services
             var prices = CalculateServicePrices(rate, view);
 
             var service = UnitOfWork.To<Service>(view);
+            service.Rate = rate;
             service.FullPrice = prices.FullPrice;
             service.HoldingPrice = prices.HoldingPrice;
             service.Holdings = GenerateHoldings(view, prices.PricePerEmployee);
