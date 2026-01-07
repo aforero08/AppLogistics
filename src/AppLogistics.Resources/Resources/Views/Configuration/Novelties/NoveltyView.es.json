@@ -4,6 +4,7 @@
         "Name": "Nombre"
     },
     "Validations": {
-        "AssociatedServices": "Existen servicios asociados a esta Novedad. Para eliminar esta Novedad, debe eliminar primero esos servicios o asociarles una Novedad diferente."
+        "AssociatedServices": "Existen servicios asociados a esta Novedad. Para eliminar esta Novedad, debe eliminar primero esos servicios o asociarles una Novedad diferente.",
+        "DuplicateName": "Ya existe una Novedad con ese Nombre."
     }
 }

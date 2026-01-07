@@ -14,11 +14,31 @@ namespace AppLogistics.Validators
 
         public bool CanCreate(VehicleTypeView view)
         {
+            var alreadyExists = UnitOfWork.Select<VehicleType>()
+                .Where(c => c.Name.ToUpper().Equals(view.Name.ToUpper()))
+                .Any();
+            
+            if (alreadyExists)
+            {
+                Alerts.AddError(Validation.For<VehicleTypeView>("DuplicateName"));
+                return false;
+            }
+            
             return ModelState.IsValid;
         }
 
         public bool CanEdit(VehicleTypeView view)
         {
+            var alreadyExists = UnitOfWork.Select<VehicleType>()
+                .Where(c => c.Name.ToUpper().Equals(view.Name.ToUpper()))
+                .Any();
+            
+            if (alreadyExists)
+            {
+                Alerts.AddError(Validation.For<VehicleTypeView>("DuplicateName"));
+                return false;
+            }
+            
             return ModelState.IsValid;
         }
 

@@ -14,11 +14,31 @@ namespace AppLogistics.Validators
 
         public bool CanCreate(SectorView view)
         {
+            var alreadyExists = UnitOfWork.Select<Sector>()
+                .Where(c => c.Name.ToUpper().Equals(view.Name.ToUpper()))
+                .Any();
+            
+            if (alreadyExists)
+            {
+                Alerts.AddError(Validation.For<SectorView>("DuplicateName"));
+                return false;
+            }
+            
             return ModelState.IsValid;
         }
 
         public bool CanEdit(SectorView view)
         {
+            var alreadyExists = UnitOfWork.Select<Sector>()
+                .Where(c => c.Name.ToUpper().Equals(view.Name.ToUpper()))
+                .Any();
+            
+            if (alreadyExists)
+            {
+                Alerts.AddError(Validation.For<SectorView>("DuplicateName"));
+                return false;
+            }
+            
             return ModelState.IsValid;
         }
 

@@ -14,11 +14,31 @@ namespace AppLogistics.Validators
 
         public bool CanCreate(EducationLevelView view)
         {
+            var alreadyExists = UnitOfWork.Select<EducationLevel>()
+                .Where(c => c.Name.ToUpper().Equals(view.Name.ToUpper()))
+                .Any();
+            
+            if (alreadyExists)
+            {
+                Alerts.AddError(Validation.For<EducationLevelView>("DuplicateName"));
+                return false;
+            }
+            
             return ModelState.IsValid;
         }
 
         public bool CanEdit(EducationLevelView view)
         {
+            var alreadyExists = UnitOfWork.Select<EducationLevel>()
+                .Where(c => c.Name.ToUpper().Equals(view.Name.ToUpper()))
+                .Any();
+            
+            if (alreadyExists)
+            {
+                Alerts.AddError(Validation.For<EducationLevelView>("DuplicateName"));
+                return false;
+            }
+            
             return ModelState.IsValid;
         }
 

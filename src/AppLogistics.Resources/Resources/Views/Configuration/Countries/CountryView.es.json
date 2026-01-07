@@ -3,6 +3,7 @@
         "Name": "Nombre"
     },
     "Validations": {
-        "AssociatedEmployees": "Existen empleados asociados a este País. Para eliminar este País, debe eliminar primero esos empleados o asociarles un País diferente."
+        "AssociatedEmployees": "Existen empleados asociados a este País. Para eliminar este País, debe eliminar primero esos empleados o asociarles un País diferente.",
+        "DuplicateName": "Ya existe un País con ese Nombre."
     }
 }

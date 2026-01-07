@@ -3,6 +3,7 @@
         "Name": "Name"
     },
     "Validations": {
-        "AssociatedRates": "There are rates associated to this Product. To delete this Product, you should delete those rates first or associate them a different Product."
+        "AssociatedRates": "There are rates associated to this Product. To delete this Product, you should delete those rates first or associate them a different Product.",
+        "DuplicateName": "A Product with that Name already exists."
     }
 }

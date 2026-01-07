@@ -148,15 +148,13 @@ namespace AppLogistics.Web
             services.AddSession();
             services.AddSingleton(Config);
 
-            var conn = Config["Data:Connection"];
-            if (string.IsNullOrEmpty(conn))
-            {
+            var dbConnectionString = Config["Data:Connection"];
+            if (string.IsNullOrEmpty(dbConnectionString))
                 throw new InvalidOperationException("Database connection string is not configured.");
-            }
 
             services.AddDbContext<DbContext, Context>(options =>
             {
-                options.UseSqlServer(conn);
+                options.UseSqlServer(dbConnectionString);
                 options.UseLazyLoadingProxies();
                 options.EnableDetailedErrors();
                 //options.EnableSensitiveDataLogging();

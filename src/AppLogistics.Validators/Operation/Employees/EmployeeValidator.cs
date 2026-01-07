@@ -1,3 +1,4 @@
+using AppLogistics.Components.Notifications;
 using AppLogistics.Data.Core;
 using AppLogistics.Objects;
 using AppLogistics.Resources;
@@ -54,6 +55,12 @@ namespace AppLogistics.Validators
             }
 
             return true;
+        }
+
+        public bool CanDelete(EmployeeCreateEditView view)
+        {
+            Alerts.AddError(Validation.For<EmployeeCreateEditView>("DeleteNotAllowed"));
+            return false;
         }
     }
 }

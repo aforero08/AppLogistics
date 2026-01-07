@@ -3,6 +3,7 @@
         "Name": "Name"
     },
     "Validations": {
-        "AssociatedEmployees": "There are employees associated to this Ethnic group. To delete this Ethnic group, you should delete those employees first or associate them a different Ethnic group."
+        "AssociatedEmployees": "There are employees associated to this Ethnic group. To delete this Ethnic group, you should delete those employees first or associate them a different Ethnic group.",
+        "DuplicateName": "An Ethnic group with that Name already exists."
     }
 }

@@ -14,11 +14,31 @@ namespace AppLogistics.Validators
 
         public bool CanCreate(SexView view)
         {
+            var alreadyExists = UnitOfWork.Select<Sex>()
+                .Where(c => c.Name.ToUpper().Equals(view.Name.ToUpper()))
+                .Any();
+            
+            if (alreadyExists)
+            {
+                Alerts.AddError(Validation.For<SexView>("DuplicateName"));
+                return false;
+            }
+            
             return ModelState.IsValid;
         }
 
         public bool CanEdit(SexView view)
         {
+            var alreadyExists = UnitOfWork.Select<Sex>()
+                .Where(c => c.Name.ToUpper().Equals(view.Name.ToUpper()))
+                .Any();
+            
+            if (alreadyExists)
+            {
+                Alerts.AddError(Validation.For<SexView>("DuplicateName"));
+                return false;
+            }
+            
             return ModelState.IsValid;
         }
 

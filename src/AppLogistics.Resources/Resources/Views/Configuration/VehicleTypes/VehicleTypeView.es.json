@@ -4,6 +4,7 @@
     },
     "Validations": {
         "AssociatedRates": "Existen tarifas asociadas a este Tipo de vehículo. Para eliminar este Tipo de vehículo, debe eliminar primero esas tarifas o asociarles un Tipo de vehículo diferente.",
-        "AssociatedServices": "Existen servicios asociados a este Tipo de vehículo. Para eliminar este Tipo de vehículo, debe eliminar primero esos servicios o asociarles un Tipo de vehículo diferente."
+        "AssociatedServices": "Existen servicios asociados a este Tipo de vehículo. Para eliminar este Tipo de vehículo, debe eliminar primero esos servicios o asociarles un Tipo de vehículo diferente.",
+        "DuplicateName": "Ya existe un Tipo de vehículo con ese Nombre."
     }
 }

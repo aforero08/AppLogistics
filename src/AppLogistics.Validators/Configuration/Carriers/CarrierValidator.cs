@@ -14,11 +14,31 @@ namespace AppLogistics.Validators
 
         public bool CanCreate(CarrierView view)
         {
+            var alreadyExists = UnitOfWork.Select<Carrier>()
+                .Where(a => a.Name.ToUpper().Equals(view.Name.ToUpper()))
+                .Any();
+
+            if (alreadyExists)
+            {
+                Alerts.AddError(Validation.For<CarrierView>("DuplicateName"));
+                return false;
+            }
+
             return ModelState.IsValid;
         }
 
         public bool CanEdit(CarrierView view)
         {
+            var alreadyExists = UnitOfWork.Select<Carrier>()
+                .Where(a => a.Name.ToUpper().Equals(view.Name.ToUpper()))
+                .Any();
+
+            if (alreadyExists)
+            {
+                Alerts.AddError(Validation.For<CarrierView>("DuplicateName"));
+                return false;
+            }
+
             return ModelState.IsValid;
         }
 

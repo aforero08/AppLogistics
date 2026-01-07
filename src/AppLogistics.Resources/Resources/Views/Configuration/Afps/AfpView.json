@@ -4,6 +4,7 @@
         "Nit": "Nit"
     },
     "Validations": {
-        "AssociatedEmployees": "There are employees associated to this Afp. To delete this Afp, you should delete those employees first or associate them a different Afp."
+        "AssociatedEmployees": "There are employees associated to this Afp. To delete this Afp, you should delete those employees first or associate them a different Afp.",
+        "DuplicateName": "An Afp with that Name already exists."
     }
 }

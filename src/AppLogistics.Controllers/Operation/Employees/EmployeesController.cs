@@ -74,6 +74,11 @@ namespace AppLogistics.Controllers.Operation
         [ActionName("Delete")]
         public RedirectToActionResult DeleteConfirmed(int id)
         {
+            if (!Validator.CanDelete(Service.Get<EmployeeCreateEditView>(id)))
+            {
+                return RedirectToAction("Delete", new { id });
+            }
+
             Service.Delete(id);
 
             return RedirectToAction("Index");

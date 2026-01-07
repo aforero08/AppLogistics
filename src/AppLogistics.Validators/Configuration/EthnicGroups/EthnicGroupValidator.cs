@@ -14,11 +14,31 @@ namespace AppLogistics.Validators
 
         public bool CanCreate(EthnicGroupView view)
         {
+            var alreadyExists = UnitOfWork.Select<EthnicGroup>()
+                .Where(c => c.Name.ToUpper().Equals(view.Name.ToUpper()))
+                .Any();
+            
+            if (alreadyExists)
+            {
+                Alerts.AddError(Validation.For<EthnicGroupView>("DuplicateName"));
+                return false;
+            }
+            
             return ModelState.IsValid;
         }
 
         public bool CanEdit(EthnicGroupView view)
         {
+            var alreadyExists = UnitOfWork.Select<EthnicGroup>()
+                .Where(c => c.Name.ToUpper().Equals(view.Name.ToUpper()))
+                .Any();
+            
+            if (alreadyExists)
+            {
+                Alerts.AddError(Validation.For<EthnicGroupView>("DuplicateName"));
+                return false;
+            }
+            
             return ModelState.IsValid;
         }
 

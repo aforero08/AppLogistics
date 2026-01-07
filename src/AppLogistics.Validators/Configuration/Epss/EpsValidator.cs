@@ -14,11 +14,31 @@ namespace AppLogistics.Validators
 
         public bool CanCreate(EpsView view)
         {
+            var alreadyExists = UnitOfWork.Select<Eps>()
+                .Where(c => c.Name.ToUpper().Equals(view.Name.ToUpper()))
+                .Any();
+            
+            if (alreadyExists)
+            {
+                Alerts.AddError(Validation.For<EpsView>("DuplicateName"));
+                return false;
+            }
+            
             return ModelState.IsValid;
         }
 
         public bool CanEdit(EpsView view)
         {
+            var alreadyExists = UnitOfWork.Select<Eps>()
+                .Where(c => c.Name.ToUpper().Equals(view.Name.ToUpper()))
+                .Any();
+            
+            if (alreadyExists)
+            {
+                Alerts.AddError(Validation.For<EpsView>("DuplicateName"));
+                return false;
+            }
+            
             return ModelState.IsValid;
         }
 
