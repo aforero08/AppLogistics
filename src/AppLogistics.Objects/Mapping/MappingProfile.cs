@@ -22,5 +22,13 @@ public sealed class MappingProfile : Profile
         foreach (Type view in views)
             view.GetMethod(nameof(BaseView<BaseModel>.Map), BindingFlags.NonPublic | BindingFlags.Instance)
                 .Invoke(Activator.CreateInstance(view), profile);
+
+
+        CreateMap<ServiceCreateEditView, Service>()
+                .ForMember(dest => dest.Holdings, opt => opt.Ignore())
+                .ForMember(dest => dest.ServiceNovelties, opt => opt.Ignore());
+
+        CreateMap<Service, ServiceView>()
+            .ForMember(dest => dest.UnifiedVehicleTypeName, opt => opt.MapFrom(src => src.VehicleTypeId.HasValue ? src.VehicleType.Name : src.Rate.VehicleType.Name ?? null));
     }
 }

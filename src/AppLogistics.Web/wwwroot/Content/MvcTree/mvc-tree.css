@@ -1,7 +1,3 @@
-.mvc-tree {
-    padding: 7px 0 3px;
-}
-
 .mvc-tree ul {
     list-style: none;
     padding: 0;
@@ -9,43 +5,44 @@
 }
 
 .mvc-tree li {
-    background-image: url("../../Images/MvcTree/icons.png");
+    background-image: url("../../img/mvc-tree/icons.png");
     background-position: -292px -4px;
     background-repeat: repeat-y;
     white-space: nowrap;
 }
 
-.mvc-tree li li {
-    margin-left: 24px;
-}
+    .mvc-tree li li {
+        margin-left: 24px;
+    }
 
-.mvc-tree li:last-child {
-    background: transparent;
-}
+    .mvc-tree li:last-child {
+        background: transparent;
+    }
 
 .mvc-tree a {
     transition: background-color 0.2s;
-    border-radius: 2px;
     padding-right: 4px;
+    border-radius: 2px;
+    margin-left: -5px;
     line-height: 24px;
     color: inherit;
     outline: none;
 }
 
-.mvc-tree i,
-.mvc-tree a::before {
-    background-image: url("../../Images/MvcTree/icons.png");
-    display: inline-block;
-    vertical-align: top;
-    content: " ";
-    height: 24px;
-    width: 24px;
-}
+    .mvc-tree i,
+    .mvc-tree a::before {
+        background-image: url("../../img/mvc-tree/icons.png");
+        display: inline-block;
+        vertical-align: top;
+        content: " ";
+        height: 24px;
+        width: 24px;
+    }
 
-.mvc-tree a:focus,
-.mvc-tree a:hover {
-    background: #e7f4f9;
-}
+    .mvc-tree a:focus,
+    .mvc-tree a:hover {
+        background: #e7f4f9;
+    }
 
 .mvc-tree i {
     background-position: -68px -4px;
@@ -73,6 +70,7 @@
 }
 
 .mvc-tree-readonly a {
+    filter: grayscale(100%);
     cursor: default;
 }
 

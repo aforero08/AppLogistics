@@ -4,6 +4,13 @@
     <Version>0.1.0</Version>
     <OutputType>Exe</OutputType>
     <GenerateFullPaths>true</GenerateFullPaths>
+    <Nullable>annotations</Nullable>
+    <Deterministic>true</Deterministic>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
     <TargetFramework>net8.0</TargetFramework>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
@@ -17,11 +24,10 @@
   <ItemGroup>
     <None Remove="Logs\**" />
 
-    <Content Include="mvc.sitemap" CopyToPublishDirectory="Always" />
-
+    <Content Include="mvc.sitemap" CopyToOutputDirectory="Always" CopyToPublishDirectory="Always" />
     <Content Update="Templates\**" CopyToPublishDirectory="Never" />
-    <Content Update="package.json" CopyToPublishDirectory="Never" />
-    <Content Update="package-lock.json" CopyToPublishDirectory="Never" />
+    <Content Update="package.json" CopyToOutputDirectory="Never" CopyToPublishDirectory="Never" />
+    <Content Update="package-lock.json" CopyToOutputDirectory="Never" CopyToPublishDirectory="Never" />
     <Content Update="wwwroot\Content\**" CopyToPublishDirectory="Never" />
     <Content Update="wwwroot\Scripts\**" CopyToPublishDirectory="Never" />
     <Content Update="wwwroot\Content\**\*.woff" CopyToPublishDirectory="Always" />
@@ -37,7 +43,6 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.VisualStudio.Web.BrowserLink" Version="2.2.0" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.18" />
     <PackageReference Include="NonFactors.Grid.Mvc6" Version="7.0.0" />
     <PackageReference Include="NonFactors.Lookup.Mvc6" Version="6.0.0" />
@@ -48,11 +53,12 @@
     <ProjectReference Include="..\AppLogistics.Controllers\AppLogistics.Controllers.csproj" />
   </ItemGroup>
 
-    <ItemGroup>
-        <Compile Remove="Templates/**" Condition="'$(Configuration)'=='Release'" />
-    </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="Templates/**" Condition="'$(Configuration)'!='Debug'" />
+    <Content Remove="Templates/**" Condition="'$(Configuration)'!='Debug'" />
+  </ItemGroup>
 
-    <Target Name="PrePublishScript" BeforeTargets="PrepareForPublish">
+  <Target Name="PrePublishScript" BeforeTargets="PrepareForPublish">
     <Exec Command="npm install" />
     <Exec Command="npm run gulp minify" />
   </Target>
