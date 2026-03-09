@@ -23,7 +23,7 @@ public sealed class MappingProfile : Profile
             view.GetMethod(nameof(BaseView<BaseModel>.Map), BindingFlags.NonPublic | BindingFlags.Instance)
                 .Invoke(Activator.CreateInstance(view), profile);
 
-
+        // Add additional mappings here
         CreateMap<ServiceCreateEditView, Service>()
                 .ForMember(dest => dest.Holdings, opt => opt.Ignore())
                 .ForMember(dest => dest.ServiceNovelties, opt => opt.Ignore());
