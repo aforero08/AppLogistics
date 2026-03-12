@@ -1,33 +1,49 @@
 ﻿using AppLogistics.Data.Core;
+using AppLogistics.Objects;
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using MvcTemplate.Objects.Mapping;
 using System;
+using System.Linq;
 
-namespace AppLogistics.Tests
+namespace AppLogistics.Tests;
+
+public static class TestingContext
 {
-    public class TestingContext : Context
+    public static IMapper Mapper { get; }
+    private static DbContextOptions<Context> Options { get; }
+
+    static TestingContext()
     {
-        #region Tests
+        IConfiguration config = new ConfigurationBuilder().AddJsonFile($"configuration.testing.json").AddEnvironmentVariables("MvcTemplate__Testing__").Build();
+        Mapper = new MapperConfiguration(mapper => mapper.AddProfile(new MappingProfile())).CreateMapper();
+        Options = new DbContextOptionsBuilder<Context>().UseSqlServer(config["Data:Connection"]).Options;
 
-        protected DbSet<TestModel> TestModel { get; set; }
+        using Context context = new TestContext(Options);
 
-        #endregion Tests
+        context.Database.Migrate();
+    }
 
-        private string DatabaseName { get; }
+    public static DbContext Create()
+    {
+        return new TestContext(Options);
+    }
 
-        public TestingContext()
-        {
-            DatabaseName = Guid.NewGuid().ToString();
-        }
+    public static DbContext Drop(this DbContext context)
+    {
+        context.RemoveRange(context.Set<RolePermission>());
+        context.RemoveRange(context.Set<Permission>());
+        context.RemoveRange(context.Set<AuditLog>());
+        context.RemoveRange(context.Set<Account>());
+        context.RemoveRange(context.Set<Role>());
 
-        public TestingContext(TestingContext context)
-        {
-            DatabaseName = context.DatabaseName;
-        }
+        context.SaveChanges();
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            optionsBuilder.UseInMemoryDatabase(DatabaseName);
-            optionsBuilder.UseLazyLoadingProxies();
-        }
+        return context;
+    }
+    public static IQueryable<T> Db<T>(this DbContext context) where T : class
+    {
+        return context.Set<T>().AsNoTracking();
     }
 }

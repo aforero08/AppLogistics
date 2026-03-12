@@ -2,31 +2,26 @@
 using AppLogistics.Objects;
 using AppLogistics.Resources;
 using AppLogistics.Tests;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
 using Xunit;
 
 namespace AppLogistics.Validators.Tests
 {
-    public class RoleValidatorTests : IDisposable
+    public class RoleValidatorTests
     {
         private RoleValidator validator;
-        private TestingContext context;
+        private DbContext context;
         private Role role;
 
         public RoleValidatorTests()
         {
-            context = new TestingContext();
-            validator = new RoleValidator(new UnitOfWork(new TestingContext(context)));
+            context = TestingContext.Create();
+            validator = new RoleValidator(new UnitOfWork(TestingContext.Create(), TestingContext.Mapper));
 
             context.Add(role = ObjectsFactory.CreateRole());
             context.SaveChanges();
-        }
-
-        public void Dispose()
-        {
-            context.Dispose();
-            validator.Dispose();
         }
 
         #region CanCreate(RoleView view)

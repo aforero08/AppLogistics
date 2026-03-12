@@ -1,30 +1,25 @@
 using AppLogistics.Data.Core;
 using AppLogistics.Objects;
 using AppLogistics.Tests;
+using Microsoft.EntityFrameworkCore;
 using System;
 using Xunit;
 
 namespace AppLogistics.Validators.Tests
 {
-    public class SectorValidatorTests : IDisposable
+    public class SectorValidatorTests
     {
         private SectorValidator validator;
-        private TestingContext context;
+        private DbContext context;
         private Sector sector;
 
         public SectorValidatorTests()
         {
-            context = new TestingContext();
-            validator = new SectorValidator(new UnitOfWork(new TestingContext(context)));
+            context = TestingContext.Create();
+            validator = new SectorValidator(new UnitOfWork(TestingContext.Create(), TestingContext.Mapper));
 
             context.Set<Sector>().Add(sector = ObjectsFactory.CreateSector());
             context.SaveChanges();
-        }
-
-        public void Dispose()
-        {
-            context.Dispose();
-            validator.Dispose();
         }
 
         #region CanCreate(SectorView view)

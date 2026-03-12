@@ -10,25 +10,19 @@ using Xunit;
 
 namespace AppLogistics.Services.Tests
 {
-    public class EpsServiceTests : IDisposable
+    public class EpsServiceTests
     {
         private EpsService service;
-        private TestingContext context;
+        private DbContext context;
         private Eps eps;
 
         public EpsServiceTests()
         {
-            context = new TestingContext();
-            service = new EpsService(new UnitOfWork(new TestingContext(context)));
+            context = TestingContext.Create();
+            service = new EpsService(new UnitOfWork(TestingContext.Create(), TestingContext.Mapper));
 
             context.Set<Eps>().Add(eps = ObjectsFactory.CreateEps());
             context.SaveChanges();
-        }
-
-        public void Dispose()
-        {
-            service.Dispose();
-            context.Dispose();
         }
 
         #region Get<TView>(String id)
@@ -37,7 +31,7 @@ namespace AppLogistics.Services.Tests
         public void Get_ReturnsViewById()
         {
             EpsView actual = service.Get<EpsView>(eps.Id);
-            EpsView expected = Mapper.Map<EpsView>(eps);
+            EpsView expected = TestingContext.Mapper.Map<EpsView>(eps);
 
             Assert.Equal(expected.CreationDate, actual.CreationDate);
             Assert.Equal(expected.Name, actual.Name);
@@ -55,7 +49,7 @@ namespace AppLogistics.Services.Tests
             EpsView[] actual = service.GetViews().ToArray();
             EpsView[] expected = context
                 .Set<Eps>()
-                .ProjectTo<EpsView>()
+                .ProjectTo<EpsView>(TestingContext.Mapper.ConfigurationProvider)
                 .OrderByDescending(view => view.CreationDate)
                 .ToArray();
 

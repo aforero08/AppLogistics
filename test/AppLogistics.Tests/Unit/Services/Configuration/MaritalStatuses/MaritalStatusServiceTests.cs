@@ -10,25 +10,19 @@ using Xunit;
 
 namespace AppLogistics.Services.Tests
 {
-    public class MaritalStatusServiceTests : IDisposable
+    public class MaritalStatusServiceTests
     {
         private MaritalStatusService service;
-        private TestingContext context;
+        private DbContext context;
         private MaritalStatus maritalStatus;
 
         public MaritalStatusServiceTests()
         {
-            context = new TestingContext();
-            service = new MaritalStatusService(new UnitOfWork(new TestingContext(context)));
+            context = TestingContext.Create();
+            service = new MaritalStatusService(new UnitOfWork(TestingContext.Create(), TestingContext.Mapper));
 
             context.Set<MaritalStatus>().Add(maritalStatus = ObjectsFactory.CreateMaritalStatus());
             context.SaveChanges();
-        }
-
-        public void Dispose()
-        {
-            service.Dispose();
-            context.Dispose();
         }
 
         #region Get<TView>(String id)
@@ -37,7 +31,7 @@ namespace AppLogistics.Services.Tests
         public void Get_ReturnsViewById()
         {
             MaritalStatusView actual = service.Get<MaritalStatusView>(maritalStatus.Id);
-            MaritalStatusView expected = Mapper.Map<MaritalStatusView>(maritalStatus);
+            MaritalStatusView expected = TestingContext.Mapper.Map<MaritalStatusView>(maritalStatus);
 
             Assert.Equal(expected.CreationDate, actual.CreationDate);
             Assert.Equal(expected.Name, actual.Name);
@@ -54,7 +48,7 @@ namespace AppLogistics.Services.Tests
             MaritalStatusView[] actual = service.GetViews().ToArray();
             MaritalStatusView[] expected = context
                 .Set<MaritalStatus>()
-                .ProjectTo<MaritalStatusView>()
+                .ProjectTo<MaritalStatusView>(TestingContext.Mapper.ConfigurationProvider)
                 .OrderByDescending(view => view.CreationDate)
                 .ToArray();
 

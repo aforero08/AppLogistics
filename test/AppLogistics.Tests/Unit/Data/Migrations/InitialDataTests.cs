@@ -10,22 +10,16 @@ using Xunit;
 
 namespace AppLogistics.Data.Migrations.Tests
 {
-    public class InitialDataTests : IDisposable
+    public class InitialDataTests
     {
         private DatabaseConfiguration dbConfiguration;
-        private TestingContext context;
+        private Microsoft.EntityFrameworkCore.DbContext context;
 
         public InitialDataTests()
         {
-            context = new TestingContext();
-            dbConfiguration = new DatabaseConfiguration(context, null, Substitute.For<IConfiguration>(), Substitute.For<IHasher>());
+            context = TestingContext.Create();
+            dbConfiguration = new DatabaseConfiguration(context, Substitute.For<IConfiguration>(), Substitute.For<IHasher>(), TestingContext.Mapper);
             dbConfiguration.SeedData();
-        }
-
-        public void Dispose()
-        {
-            dbConfiguration.Dispose();
-            context.Dispose();
         }
 
         #region Roles

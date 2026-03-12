@@ -10,25 +10,19 @@ using Xunit;
 
 namespace AppLogistics.Services.Tests
 {
-    public class EducationLevelServiceTests : IDisposable
+    public class EducationLevelServiceTests
     {
         private EducationLevelService service;
-        private TestingContext context;
+        private DbContext context;
         private EducationLevel educationLevel;
 
         public EducationLevelServiceTests()
         {
-            context = new TestingContext();
-            service = new EducationLevelService(new UnitOfWork(new TestingContext(context)));
+            context = TestingContext.Create();
+            service = new EducationLevelService(new UnitOfWork(TestingContext.Create(), TestingContext.Mapper));
 
             context.Set<EducationLevel>().Add(educationLevel = ObjectsFactory.CreateEducationLevel());
             context.SaveChanges();
-        }
-
-        public void Dispose()
-        {
-            service.Dispose();
-            context.Dispose();
         }
 
         #region Get<TView>(String id)
@@ -37,7 +31,7 @@ namespace AppLogistics.Services.Tests
         public void Get_ReturnsViewById()
         {
             EducationLevelView actual = service.Get<EducationLevelView>(educationLevel.Id);
-            EducationLevelView expected = Mapper.Map<EducationLevelView>(educationLevel);
+            EducationLevelView expected = TestingContext.Mapper.Map<EducationLevelView>(educationLevel);
 
             Assert.Equal(expected.CreationDate, actual.CreationDate);
             Assert.Equal(expected.Name, actual.Name);
@@ -54,7 +48,7 @@ namespace AppLogistics.Services.Tests
             EducationLevelView[] actual = service.GetViews().ToArray();
             EducationLevelView[] expected = context
                 .Set<EducationLevel>()
-                .ProjectTo<EducationLevelView>()
+                .ProjectTo<EducationLevelView>(TestingContext.Mapper.ConfigurationProvider)
                 .OrderByDescending(view => view.CreationDate)
                 .ToArray();
 

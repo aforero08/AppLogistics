@@ -10,25 +10,19 @@ using Xunit;
 
 namespace AppLogistics.Services.Tests
 {
-    public class EmployeeServiceTests : IDisposable
+    public class EmployeeServiceTests
     {
         private EmployeeService service;
-        private TestingContext context;
+        private DbContext context;
         private Employee employee;
 
         public EmployeeServiceTests()
         {
-            context = new TestingContext();
-            service = new EmployeeService(new UnitOfWork(new TestingContext(context)));
+            context = TestingContext.Create();
+            service = new EmployeeService(new UnitOfWork(TestingContext.Create(), TestingContext.Mapper));
 
             context.Set<Employee>().Add(employee = ObjectsFactory.CreateEmployee());
             context.SaveChanges();
-        }
-
-        public void Dispose()
-        {
-            service.Dispose();
-            context.Dispose();
         }
 
         #region Get<TView>(String id)
@@ -37,7 +31,7 @@ namespace AppLogistics.Services.Tests
         public void Get_ReturnsViewById()
         {
             EmployeeView actual = service.Get<EmployeeView>(employee.Id);
-            EmployeeView expected = Mapper.Map<EmployeeView>(employee);
+            EmployeeView expected = TestingContext.Mapper.Map<EmployeeView>(employee);
 
             Assert.Equal(expected.HasDisciplinaryBackground, actual.HasDisciplinaryBackground);
             Assert.Equal(expected.HasInternalRegulations, actual.HasInternalRegulations);
@@ -88,7 +82,7 @@ namespace AppLogistics.Services.Tests
             EmployeeView[] actual = service.GetViews().ToArray();
             EmployeeView[] expected = context
                 .Set<Employee>()
-                .ProjectTo<EmployeeView>()
+                .ProjectTo<EmployeeView>(TestingContext.Mapper.ConfigurationProvider)
                 .OrderByDescending(view => view.CreationDate)
                 .ToArray();
 

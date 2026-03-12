@@ -1,30 +1,25 @@
 using AppLogistics.Data.Core;
 using AppLogistics.Objects;
 using AppLogistics.Tests;
+using Microsoft.EntityFrameworkCore;
 using System;
 using Xunit;
 
 namespace AppLogistics.Validators.Tests
 {
-    public class ClientValidatorTests : IDisposable
+    public class ClientValidatorTests
     {
         private ClientValidator validator;
-        private TestingContext context;
+        private DbContext context;
         private Client client;
 
         public ClientValidatorTests()
         {
-            context = new TestingContext();
-            validator = new ClientValidator(new UnitOfWork(new TestingContext(context)));
+            context = TestingContext.Create();
+            validator = new ClientValidator(new UnitOfWork(TestingContext.Create(), TestingContext.Mapper));
 
             context.Set<Client>().Add(client = ObjectsFactory.CreateClient());
             context.SaveChanges();
-        }
-
-        public void Dispose()
-        {
-            context.Dispose();
-            validator.Dispose();
         }
 
         #region CanCreate(ClientView view)

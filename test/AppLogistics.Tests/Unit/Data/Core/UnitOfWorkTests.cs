@@ -11,25 +11,19 @@ using Xunit;
 
 namespace AppLogistics.Data.Core.Tests
 {
-    public class UnitOfWorkTests : IDisposable
+    public class UnitOfWorkTests
     {
-        private TestingContext context;
+        private DbContext context;
         private UnitOfWork unitOfWork;
         private IAuditLogger logger;
         private TestModel model;
 
         public UnitOfWorkTests()
         {
-            context = new TestingContext();
+            context = TestingContext.Create();
             logger = Substitute.For<IAuditLogger>();
             model = ObjectsFactory.CreateTestModel();
-            unitOfWork = new UnitOfWork(context, logger);
-        }
-
-        public void Dispose()
-        {
-            unitOfWork.Dispose();
-            context.Dispose();
+            unitOfWork = new UnitOfWork(context, TestingContext.Mapper, logger);
         }
 
         #region GetAs<TModel, TDestination>(Int32? id)
@@ -46,7 +40,7 @@ namespace AppLogistics.Data.Core.Tests
             context.Add(model);
             context.SaveChanges();
 
-            TestView expected = LegacyMapper.Map<TestView>(model);
+            TestView expected = TestingContext.Mapper.Map<TestView>(model);
             TestView actual = unitOfWork.GetAs<TestModel, TestView>(model.Id);
 
             Assert.Equal(expected.CreationDate, actual.CreationDate);
@@ -92,7 +86,7 @@ namespace AppLogistics.Data.Core.Tests
         public void To_ConvertsSourceToDestination()
         {
             TestView actual = unitOfWork.To<TestView>(model);
-            TestView expected = LegacyMapper.Map<TestView>(model);
+            TestView expected = TestingContext.Mapper.Map<TestView>(model);
 
             Assert.Equal(expected.CreationDate, actual.CreationDate);
             Assert.Equal(expected.Title, actual.Title);
@@ -123,12 +117,12 @@ namespace AppLogistics.Data.Core.Tests
         public void InsertRange_AddsModelsToDbSet()
         {
             IEnumerable<TestModel> models = new[] { ObjectsFactory.CreateTestModel(1), ObjectsFactory.CreateTestModel(2) };
-            TestingContext testingContext = Substitute.For<TestingContext>();
+            DbContext testingContext = Substitute.For<DbContext>();
             testingContext.When(sub => sub.AddRange(models)).DoNotCallBase();
 
             unitOfWork.Dispose();
 
-            unitOfWork = new UnitOfWork(testingContext);
+            unitOfWork = new UnitOfWork(testingContext, TestingContext.Mapper);
             unitOfWork.InsertRange(models);
 
             testingContext.Received().AddRange(models);
@@ -230,9 +224,9 @@ namespace AppLogistics.Data.Core.Tests
         [Fact]
         public void Commit_SavesChanges()
         {
-            TestingContext testingContext = Substitute.For<TestingContext>();
+            DbContext testingContext = Substitute.For<DbContext>();
 
-            new UnitOfWork(testingContext).Commit();
+            new UnitOfWork(testingContext, TestingContext.Mapper).Commit();
 
             testingContext.Received().SaveChanges();
         }
@@ -272,9 +266,9 @@ namespace AppLogistics.Data.Core.Tests
         [Fact]
         public void Dispose_Context()
         {
-            TestingContext testingContext = Substitute.For<TestingContext>();
+            DbContext testingContext = Substitute.For<DbContext>();
 
-            new UnitOfWork(testingContext).Dispose();
+            new UnitOfWork(testingContext, TestingContext.Mapper).Dispose();
 
             testingContext.Received().Dispose();
         }

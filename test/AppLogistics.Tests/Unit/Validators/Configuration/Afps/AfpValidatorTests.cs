@@ -1,30 +1,25 @@
 using AppLogistics.Data.Core;
 using AppLogistics.Objects;
 using AppLogistics.Tests;
+using Microsoft.EntityFrameworkCore;
 using System;
 using Xunit;
 
 namespace AppLogistics.Validators.Tests
 {
-    public class AfpValidatorTests : IDisposable
+    public class AfpValidatorTests
     {
         private AfpValidator validator;
-        private TestingContext context;
+        private DbContext context;
         private Afp afp;
 
         public AfpValidatorTests()
         {
-            context = new TestingContext();
-            validator = new AfpValidator(new UnitOfWork(new TestingContext(context)));
+            context = TestingContext.Create();
+            validator = new AfpValidator(new UnitOfWork(TestingContext.Create(), TestingContext.Mapper));
 
             context.Set<Afp>().Add(afp = ObjectsFactory.CreateAfp());
             context.SaveChanges();
-        }
-
-        public void Dispose()
-        {
-            context.Dispose();
-            validator.Dispose();
         }
 
         #region CanCreate(AfpView view)

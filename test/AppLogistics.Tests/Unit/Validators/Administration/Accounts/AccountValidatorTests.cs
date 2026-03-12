@@ -4,6 +4,7 @@ using AppLogistics.Data.Core;
 using AppLogistics.Objects;
 using AppLogistics.Resources;
 using AppLogistics.Tests;
+using Microsoft.EntityFrameworkCore;
 using NSubstitute;
 using System;
 using System.Linq;
@@ -11,30 +12,24 @@ using Xunit;
 
 namespace AppLogistics.Validators.Tests
 {
-    public class AccountValidatorTests : IDisposable
+    public class AccountValidatorTests
     {
         private AccountValidator validator;
-        private TestingContext context;
+        private DbContext context;
         private Account account;
         private IHasher hasher;
 
         public AccountValidatorTests()
         {
-            context = new TestingContext();
+            context = TestingContext.Create();
             hasher = Substitute.For<IHasher>();
             hasher.VerifyPassword(Arg.Any<string>(), Arg.Any<string>()).Returns(true);
-            validator = new AccountValidator(new UnitOfWork(new TestingContext(context)), hasher);
+            validator = new AccountValidator(new UnitOfWork(TestingContext.Create(), TestingContext.Mapper), hasher);
 
             context.Add(account = ObjectsFactory.CreateAccount());
             context.SaveChanges();
 
             validator.CurrentAccountId = account.Id;
-        }
-
-        public void Dispose()
-        {
-            validator.Dispose();
-            context.Dispose();
         }
 
         #region CanRecover(AccountRecoveryView view)

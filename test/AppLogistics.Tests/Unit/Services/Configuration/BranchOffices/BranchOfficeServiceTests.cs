@@ -10,25 +10,19 @@ using Xunit;
 
 namespace AppLogistics.Services.Tests
 {
-    public class BranchOfficeServiceTests : IDisposable
+    public class BranchOfficeServiceTests
     {
         private BranchOfficeService service;
-        private TestingContext context;
+        private DbContext context;
         private BranchOffice branchOffice;
 
         public BranchOfficeServiceTests()
         {
-            context = new TestingContext();
-            service = new BranchOfficeService(new UnitOfWork(new TestingContext(context)));
+            context = TestingContext.Create();
+            service = new BranchOfficeService(new UnitOfWork(TestingContext.Create(), TestingContext.Mapper));
 
             context.Set<BranchOffice>().Add(branchOffice = ObjectsFactory.CreateBranchOffice());
             context.SaveChanges();
-        }
-
-        public void Dispose()
-        {
-            service.Dispose();
-            context.Dispose();
         }
 
         #region Get<TView>(String id)
@@ -37,7 +31,7 @@ namespace AppLogistics.Services.Tests
         public void Get_ReturnsViewById()
         {
             BranchOfficeView actual = service.Get<BranchOfficeView>(branchOffice.Id);
-            BranchOfficeView expected = Mapper.Map<BranchOfficeView>(branchOffice);
+            BranchOfficeView expected = TestingContext.Mapper.Map<BranchOfficeView>(branchOffice);
 
             Assert.Equal(expected.CreationDate, actual.CreationDate);
             Assert.Equal(expected.Name, actual.Name);
@@ -54,7 +48,7 @@ namespace AppLogistics.Services.Tests
             BranchOfficeView[] actual = service.GetViews().ToArray();
             BranchOfficeView[] expected = context
                 .Set<BranchOffice>()
-                .ProjectTo<BranchOfficeView>()
+                .ProjectTo<BranchOfficeView>(TestingContext.Mapper.ConfigurationProvider)
                 .OrderByDescending(view => view.CreationDate)
                 .ToArray();
 

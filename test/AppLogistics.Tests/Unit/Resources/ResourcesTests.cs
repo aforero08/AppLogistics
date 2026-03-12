@@ -2,6 +2,7 @@
 using AppLogistics.Data.Migrations;
 using AppLogistics.Objects;
 using AppLogistics.Tests;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using NSubstitute;
 using System.Collections.Generic;
@@ -52,8 +53,8 @@ namespace AppLogistics.Resources.Tests
         [Fact]
         public void Resources_HasAllPermissionAreaTitles()
         {
-            using (TestingContext context = new TestingContext())
-            using (DatabaseConfiguration configuration = new DatabaseConfiguration(context, null, Substitute.For<IConfiguration>(), Substitute.For<IHasher>()))
+            using DbContext context = TestingContext.Create();
+            using (DatabaseConfiguration configuration = new DatabaseConfiguration(context, Substitute.For<IConfiguration>(), Substitute.For<IHasher>(), TestingContext.Mapper))
             {
                 configuration.SeedData();
 
@@ -68,8 +69,8 @@ namespace AppLogistics.Resources.Tests
         [Fact]
         public void Resources_HasAllPermissionControllerTitles()
         {
-            using (TestingContext context = new TestingContext())
-            using (DatabaseConfiguration configuration = new DatabaseConfiguration(context, null, Substitute.For<IConfiguration>(), Substitute.For<IHasher>()))
+            using DbContext context = TestingContext.Create();
+            using (DatabaseConfiguration configuration = new DatabaseConfiguration(context, Substitute.For<IConfiguration>(), Substitute.For<IHasher>(), TestingContext.Mapper))
             {
                 configuration.SeedData();
 
@@ -84,8 +85,8 @@ namespace AppLogistics.Resources.Tests
         [Fact]
         public void Resources_HasAllPermissionActionTitles()
         {
-            using (TestingContext context = new TestingContext())
-            using (DatabaseConfiguration configuration = new DatabaseConfiguration(context, null, Substitute.For<IConfiguration>(), Substitute.For<IHasher>()))
+            using DbContext context = TestingContext.Create();
+            using (DatabaseConfiguration configuration = new DatabaseConfiguration(context, Substitute.For<IConfiguration>(), Substitute.For<IHasher>(), TestingContext.Mapper))
             {
                 configuration.SeedData();
 

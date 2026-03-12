@@ -1,30 +1,25 @@
 using AppLogistics.Data.Core;
 using AppLogistics.Objects;
 using AppLogistics.Tests;
+using Microsoft.EntityFrameworkCore;
 using System;
 using Xunit;
 
 namespace AppLogistics.Validators.Tests
 {
-    public class BranchOfficeValidatorTests : IDisposable
+    public class BranchOfficeValidatorTests
     {
         private BranchOfficeValidator validator;
-        private TestingContext context;
+        private DbContext context;
         private BranchOffice branchOffice;
 
         public BranchOfficeValidatorTests()
         {
-            context = new TestingContext();
-            validator = new BranchOfficeValidator(new UnitOfWork(new TestingContext(context)));
+            context = TestingContext.Create();
+            validator = new BranchOfficeValidator(new UnitOfWork(TestingContext.Create(), TestingContext.Mapper));
 
             context.Set<BranchOffice>().Add(branchOffice = ObjectsFactory.CreateBranchOffice());
             context.SaveChanges();
-        }
-
-        public void Dispose()
-        {
-            context.Dispose();
-            validator.Dispose();
         }
 
         #region CanCreate(BranchOfficeView view)

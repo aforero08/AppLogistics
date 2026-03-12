@@ -9,27 +9,22 @@ using Xunit;
 
 namespace AppLogistics.Data.Logging.Tests
 {
-    public class LoggableEntityTests : IDisposable
+    public class LoggableEntityTests
     {
         private EntityEntry<BaseModel> entry;
-        private TestingContext context;
+        private DbContext context;
         private TestModel model;
 
         public LoggableEntityTests()
         {
-            using (context = new TestingContext())
+            using (DbContext tempContext = TestingContext.Create())
             {
-                context.Add(model = ObjectsFactory.CreateTestModel());
-                context.SaveChanges();
+                tempContext.Add(model = ObjectsFactory.CreateTestModel());
+                tempContext.SaveChanges();
             }
 
-            context = new TestingContext(context);
+            context = TestingContext.Create();
             entry = context.Entry<BaseModel>(model);
-        }
-
-        public void Dispose()
-        {
-            context.Dispose();
         }
 
         #region LoggableEntity(EntityEntry<BaseModel> entry)
@@ -60,10 +55,9 @@ namespace AppLogistics.Data.Logging.Tests
         [Fact]
         public void LoggableEntity_CreatesPropertiesForAttachedEntity()
         {
-            context.Dispose();
             string title = model.Title;
 
-            context = new TestingContext(context);
+            context = TestingContext.Create();
             context.Set<TestModel>().Attach(model);
 
             entry = context.Entry<BaseModel>(model);

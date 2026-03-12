@@ -1,30 +1,25 @@
 using AppLogistics.Data.Core;
 using AppLogistics.Objects;
 using AppLogistics.Tests;
+using Microsoft.EntityFrameworkCore;
 using System;
 using Xunit;
 
 namespace AppLogistics.Validators.Tests
 {
-    public class DocumentTypeValidatorTests : IDisposable
+    public class DocumentTypeValidatorTests
     {
         private DocumentTypeValidator validator;
-        private TestingContext context;
+        private DbContext context;
         private DocumentType documentType;
 
         public DocumentTypeValidatorTests()
         {
-            context = new TestingContext();
-            validator = new DocumentTypeValidator(new UnitOfWork(new TestingContext(context)));
+            context = TestingContext.Create();
+            validator = new DocumentTypeValidator(new UnitOfWork(TestingContext.Create(), TestingContext.Mapper));
 
             context.Set<DocumentType>().Add(documentType = ObjectsFactory.CreateDocumentType());
             context.SaveChanges();
-        }
-
-        public void Dispose()
-        {
-            context.Dispose();
-            validator.Dispose();
         }
 
         #region CanCreate(DocumentTypeView view)

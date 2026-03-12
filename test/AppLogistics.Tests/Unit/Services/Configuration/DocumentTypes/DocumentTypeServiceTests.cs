@@ -10,25 +10,19 @@ using Xunit;
 
 namespace AppLogistics.Services.Tests
 {
-    public class DocumentTypeServiceTests : IDisposable
+    public class DocumentTypeServiceTests
     {
         private DocumentTypeService service;
-        private TestingContext context;
+        private DbContext context;
         private DocumentType documentType;
 
         public DocumentTypeServiceTests()
         {
-            context = new TestingContext();
-            service = new DocumentTypeService(new UnitOfWork(new TestingContext(context)));
+            context = TestingContext.Create();
+            service = new DocumentTypeService(new UnitOfWork(TestingContext.Create(), TestingContext.Mapper));
 
             context.Set<DocumentType>().Add(documentType = ObjectsFactory.CreateDocumentType());
             context.SaveChanges();
-        }
-
-        public void Dispose()
-        {
-            service.Dispose();
-            context.Dispose();
         }
 
         #region Get<TView>(String id)
@@ -37,7 +31,7 @@ namespace AppLogistics.Services.Tests
         public void Get_ReturnsViewById()
         {
             DocumentTypeView actual = service.Get<DocumentTypeView>(documentType.Id);
-            DocumentTypeView expected = Mapper.Map<DocumentTypeView>(documentType);
+            DocumentTypeView expected = TestingContext.Mapper.Map<DocumentTypeView>(documentType);
 
             Assert.Equal(expected.CreationDate, actual.CreationDate);
             Assert.Equal(expected.ShortName, actual.ShortName);
@@ -55,7 +49,7 @@ namespace AppLogistics.Services.Tests
             DocumentTypeView[] actual = service.GetViews().ToArray();
             DocumentTypeView[] expected = context
                 .Set<DocumentType>()
-                .ProjectTo<DocumentTypeView>()
+                .ProjectTo<DocumentTypeView>(TestingContext.Mapper.ConfigurationProvider)
                 .OrderByDescending(view => view.CreationDate)
                 .ToArray();
 

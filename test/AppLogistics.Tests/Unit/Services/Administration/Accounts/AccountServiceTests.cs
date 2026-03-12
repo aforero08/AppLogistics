@@ -17,20 +17,20 @@ using Xunit;
 
 namespace AppLogistics.Services.Tests
 {
-    public class AccountServiceTests : IDisposable
+    public class AccountServiceTests
     {
         private HttpContext httpContext;
         private AccountService service;
-        private TestingContext context;
+        private DbContext context;
         private Account account;
         private IHasher hasher;
 
         public AccountServiceTests()
         {
-            context = new TestingContext();
+            context = TestingContext.Create();
             hasher = Substitute.For<IHasher>();
             httpContext = new DefaultHttpContext();
-            service = new AccountService(new UnitOfWork(new TestingContext(context)), hasher);
+            service = new AccountService(new UnitOfWork(TestingContext.Create(), TestingContext.Mapper), hasher);
             hasher.HashPassword(Arg.Any<string>()).Returns(info => info.Arg<string>() + "Hashed");
 
             context.Add(account = ObjectsFactory.CreateAccount());
@@ -39,19 +39,13 @@ namespace AppLogistics.Services.Tests
             service.CurrentAccountId = account.Id;
         }
 
-        public void Dispose()
-        {
-            service.Dispose();
-            context.Dispose();
-        }
-
         #region Get<TView>(Int32 id)
 
         [Fact]
         public void Get_ReturnsViewById()
         {
             AccountView actual = service.Get<AccountView>(account.Id);
-            AccountView expected = Mapper.Map<AccountView>(account);
+            AccountView expected = TestingContext.Mapper.Map<AccountView>(account);
 
             Assert.Equal(expected.CreationDate, actual.CreationDate);
             Assert.Equal(expected.RoleTitle, actual.RoleTitle);
@@ -72,7 +66,7 @@ namespace AppLogistics.Services.Tests
             AccountView[] expected = context
                 .Set<Account>()
                 .AsNoTracking()
-                .ProjectTo<AccountView>()
+                .ProjectTo<AccountView>(TestingContext.Mapper.ConfigurationProvider)
                 .OrderByDescending(view => view.Id)
                 .ToArray();
 

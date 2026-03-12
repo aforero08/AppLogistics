@@ -10,24 +10,19 @@ using Xunit;
 
 namespace AppLogistics.Data.Core.Tests
 {
-    public class QueryTests : IDisposable
+    public class QueryTests
     {
-        private TestingContext context;
+        private DbContext context;
         private Query<TestModel> select;
 
         public QueryTests()
         {
-            context = new TestingContext();
-            select = new Query<TestModel>(context.Set<TestModel>());
+            context = TestingContext.Create();
+            select = new Query<TestModel>(context.Set<TestModel>(), TestingContext.Mapper.ConfigurationProvider);
 
             context.RemoveRange(context.Set<TestModel>());
             context.Add(ObjectsFactory.CreateTestModel());
             context.SaveChanges();
-        }
-
-        public void Dispose()
-        {
-            context.Dispose();
         }
 
         #region ElementType
@@ -49,11 +44,11 @@ namespace AppLogistics.Data.Core.Tests
         public void Expression_IsSetsExpression()
         {
             DbSet<TestModel> set = Substitute.For<DbSet<TestModel>, IQueryable>();
-            TestingContext testingContext = Substitute.For<TestingContext>();
+            DbContext testingContext = Substitute.For<DbContext>();
             ((IQueryable)set).Expression.Returns(Expression.Empty());
             testingContext.Set<TestModel>().Returns(set);
 
-            select = new Query<TestModel>(testingContext.Set<TestModel>());
+            select = new Query<TestModel>(testingContext.Set<TestModel>(), TestingContext.Mapper.ConfigurationProvider);
 
             object actual = ((IQueryable)select).Expression;
             object expected = ((IQueryable)set).Expression;
@@ -109,7 +104,7 @@ namespace AppLogistics.Data.Core.Tests
         [Fact]
         public void To_ProjectsSet()
         {
-            IEnumerable<int> expected = context.Set<TestModel>().ProjectTo<TestView>().Select(view => view.Id).ToArray();
+            IEnumerable<int> expected = context.Set<TestModel>().ProjectTo<TestView>(TestingContext.Mapper.ConfigurationProvider).Select(view => view.Id).ToArray();
             IEnumerable<int> actual = select.To<TestView>().Select(view => view.Id).ToArray();
 
             Assert.Equal(expected, actual);

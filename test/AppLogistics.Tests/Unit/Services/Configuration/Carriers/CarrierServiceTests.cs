@@ -10,25 +10,19 @@ using Xunit;
 
 namespace AppLogistics.Services.Tests
 {
-    public class CarrierServiceTests : IDisposable
+    public class CarrierServiceTests
     {
         private CarrierService service;
-        private TestingContext context;
+        private DbContext context;
         private Carrier carrier;
 
         public CarrierServiceTests()
         {
-            context = new TestingContext();
-            service = new CarrierService(new UnitOfWork(new TestingContext(context)));
+            context = TestingContext.Create();
+            service = new CarrierService(new UnitOfWork(TestingContext.Create(), TestingContext.Mapper));
 
             context.Set<Carrier>().Add(carrier = ObjectsFactory.CreateCarrier());
             context.SaveChanges();
-        }
-
-        public void Dispose()
-        {
-            service.Dispose();
-            context.Dispose();
         }
 
         #region Get<TView>(String id)
@@ -37,7 +31,7 @@ namespace AppLogistics.Services.Tests
         public void Get_ReturnsViewById()
         {
             CarrierView actual = service.Get<CarrierView>(carrier.Id);
-            CarrierView expected = Mapper.Map<CarrierView>(carrier);
+            CarrierView expected = TestingContext.Mapper.Map<CarrierView>(carrier);
 
             Assert.Equal(expected.CreationDate, actual.CreationDate);
             Assert.Equal(expected.Name, actual.Name);
@@ -55,7 +49,7 @@ namespace AppLogistics.Services.Tests
             CarrierView[] actual = service.GetViews().ToArray();
             CarrierView[] expected = context
                 .Set<Carrier>()
-                .ProjectTo<CarrierView>()
+                .ProjectTo<CarrierView>(TestingContext.Mapper.ConfigurationProvider)
                 .OrderByDescending(view => view.CreationDate)
                 .ToArray();
 

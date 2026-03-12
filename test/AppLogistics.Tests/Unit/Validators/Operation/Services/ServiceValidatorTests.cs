@@ -1,32 +1,27 @@
 using AppLogistics.Data.Core;
 using AppLogistics.Objects;
 using AppLogistics.Tests;
+using Microsoft.EntityFrameworkCore;
 using System;
 using Xunit;
 
 namespace AppLogistics.Validators.Tests
 {
-    public class ServiceValidatorTests : IDisposable
+    public class ServiceValidatorTests
     {
         private ServiceValidator validator;
-        private TestingContext context;
+        private DbContext context;
         private Service service;
         private Rate rate;
 
         public ServiceValidatorTests()
         {
-            context = new TestingContext();
-            validator = new ServiceValidator(new UnitOfWork(new TestingContext(context)));
+            context = TestingContext.Create();
+            validator = new ServiceValidator(new UnitOfWork(TestingContext.Create(), TestingContext.Mapper));
 
             context.Set<Service>().Add(service = ObjectsFactory.CreateService());
             context.Set<Rate>().Add(rate = ObjectsFactory.CreateRate(1));
             context.SaveChanges();
-        }
-
-        public void Dispose()
-        {
-            context.Dispose();
-            validator.Dispose();
         }
 
         #region CanCreate(ServiceView view)

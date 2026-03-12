@@ -1,30 +1,25 @@
 using AppLogistics.Data.Core;
 using AppLogistics.Objects;
 using AppLogistics.Tests;
+using Microsoft.EntityFrameworkCore;
 using System;
 using Xunit;
 
 namespace AppLogistics.Validators.Tests
 {
-    public class VehicleTypeValidatorTests : IDisposable
+    public class VehicleTypeValidatorTests
     {
         private VehicleTypeValidator validator;
-        private TestingContext context;
+        private DbContext context;
         private VehicleType vehicleType;
 
         public VehicleTypeValidatorTests()
         {
-            context = new TestingContext();
-            validator = new VehicleTypeValidator(new UnitOfWork(new TestingContext(context)));
+            context = TestingContext.Create();
+            validator = new VehicleTypeValidator(new UnitOfWork(TestingContext.Create(), TestingContext.Mapper));
 
             context.Set<VehicleType>().Add(vehicleType = ObjectsFactory.CreateVehicleType());
             context.SaveChanges();
-        }
-
-        public void Dispose()
-        {
-            context.Dispose();
-            validator.Dispose();
         }
 
         #region CanCreate(VehicleTypeView view)

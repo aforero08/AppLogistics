@@ -1,5 +1,6 @@
 ﻿using AppLogistics.Objects;
 using AppLogistics.Tests;
+using AutoMapper;
 using Xunit;
 
 namespace AppLogistics.Data.Mapping.Tests
@@ -14,7 +15,7 @@ namespace AppLogistics.Data.Mapping.Tests
         public void MapRoles_Role_RoleView()
         {
             Role expected = ObjectsFactory.CreateRole();
-            RoleView actual = Mapper.Map<RoleView>(expected); // Mapper alias -> LegacyMapper
+            RoleView actual = TestingContext.Mapper.Map<RoleView>(expected); // Mapper alias -> LegacyMapper
 
             Assert.Equal(expected.CreationDate, actual.CreationDate);
             Assert.Equal(expected.Title, actual.Title);
@@ -26,7 +27,7 @@ namespace AppLogistics.Data.Mapping.Tests
         public void MapRoles_RoleView_Role()
         {
             RoleView expected = ObjectsFactory.CreateRoleView();
-            Role actual = Mapper.Map<Role>(expected);
+            Role actual = TestingContext.Mapper.Map<Role>(expected);
 
             Assert.Equal(expected.CreationDate, actual.CreationDate);
             Assert.Equal(expected.Title, actual.Title);

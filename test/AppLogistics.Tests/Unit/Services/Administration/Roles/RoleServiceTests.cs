@@ -14,24 +14,18 @@ using Xunit;
 
 namespace AppLogistics.Services.Tests
 {
-    public class RoleServiceTests : IDisposable
+    public class RoleServiceTests
     {
-        private TestingContext context;
+        private DbContext context;
         private RoleService service;
         private Role role;
 
         public RoleServiceTests()
         {
-            context = new TestingContext();
-            service = Substitute.ForPartsOf<RoleService>(new UnitOfWork(new TestingContext(context)));
+            context = TestingContext.Create();
+            service = Substitute.ForPartsOf<RoleService>(new UnitOfWork(TestingContext.Create(), TestingContext.Mapper));
 
             SetUpData();
-        }
-
-        public void Dispose()
-        {
-            context.Dispose();
-            service.Dispose();
         }
 
         #region SeedPermissions(RoleView view)
@@ -127,7 +121,7 @@ namespace AppLogistics.Services.Tests
             RoleView[] expected = context
                 .Set<Role>()
                 .AsNoTracking()
-                .ProjectTo<RoleView>()
+                .ProjectTo<RoleView>(TestingContext.Mapper.ConfigurationProvider)
                 .OrderByDescending(view => view.Id)
                 .ToArray();
 
@@ -155,7 +149,7 @@ namespace AppLogistics.Services.Tests
         {
             service.When(sub => sub.SeedPermissions(Arg.Any<RoleView>())).DoNotCallBase();
 
-            RoleView expected = Mapper.Map<RoleView>(role);
+            RoleView expected = TestingContext.Mapper.Map<RoleView>(role);
             RoleView actual = service.GetView(role.Id);
 
             Assert.Equal(expected.CreationDate, actual.CreationDate);

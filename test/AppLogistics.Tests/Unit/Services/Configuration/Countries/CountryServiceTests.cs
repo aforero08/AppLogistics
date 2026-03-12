@@ -10,25 +10,19 @@ using Xunit;
 
 namespace AppLogistics.Services.Tests
 {
-    public class CountryServiceTests : IDisposable
+    public class CountryServiceTests
     {
         private CountryService service;
-        private TestingContext context;
+        private DbContext context;
         private Country country;
 
         public CountryServiceTests()
         {
-            context = new TestingContext();
-            service = new CountryService(new UnitOfWork(new TestingContext(context)));
+            context = TestingContext.Create();
+            service = new CountryService(new UnitOfWork(TestingContext.Create(), TestingContext.Mapper));
 
             context.Set<Country>().Add(country = ObjectsFactory.CreateCountry());
             context.SaveChanges();
-        }
-
-        public void Dispose()
-        {
-            service.Dispose();
-            context.Dispose();
         }
 
         #region Get<TView>(String id)
@@ -37,7 +31,7 @@ namespace AppLogistics.Services.Tests
         public void Get_ReturnsViewById()
         {
             CountryView actual = service.Get<CountryView>(country.Id);
-            CountryView expected = Mapper.Map<CountryView>(country);
+            CountryView expected = TestingContext.Mapper.Map<CountryView>(country);
 
             Assert.Equal(expected.CreationDate, actual.CreationDate);
             Assert.Equal(expected.Name, actual.Name);
@@ -54,7 +48,7 @@ namespace AppLogistics.Services.Tests
             CountryView[] actual = service.GetViews().ToArray();
             CountryView[] expected = context
                 .Set<Country>()
-                .ProjectTo<CountryView>()
+                .ProjectTo<CountryView>(TestingContext.Mapper.ConfigurationProvider)
                 .OrderByDescending(view => view.CreationDate)
                 .ToArray();
 

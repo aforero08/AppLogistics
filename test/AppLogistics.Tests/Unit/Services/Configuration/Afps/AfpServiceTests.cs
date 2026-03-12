@@ -10,25 +10,19 @@ using Xunit;
 
 namespace AppLogistics.Services.Tests
 {
-    public class AfpServiceTests : IDisposable
+    public class AfpServiceTests
     {
         private AfpService service;
-        private TestingContext context;
+        private DbContext context;
         private Afp afp;
 
         public AfpServiceTests()
         {
-            context = new TestingContext();
-            service = new AfpService(new UnitOfWork(new TestingContext(context)));
+            context = TestingContext.Create();
+            service = new AfpService(new UnitOfWork(TestingContext.Create(), TestingContext.Mapper));
 
             context.Set<Afp>().Add(afp = ObjectsFactory.CreateAfp());
             context.SaveChanges();
-        }
-
-        public void Dispose()
-        {
-            service.Dispose();
-            context.Dispose();
         }
 
         #region Get<TView>(String id)
@@ -37,7 +31,7 @@ namespace AppLogistics.Services.Tests
         public void Get_ReturnsViewById()
         {
             AfpView actual = service.Get<AfpView>(afp.Id);
-            AfpView expected = Mapper.Map<AfpView>(afp);
+            AfpView expected = TestingContext.Mapper.Map<AfpView>(afp);
 
             Assert.Equal(expected.CreationDate, actual.CreationDate);
             Assert.Equal(expected.Name, actual.Name);
@@ -55,7 +49,7 @@ namespace AppLogistics.Services.Tests
             AfpView[] actual = service.GetViews().ToArray();
             AfpView[] expected = context
                 .Set<Afp>()
-                .ProjectTo<AfpView>()
+                .ProjectTo<AfpView>(TestingContext.Mapper.ConfigurationProvider)
                 .OrderByDescending(view => view.CreationDate)
                 .ToArray();
 

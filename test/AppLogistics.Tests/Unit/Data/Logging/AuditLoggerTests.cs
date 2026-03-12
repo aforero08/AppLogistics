@@ -10,27 +10,21 @@ using Xunit;
 
 namespace AppLogistics.Data.Logging.Tests
 {
-    public class AuditLoggerTests : IDisposable
+    public class AuditLoggerTests
     {
         private EntityEntry<BaseModel> entry;
-        private TestingContext context;
+        private DbContext context;
         private AuditLogger logger;
 
         public AuditLoggerTests()
         {
-            context = new TestingContext();
+            context = TestingContext.Create();
             logger = new AuditLogger(context, 1);
-            TestingContext dataContext = new TestingContext();
+            DbContext dataContext = TestingContext.Create();
             TestModel model = ObjectsFactory.CreateTestModel();
 
             entry = dataContext.Entry<BaseModel>(dataContext.Add(model).Entity);
             dataContext.SaveChanges();
-        }
-
-        public void Dispose()
-        {
-            context.Dispose();
-            logger.Dispose();
         }
 
         #region Log(IEnumerable<EntityEntry<BaseModel>> entries)
@@ -196,7 +190,7 @@ namespace AppLogistics.Data.Logging.Tests
         [Fact]
         public void Dispose_Context()
         {
-            TestingContext testingContext = Substitute.For<TestingContext>();
+            DbContext testingContext = Substitute.For<DbContext>();
             testingContext.ChangeTracker.Returns(context.ChangeTracker);
 
             new AuditLogger(testingContext, 0).Dispose();

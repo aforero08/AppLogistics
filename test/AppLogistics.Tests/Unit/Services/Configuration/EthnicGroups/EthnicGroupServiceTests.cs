@@ -10,25 +10,19 @@ using Xunit;
 
 namespace AppLogistics.Services.Tests
 {
-    public class EthnicGroupServiceTests : IDisposable
+    public class EthnicGroupServiceTests
     {
         private EthnicGroupService service;
-        private TestingContext context;
+        private DbContext context;
         private EthnicGroup ethnicGroup;
 
         public EthnicGroupServiceTests()
         {
-            context = new TestingContext();
-            service = new EthnicGroupService(new UnitOfWork(new TestingContext(context)));
+            context = TestingContext.Create();
+            service = new EthnicGroupService(new UnitOfWork(TestingContext.Create(), TestingContext.Mapper));
 
             context.Set<EthnicGroup>().Add(ethnicGroup = ObjectsFactory.CreateEthnicGroup());
             context.SaveChanges();
-        }
-
-        public void Dispose()
-        {
-            service.Dispose();
-            context.Dispose();
         }
 
         #region Get<TView>(String id)
@@ -37,7 +31,7 @@ namespace AppLogistics.Services.Tests
         public void Get_ReturnsViewById()
         {
             EthnicGroupView actual = service.Get<EthnicGroupView>(ethnicGroup.Id);
-            EthnicGroupView expected = Mapper.Map<EthnicGroupView>(ethnicGroup);
+            EthnicGroupView expected = TestingContext.Mapper.Map<EthnicGroupView>(ethnicGroup);
 
             Assert.Equal(expected.CreationDate, actual.CreationDate);
             Assert.Equal(expected.Name, actual.Name);
@@ -54,7 +48,7 @@ namespace AppLogistics.Services.Tests
             EthnicGroupView[] actual = service.GetViews().ToArray();
             EthnicGroupView[] expected = context
                 .Set<EthnicGroup>()
-                .ProjectTo<EthnicGroupView>()
+                .ProjectTo<EthnicGroupView>(TestingContext.Mapper.ConfigurationProvider)
                 .OrderByDescending(view => view.CreationDate)
                 .ToArray();
 

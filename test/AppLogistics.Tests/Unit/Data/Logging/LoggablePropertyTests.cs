@@ -13,7 +13,7 @@ namespace AppLogistics.Data.Logging.Tests
 
         public LoggablePropertyTests()
         {
-            using (TestingContext context = new TestingContext())
+            using (DbContext context = TestingContext.Create())
             {
                 TestModel model = new TestModel { Id = 1 };
 

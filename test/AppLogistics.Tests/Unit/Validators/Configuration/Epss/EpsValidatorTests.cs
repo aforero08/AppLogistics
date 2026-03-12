@@ -1,30 +1,25 @@
 using AppLogistics.Data.Core;
 using AppLogistics.Objects;
 using AppLogistics.Tests;
+using Microsoft.EntityFrameworkCore;
 using System;
 using Xunit;
 
 namespace AppLogistics.Validators.Tests
 {
-    public class EpsValidatorTests : IDisposable
+    public class EpsValidatorTests
     {
         private EpsValidator validator;
-        private TestingContext context;
+        private DbContext context;
         private Eps eps;
 
         public EpsValidatorTests()
         {
-            context = new TestingContext();
-            validator = new EpsValidator(new UnitOfWork(new TestingContext(context)));
+            context = TestingContext.Create();
+            validator = new EpsValidator(new UnitOfWork(TestingContext.Create(), TestingContext.Mapper));
 
             context.Set<Eps>().Add(eps = ObjectsFactory.CreateEps());
             context.SaveChanges();
-        }
-
-        public void Dispose()
-        {
-            context.Dispose();
-            validator.Dispose();
         }
 
         #region CanCreate(EpsView view)

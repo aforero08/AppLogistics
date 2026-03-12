@@ -10,25 +10,19 @@ using Xunit;
 
 namespace AppLogistics.Services.Tests
 {
-    public class SectorServiceTests : IDisposable
+    public class SectorServiceTests
     {
         private SectorService service;
-        private TestingContext context;
+        private DbContext context;
         private Sector sector;
 
         public SectorServiceTests()
         {
-            context = new TestingContext();
-            service = new SectorService(new UnitOfWork(new TestingContext(context)));
+            context = TestingContext.Create();
+            service = new SectorService(new UnitOfWork(TestingContext.Create(), TestingContext.Mapper));
 
             context.Set<Sector>().Add(sector = ObjectsFactory.CreateSector());
             context.SaveChanges();
-        }
-
-        public void Dispose()
-        {
-            service.Dispose();
-            context.Dispose();
         }
 
         #region Get<TView>(String id)
@@ -37,7 +31,7 @@ namespace AppLogistics.Services.Tests
         public void Get_ReturnsViewById()
         {
             SectorView actual = service.Get<SectorView>(sector.Id);
-            SectorView expected = Mapper.Map<SectorView>(sector);
+            SectorView expected = TestingContext.Mapper.Map<SectorView>(sector);
 
             Assert.Equal(expected.CreationDate, actual.CreationDate);
             Assert.Equal(expected.Name, actual.Name);
@@ -54,7 +48,7 @@ namespace AppLogistics.Services.Tests
             SectorView[] actual = service.GetViews().ToArray();
             SectorView[] expected = context
                 .Set<Sector>()
-                .ProjectTo<SectorView>()
+                .ProjectTo<SectorView>(TestingContext.Mapper.ConfigurationProvider)
                 .OrderByDescending(view => view.CreationDate)
                 .ToArray();
 
