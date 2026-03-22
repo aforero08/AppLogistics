@@ -3,73 +3,72 @@ using AppLogistics.Objects;
 using AppLogistics.Resources;
 using System.Linq;
 
-namespace AppLogistics.Validators
+namespace AppLogistics.Validators;
+
+public class ClientValidator : BaseValidator, IClientValidator
 {
-    public class ClientValidator : BaseValidator, IClientValidator
+    public ClientValidator(IUnitOfWork unitOfWork)
+        : base(unitOfWork)
     {
-        public ClientValidator(IUnitOfWork unitOfWork)
-            : base(unitOfWork)
+    }
+
+    public bool CanCreate(ClientCreateEditView view)
+    {
+        var alreadyExists = UnitOfWork.Select<Client>()
+            .Where(c => c.Name.ToUpper().Equals(view.Name.ToUpper()))
+            .Any();
+
+        if (alreadyExists)
         {
+            Alerts.AddError(Validation.For<ClientCreateEditView>("DuplicateName"));
+            return false;
         }
 
-        public bool CanCreate(ClientCreateEditView view)
+        return IsUniqueNit(view.Id, view.Nit) && ModelState.IsValid;
+    }
+
+    public bool CanEdit(ClientCreateEditView view)
+    {
+        var alreadyExists = UnitOfWork.Select<Client>()
+            .Where(c => c.Name.ToUpper().Equals(view.Name.ToUpper()))
+            .Any();
+
+        if (alreadyExists)
         {
-            var alreadyExists = UnitOfWork.Select<Client>()
-                .Where(c => c.Name.ToUpper().Equals(view.Name.ToUpper()))
-                .Any();
-
-            if (alreadyExists)
-            {
-                Alerts.AddError(Validation.For<ClientCreateEditView>("DuplicateName"));
-                return false;
-            }
-
-            return IsUniqueNit(view.Id, view.Nit) && ModelState.IsValid;
+            Alerts.AddError(Validation.For<ClientCreateEditView>("DuplicateName"));
+            return false;
         }
 
-        public bool CanEdit(ClientCreateEditView view)
+        return IsUniqueNit(view.Id, view.Nit) && ModelState.IsValid;
+    }
+
+    public bool CanDelete(int id)
+    {
+        var hasReferencedRates = UnitOfWork.Select<Rate>()
+            .Where(c => c.ClientId.Equals(id))
+            .Any();
+
+        if (hasReferencedRates)
         {
-            var alreadyExists = UnitOfWork.Select<Client>()
-                .Where(c => c.Name.ToUpper().Equals(view.Name.ToUpper()))
-                .Any();
-
-            if (alreadyExists)
-            {
-                Alerts.AddError(Validation.For<ClientCreateEditView>("DuplicateName"));
-                return false;
-            }
-
-            return IsUniqueNit(view.Id, view.Nit) && ModelState.IsValid;
+            Alerts.AddError(Validation.For<ClientCreateEditView>("AssociatedRates"));
+            return false;
         }
 
-        public bool CanDelete(int id)
+        return ModelState.IsValid;
+    }
+
+    private bool IsUniqueNit(int clientId, string nit)
+    {
+        var alreadyExists = UnitOfWork.Select<Client>()
+            .Where(c => c.Nit.Equals(nit) && c.Id != clientId)
+            .Any();
+
+        if (alreadyExists)
         {
-            var hasReferencedRates = UnitOfWork.Select<Rate>()
-                .Where(c => c.ClientId.Equals(id))
-                .Any();
-
-            if (hasReferencedRates)
-            {
-                Alerts.AddError(Validation.For<ClientCreateEditView>("AssociatedRates"));
-                return false;
-            }
-
-            return ModelState.IsValid;
+            Alerts.AddError(Validation.For<ClientCreateEditView>("NotUniqueNit"));
+            return false;
         }
 
-        private bool IsUniqueNit(int clientId, string nit)
-        {
-            var alreadyExists = UnitOfWork.Select<Client>()
-                .Where(c => c.Nit.Equals(nit) && c.Id != clientId)
-                .Any();
-
-            if (alreadyExists)
-            {
-                Alerts.AddError(Validation.For<ClientCreateEditView>("NotUniqueNit"));
-                return false;
-            }
-
-            return true;
-        }
+        return true;
     }
 }

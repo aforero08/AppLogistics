@@ -4,84 +4,83 @@ using AppLogistics.Services;
 using AppLogistics.Validators;
 using Microsoft.AspNetCore.Mvc;
 
-namespace AppLogistics.Controllers.Configuration
+namespace AppLogistics.Controllers.Configuration;
+
+[Area("Configuration")]
+public class EpssController : ValidatedController<IEpsValidator, IEpsService>
 {
-    [Area("Configuration")]
-    public class EpssController : ValidatedController<IEpsValidator, IEpsService>
+    public EpssController(IEpsValidator validator, IEpsService service)
+        : base(validator, service)
     {
-        public EpssController(IEpsValidator validator, IEpsService service)
-            : base(validator, service)
+    }
+
+    [HttpGet]
+    public ViewResult Index()
+    {
+        return View(Service.GetViews());
+    }
+
+    [HttpGet]
+    public ViewResult Create()
+    {
+        return View();
+    }
+
+    [HttpPost]
+    public ActionResult Create([BindExcludeId] EpsView eps)
+    {
+        if (!Validator.CanCreate(eps))
         {
+            return View(eps);
         }
 
-        [HttpGet]
-        public ViewResult Index()
+        Service.Create(eps);
+
+        return RedirectToAction("Index");
+    }
+
+    [HttpGet]
+    public ActionResult Details(int id)
+    {
+        return NotEmptyView(Service.Get<EpsView>(id));
+    }
+
+    [HttpGet]
+    public ActionResult Edit(int id)
+    {
+        return NotEmptyView(Service.Get<EpsView>(id));
+    }
+
+    [HttpPost]
+    public ActionResult Edit(EpsView eps)
+    {
+        if (!Validator.CanEdit(eps))
         {
-            return View(Service.GetViews());
+            return View(eps);
         }
 
-        [HttpGet]
-        public ViewResult Create()
+        Service.Edit(eps);
+
+        return RedirectToAction("Index");
+    }
+
+    [HttpGet]
+    public ActionResult Delete(int id)
+    {
+        return NotEmptyView(Service.Get<EpsView>(id));
+    }
+
+    [HttpPost]
+    [ActionName("Delete")]
+    public RedirectToActionResult DeleteConfirmed(int id)
+    {
+        if (!Validator.CanDelete(id))
         {
-            return View();
+            return RedirectToAction("Delete", new { id });
         }
 
-        [HttpPost]
-        public ActionResult Create([BindExcludeId] EpsView eps)
-        {
-            if (!Validator.CanCreate(eps))
-            {
-                return View(eps);
-            }
+        Service.Delete(id);
 
-            Service.Create(eps);
-
-            return RedirectToAction("Index");
-        }
-
-        [HttpGet]
-        public ActionResult Details(int id)
-        {
-            return NotEmptyView(Service.Get<EpsView>(id));
-        }
-
-        [HttpGet]
-        public ActionResult Edit(int id)
-        {
-            return NotEmptyView(Service.Get<EpsView>(id));
-        }
-
-        [HttpPost]
-        public ActionResult Edit(EpsView eps)
-        {
-            if (!Validator.CanEdit(eps))
-            {
-                return View(eps);
-            }
-
-            Service.Edit(eps);
-
-            return RedirectToAction("Index");
-        }
-
-        [HttpGet]
-        public ActionResult Delete(int id)
-        {
-            return NotEmptyView(Service.Get<EpsView>(id));
-        }
-
-        [HttpPost]
-        [ActionName("Delete")]
-        public RedirectToActionResult DeleteConfirmed(int id)
-        {
-            if (!Validator.CanDelete(id))
-            {
-                return RedirectToAction("Delete", new { id });
-            }
-
-            Service.Delete(id);
-
-            return RedirectToAction("Index");
-        }
+        return RedirectToAction("Index");
     }
 }

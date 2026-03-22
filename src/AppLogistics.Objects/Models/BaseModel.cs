@@ -2,45 +2,44 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace AppLogistics.Objects
+namespace AppLogistics.Objects;
+
+public abstract class BaseModel
 {
-    public abstract class BaseModel
+    [Key]
+    public virtual int Id
     {
-        [Key]
-        public virtual int Id
-        {
-            get;
-            set;
-        }
+        get;
+        set;
+    }
 
-        public virtual DateTime CreationDate
+    public virtual DateTime CreationDate
+    {
+        get
         {
-            get
+            if (!IsCreationDateSet)
             {
-                if (!IsCreationDateSet)
-                {
-                    CreationDate = DateTime.Now.UtcToDefaultTimeZone();
-                }
-
-                return InternalCreationDate;
+                CreationDate = DateTime.Now.UtcToDefaultTimeZone();
             }
-            protected set
-            {
-                IsCreationDateSet = true;
-                InternalCreationDate = value;
-            }
-        }
 
-        private bool IsCreationDateSet
-        {
-            get;
-            set;
+            return InternalCreationDate;
         }
+        protected set
+        {
+            IsCreationDateSet = true;
+            InternalCreationDate = value;
+        }
+    }
 
-        private DateTime InternalCreationDate
-        {
-            get;
-            set;
-        }
+    private bool IsCreationDateSet
+    {
+        get;
+        set;
+    }
+
+    private DateTime InternalCreationDate
+    {
+        get;
+        set;
     }
 }

@@ -1,10 +1,9 @@
 ﻿using AppLogistics.Objects;
 using System.Collections.Generic;
 
-namespace AppLogistics.Components.ExcelReports
+namespace AppLogistics.Components.ExcelReports;
+
+public interface IExcelReportCreator
 {
-    public interface IExcelReportCreator
-    {
-        byte[] CreateServiceReport(IList<ServiceReportExcelView> mappedServices);
-    }
+    byte[] CreateServiceReport(IList<ServiceReportExcelView> mappedServices);
 }

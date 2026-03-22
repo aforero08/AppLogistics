@@ -6,26 +6,25 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
 
-namespace AppLogistics.Components.Mvc
+namespace AppLogistics.Components.Mvc;
+
+[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter)]
+public class TruncatedAttribute : ModelBinderAttribute, IModelBinder
 {
-    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter)]
-    public class TruncatedAttribute : ModelBinderAttribute, IModelBinder
+    public TruncatedAttribute()
     {
-        public TruncatedAttribute()
+        BinderType = GetType();
+    }
+
+    public async Task BindModelAsync(ModelBindingContext bindingContext)
+    {
+        ILoggerFactory logger = bindingContext.HttpContext.RequestServices.GetRequiredService<ILoggerFactory>();
+
+        await new SimpleTypeModelBinder(typeof(DateTime?), logger).BindModelAsync(bindingContext);
+
+        if (bindingContext.Result.IsModelSet)
         {
-            BinderType = GetType();
-        }
-
-        public async Task BindModelAsync(ModelBindingContext bindingContext)
-        {
-            ILoggerFactory logger = bindingContext.HttpContext.RequestServices.GetRequiredService<ILoggerFactory>();
-
-            await new SimpleTypeModelBinder(typeof(DateTime?), logger).BindModelAsync(bindingContext);
-
-            if (bindingContext.Result.IsModelSet)
-            {
-                bindingContext.Result = ModelBindingResult.Success((bindingContext.Result.Model as DateTime?)?.Date);
-            }
+            bindingContext.Result = ModelBindingResult.Success((bindingContext.Result.Model as DateTime?)?.Date);
         }
     }
 }

@@ -7,174 +7,173 @@ using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using AppLogistics.Data.Core;
 
-namespace AppLogistics.Data.Migrations
+namespace AppLogistics.Data.Migrations;
+
+[DbContext(typeof(Context))]
+[Migration("20160522062228_Initial")]
+partial class Initial
 {
-    [DbContext(typeof(Context))]
-    [Migration("20160522062228_Initial")]
-    partial class Initial
+    protected override void BuildTargetModel(ModelBuilder modelBuilder)
     {
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
-        {
 #pragma warning disable 612, 618
-            modelBuilder
-                .HasAnnotation("ProductVersion", "2.1.0-rtm-30799")
-                .HasAnnotation("Relational:MaxIdentifierLength", 128)
-                .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+        modelBuilder
+            .HasAnnotation("ProductVersion", "2.1.0-rtm-30799")
+            .HasAnnotation("Relational:MaxIdentifierLength", 128)
+            .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-            modelBuilder.Entity("AppLogistics.Objects.Account", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+        modelBuilder.Entity("AppLogistics.Objects.Account", b =>
+            {
+                b.Property<int>("Id")
+                    .ValueGeneratedOnAdd()
+                    .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<DateTime>("CreationDate");
+                b.Property<DateTime>("CreationDate");
 
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasMaxLength(256);
+                b.Property<string>("Email")
+                    .IsRequired()
+                    .HasMaxLength(256);
 
-                    b.Property<bool>("IsLocked");
+                b.Property<bool>("IsLocked");
 
-                    b.Property<string>("Passhash")
-                        .IsRequired()
-                        .HasMaxLength(64);
+                b.Property<string>("Passhash")
+                    .IsRequired()
+                    .HasMaxLength(64);
 
-                    b.Property<string>("RecoveryToken")
-                        .HasMaxLength(36);
+                b.Property<string>("RecoveryToken")
+                    .HasMaxLength(36);
 
-                    b.Property<DateTime?>("RecoveryTokenExpirationDate");
+                b.Property<DateTime?>("RecoveryTokenExpirationDate");
 
-                    b.Property<int?>("RoleId");
+                b.Property<int?>("RoleId");
 
-                    b.Property<string>("Username")
-                        .IsRequired()
-                        .HasMaxLength(32);
+                b.Property<string>("Username")
+                    .IsRequired()
+                    .HasMaxLength(32);
 
-                    b.HasKey("Id");
+                b.HasKey("Id");
 
-                    b.HasIndex("Email")
-                        .IsUnique();
+                b.HasIndex("Email")
+                    .IsUnique();
 
-                    b.HasIndex("RoleId");
+                b.HasIndex("RoleId");
 
-                    b.HasIndex("Username")
-                        .IsUnique();
+                b.HasIndex("Username")
+                    .IsUnique();
 
-                    b.ToTable("Account");
-                });
+                b.ToTable("Account");
+            });
 
-            modelBuilder.Entity("AppLogistics.Objects.AuditLog", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+        modelBuilder.Entity("AppLogistics.Objects.AuditLog", b =>
+            {
+                b.Property<int>("Id")
+                    .ValueGeneratedOnAdd()
+                    .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int?>("AccountId");
+                b.Property<int?>("AccountId");
 
-                    b.Property<string>("Action")
-                        .IsRequired()
-                        .HasMaxLength(16);
+                b.Property<string>("Action")
+                    .IsRequired()
+                    .HasMaxLength(16);
 
-                    b.Property<string>("Changes")
-                        .IsRequired();
+                b.Property<string>("Changes")
+                    .IsRequired();
 
-                    b.Property<DateTime>("CreationDate");
+                b.Property<DateTime>("CreationDate");
 
-                    b.Property<int>("EntityId");
+                b.Property<int>("EntityId");
 
-                    b.Property<string>("EntityName")
-                        .IsRequired()
-                        .HasMaxLength(64);
+                b.Property<string>("EntityName")
+                    .IsRequired()
+                    .HasMaxLength(64);
 
-                    b.HasKey("Id");
+                b.HasKey("Id");
 
-                    b.ToTable("AuditLog");
-                });
+                b.ToTable("AuditLog");
+            });
 
-            modelBuilder.Entity("AppLogistics.Objects.Permission", b =>
-                {
-                    b.Property<int>("Id");
+        modelBuilder.Entity("AppLogistics.Objects.Permission", b =>
+            {
+                b.Property<int>("Id");
 
-                    b.Property<string>("Action")
-                        .IsRequired()
-                        .HasMaxLength(64);
+                b.Property<string>("Action")
+                    .IsRequired()
+                    .HasMaxLength(64);
 
-                    b.Property<string>("Area")
-                        .HasMaxLength(64);
+                b.Property<string>("Area")
+                    .HasMaxLength(64);
 
-                    b.Property<string>("Controller")
-                        .IsRequired()
-                        .HasMaxLength(64);
+                b.Property<string>("Controller")
+                    .IsRequired()
+                    .HasMaxLength(64);
 
-                    b.Property<DateTime>("CreationDate");
+                b.Property<DateTime>("CreationDate");
 
-                    b.HasKey("Id");
+                b.HasKey("Id");
 
-                    b.ToTable("Permission");
-                });
+                b.ToTable("Permission");
+            });
 
-            modelBuilder.Entity("AppLogistics.Objects.Role", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+        modelBuilder.Entity("AppLogistics.Objects.Role", b =>
+            {
+                b.Property<int>("Id")
+                    .ValueGeneratedOnAdd()
+                    .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<DateTime>("CreationDate");
+                b.Property<DateTime>("CreationDate");
 
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasMaxLength(128);
+                b.Property<string>("Title")
+                    .IsRequired()
+                    .HasMaxLength(128);
 
-                    b.HasKey("Id");
+                b.HasKey("Id");
 
-                    b.HasIndex("Title")
-                        .IsUnique();
+                b.HasIndex("Title")
+                    .IsUnique();
 
-                    b.ToTable("Role");
-                });
+                b.ToTable("Role");
+            });
 
-            modelBuilder.Entity("AppLogistics.Objects.RolePermission", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+        modelBuilder.Entity("AppLogistics.Objects.RolePermission", b =>
+            {
+                b.Property<int>("Id")
+                    .ValueGeneratedOnAdd()
+                    .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<DateTime>("CreationDate");
+                b.Property<DateTime>("CreationDate");
 
-                    b.Property<int>("PermissionId");
+                b.Property<int>("PermissionId");
 
-                    b.Property<int>("RoleId");
+                b.Property<int>("RoleId");
 
-                    b.HasKey("Id");
+                b.HasKey("Id");
 
-                    b.HasIndex("PermissionId");
+                b.HasIndex("PermissionId");
 
-                    b.HasIndex("RoleId");
+                b.HasIndex("RoleId");
 
-                    b.ToTable("RolePermission");
-                });
+                b.ToTable("RolePermission");
+            });
 
-            modelBuilder.Entity("AppLogistics.Objects.Account", b =>
-                {
-                    b.HasOne("AppLogistics.Objects.Role", "Role")
-                        .WithMany("Accounts")
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Restrict);
-                });
+        modelBuilder.Entity("AppLogistics.Objects.Account", b =>
+            {
+                b.HasOne("AppLogistics.Objects.Role", "Role")
+                    .WithMany("Accounts")
+                    .HasForeignKey("RoleId")
+                    .OnDelete(DeleteBehavior.Restrict);
+            });
 
-            modelBuilder.Entity("AppLogistics.Objects.RolePermission", b =>
-                {
-                    b.HasOne("AppLogistics.Objects.Permission", "Permission")
-                        .WithMany()
-                        .HasForeignKey("PermissionId")
-                        .OnDelete(DeleteBehavior.Restrict);
+        modelBuilder.Entity("AppLogistics.Objects.RolePermission", b =>
+            {
+                b.HasOne("AppLogistics.Objects.Permission", "Permission")
+                    .WithMany()
+                    .HasForeignKey("PermissionId")
+                    .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("AppLogistics.Objects.Role", "Role")
-                        .WithMany("Permissions")
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Restrict);
-                });
+                b.HasOne("AppLogistics.Objects.Role", "Role")
+                    .WithMany("Permissions")
+                    .HasForeignKey("RoleId")
+                    .OnDelete(DeleteBehavior.Restrict);
+            });
 #pragma warning restore 612, 618
-        }
     }
 }

@@ -3,41 +3,40 @@ using NSubstitute;
 using System;
 using Xunit;
 
-namespace AppLogistics.Services.Tests
+namespace AppLogistics.Services.Tests;
+
+public class BaseServiceTests : IDisposable
 {
-    public class BaseServiceTests : IDisposable
+    private IUnitOfWork unitOfWork;
+    private BaseService service;
+
+    public BaseServiceTests()
     {
-        private IUnitOfWork unitOfWork;
-        private BaseService service;
-
-        public BaseServiceTests()
-        {
-            unitOfWork = Substitute.For<IUnitOfWork>();
-            service = Substitute.ForPartsOf<BaseService>(unitOfWork);
-        }
-
-        public void Dispose()
-        {
-            service.Dispose();
-        }
-
-        #region Dispose()
-
-        [Fact]
-        public void Dispose_UnitOfWork()
-        {
-            service.Dispose();
-
-            unitOfWork.Received().Dispose();
-        }
-
-        [Fact]
-        public void Dispose_MultipleTimes()
-        {
-            service.Dispose();
-            service.Dispose();
-        }
-
-        #endregion Dispose()
+        unitOfWork = Substitute.For<IUnitOfWork>();
+        service = Substitute.ForPartsOf<BaseService>(unitOfWork);
     }
+
+    public void Dispose()
+    {
+        service.Dispose();
+    }
+
+    #region Dispose()
+
+    [Fact]
+    public void Dispose_UnitOfWork()
+    {
+        service.Dispose();
+
+        unitOfWork.Received().Dispose();
+    }
+
+    [Fact]
+    public void Dispose_MultipleTimes()
+    {
+        service.Dispose();
+        service.Dispose();
+    }
+
+    #endregion Dispose()
 }

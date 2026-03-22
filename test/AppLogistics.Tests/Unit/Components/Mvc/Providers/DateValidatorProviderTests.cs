@@ -5,40 +5,39 @@ using System.Collections.Generic;
 using System.Linq;
 using Xunit;
 
-namespace AppLogistics.Components.Mvc.Tests
+namespace AppLogistics.Components.Mvc.Tests;
+
+public class DateValidatorProviderTests
 {
-    public class DateValidatorProviderTests
+    #region CreateValidators(ClientValidatorProviderContext context)
+
+    [Theory]
+    [InlineData(typeof(DateTime))]
+    [InlineData(typeof(DateTime?))]
+    public void CreateValidators_ForDate(Type type)
     {
-        #region CreateValidators(ClientValidatorProviderContext context)
+        ModelMetadata metadata = new EmptyModelMetadataProvider().GetMetadataForType(type);
+        ClientValidatorProviderContext context = new ClientValidatorProviderContext(metadata, new List<ClientValidatorItem>());
 
-        [Theory]
-        [InlineData(typeof(DateTime))]
-        [InlineData(typeof(DateTime?))]
-        public void CreateValidators_ForDate(Type type)
-        {
-            ModelMetadata metadata = new EmptyModelMetadataProvider().GetMetadataForType(type);
-            ClientValidatorProviderContext context = new ClientValidatorProviderContext(metadata, new List<ClientValidatorItem>());
+        new DateValidatorProvider().CreateValidators(context);
 
-            new DateValidatorProvider().CreateValidators(context);
+        ClientValidatorItem actual = context.Results.Single();
 
-            ClientValidatorItem actual = context.Results.Single();
-
-            Assert.IsType<DateValidator>(actual.Validator);
-            Assert.Null(actual.ValidatorMetadata);
-            Assert.True(actual.IsReusable);
-        }
-
-        [Fact]
-        public void CreateValidators_DoesNotCreate()
-        {
-            ModelMetadata metadata = new EmptyModelMetadataProvider().GetMetadataForType(typeof(string));
-            ClientValidatorProviderContext context = new ClientValidatorProviderContext(metadata, new List<ClientValidatorItem>());
-
-            new DateValidatorProvider().CreateValidators(context);
-
-            Assert.Empty(context.Results);
-        }
-
-        #endregion CreateValidators(ClientValidatorProviderContext context)
+        Assert.IsType<DateValidator>(actual.Validator);
+        Assert.Null(actual.ValidatorMetadata);
+        Assert.True(actual.IsReusable);
     }
+
+    [Fact]
+    public void CreateValidators_DoesNotCreate()
+    {
+        ModelMetadata metadata = new EmptyModelMetadataProvider().GetMetadataForType(typeof(string));
+        ClientValidatorProviderContext context = new ClientValidatorProviderContext(metadata, new List<ClientValidatorItem>());
+
+        new DateValidatorProvider().CreateValidators(context);
+
+        Assert.Empty(context.Results);
+    }
+
+    #endregion CreateValidators(ClientValidatorProviderContext context)
 }

@@ -1,11 +1,10 @@
 using AppLogistics.Objects;
 
-namespace AppLogistics.Validators
+namespace AppLogistics.Validators;
+
+public interface IVehicleTypeValidator : IValidator
 {
-    public interface IVehicleTypeValidator : IValidator
-    {
-        bool CanCreate(VehicleTypeView view);
-        bool CanEdit(VehicleTypeView view);
-        bool CanDelete(int id);
-    }
+    bool CanCreate(VehicleTypeView view);
+    bool CanEdit(VehicleTypeView view);
+    bool CanDelete(int id);
 }

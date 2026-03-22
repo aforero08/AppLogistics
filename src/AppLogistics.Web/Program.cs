@@ -1,20 +1,19 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using System.IO;
 
-namespace AppLogistics.Web
+namespace AppLogistics.Web;
+
+public class Program
 {
-    public class Program
+    public static void Main()
     {
-        public static void Main()
-        {
-            new WebHostBuilder()
-                .UseKestrel(options => options.AddServerHeader = false)
-                .UseContentRoot(Directory.GetCurrentDirectory())
-                .UseStartup<Startup>()
-                .UseIISIntegration()
-                .UseIIS()
-                .Build()
-                .Run();
-        }
+        new WebHostBuilder()
+            .UseKestrel(options => options.AddServerHeader = false)
+            .UseContentRoot(Directory.GetCurrentDirectory())
+            .UseStartup<Startup>()
+            .UseIISIntegration()
+            .UseIIS()
+            .Build()
+            .Run();
     }
 }

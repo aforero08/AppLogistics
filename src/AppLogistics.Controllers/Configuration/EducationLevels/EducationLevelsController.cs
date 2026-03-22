@@ -4,84 +4,83 @@ using AppLogistics.Services;
 using AppLogistics.Validators;
 using Microsoft.AspNetCore.Mvc;
 
-namespace AppLogistics.Controllers.Configuration
+namespace AppLogistics.Controllers.Configuration;
+
+[Area("Configuration")]
+public class EducationLevelsController : ValidatedController<IEducationLevelValidator, IEducationLevelService>
 {
-    [Area("Configuration")]
-    public class EducationLevelsController : ValidatedController<IEducationLevelValidator, IEducationLevelService>
+    public EducationLevelsController(IEducationLevelValidator validator, IEducationLevelService service)
+        : base(validator, service)
     {
-        public EducationLevelsController(IEducationLevelValidator validator, IEducationLevelService service)
-            : base(validator, service)
+    }
+
+    [HttpGet]
+    public ViewResult Index()
+    {
+        return View(Service.GetViews());
+    }
+
+    [HttpGet]
+    public ViewResult Create()
+    {
+        return View();
+    }
+
+    [HttpPost]
+    public ActionResult Create([BindExcludeId] EducationLevelView educationLevel)
+    {
+        if (!Validator.CanCreate(educationLevel))
         {
+            return View(educationLevel);
         }
 
-        [HttpGet]
-        public ViewResult Index()
+        Service.Create(educationLevel);
+
+        return RedirectToAction("Index");
+    }
+
+    [HttpGet]
+    public ActionResult Details(int id)
+    {
+        return NotEmptyView(Service.Get<EducationLevelView>(id));
+    }
+
+    [HttpGet]
+    public ActionResult Edit(int id)
+    {
+        return NotEmptyView(Service.Get<EducationLevelView>(id));
+    }
+
+    [HttpPost]
+    public ActionResult Edit(EducationLevelView educationLevel)
+    {
+        if (!Validator.CanEdit(educationLevel))
         {
-            return View(Service.GetViews());
+            return View(educationLevel);
         }
 
-        [HttpGet]
-        public ViewResult Create()
+        Service.Edit(educationLevel);
+
+        return RedirectToAction("Index");
+    }
+
+    [HttpGet]
+    public ActionResult Delete(int id)
+    {
+        return NotEmptyView(Service.Get<EducationLevelView>(id));
+    }
+
+    [HttpPost]
+    [ActionName("Delete")]
+    public RedirectToActionResult DeleteConfirmed(int id)
+    {
+        if (!Validator.CanDelete(id))
         {
-            return View();
+            return RedirectToAction("Delete", new { id });
         }
 
-        [HttpPost]
-        public ActionResult Create([BindExcludeId] EducationLevelView educationLevel)
-        {
-            if (!Validator.CanCreate(educationLevel))
-            {
-                return View(educationLevel);
-            }
+        Service.Delete(id);
 
-            Service.Create(educationLevel);
-
-            return RedirectToAction("Index");
-        }
-
-        [HttpGet]
-        public ActionResult Details(int id)
-        {
-            return NotEmptyView(Service.Get<EducationLevelView>(id));
-        }
-
-        [HttpGet]
-        public ActionResult Edit(int id)
-        {
-            return NotEmptyView(Service.Get<EducationLevelView>(id));
-        }
-
-        [HttpPost]
-        public ActionResult Edit(EducationLevelView educationLevel)
-        {
-            if (!Validator.CanEdit(educationLevel))
-            {
-                return View(educationLevel);
-            }
-
-            Service.Edit(educationLevel);
-
-            return RedirectToAction("Index");
-        }
-
-        [HttpGet]
-        public ActionResult Delete(int id)
-        {
-            return NotEmptyView(Service.Get<EducationLevelView>(id));
-        }
-
-        [HttpPost]
-        [ActionName("Delete")]
-        public RedirectToActionResult DeleteConfirmed(int id)
-        {
-            if (!Validator.CanDelete(id))
-            {
-                return RedirectToAction("Delete", new { id });
-            }
-
-            Service.Delete(id);
-
-            return RedirectToAction("Index");
-        }
+        return RedirectToAction("Index");
     }
 }

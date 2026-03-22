@@ -4,68 +4,67 @@ using AppLogistics.Services;
 using AppLogistics.Validators;
 using Microsoft.AspNetCore.Mvc;
 
-namespace AppLogistics.Controllers.Administration
+namespace AppLogistics.Controllers.Administration;
+
+[Area("Administration")]
+public class AccountsController : ValidatedController<IAccountValidator, IAccountService>
 {
-    [Area("Administration")]
-    public class AccountsController : ValidatedController<IAccountValidator, IAccountService>
+    public AccountsController(IAccountValidator validator, IAccountService service)
+        : base(validator, service)
     {
-        public AccountsController(IAccountValidator validator, IAccountService service)
-            : base(validator, service)
+    }
+
+    [HttpGet]
+    public ViewResult Index()
+    {
+        return View(Service.GetViews());
+    }
+
+    [HttpGet]
+    public ViewResult Create()
+    {
+        return View();
+    }
+
+    [HttpPost]
+    public ActionResult Create([BindExcludeId] AccountCreateView account)
+    {
+        if (!Validator.CanCreate(account))
         {
+            return View(account);
         }
 
-        [HttpGet]
-        public ViewResult Index()
+        Service.Create(account);
+
+        Authorization?.Refresh();
+
+        return RedirectToAction("Index");
+    }
+
+    [HttpGet]
+    public ActionResult Details(int id)
+    {
+        return NotEmptyView(Service.Get<AccountView>(id));
+    }
+
+    [HttpGet]
+    public ActionResult Edit(int id)
+    {
+        return NotEmptyView(Service.Get<AccountEditView>(id));
+    }
+
+    [HttpPost]
+    public ActionResult Edit(AccountEditView account)
+    {
+        if (!Validator.CanEdit(account))
         {
-            return View(Service.GetViews());
+            return View(account);
         }
 
-        [HttpGet]
-        public ViewResult Create()
-        {
-            return View();
-        }
+        Service.Edit(account);
 
-        [HttpPost]
-        public ActionResult Create([BindExcludeId] AccountCreateView account)
-        {
-            if (!Validator.CanCreate(account))
-            {
-                return View(account);
-            }
+        Authorization?.Refresh();
 
-            Service.Create(account);
-
-            Authorization?.Refresh();
-
-            return RedirectToAction("Index");
-        }
-
-        [HttpGet]
-        public ActionResult Details(int id)
-        {
-            return NotEmptyView(Service.Get<AccountView>(id));
-        }
-
-        [HttpGet]
-        public ActionResult Edit(int id)
-        {
-            return NotEmptyView(Service.Get<AccountEditView>(id));
-        }
-
-        [HttpPost]
-        public ActionResult Edit(AccountEditView account)
-        {
-            if (!Validator.CanEdit(account))
-            {
-                return View(account);
-            }
-
-            Service.Edit(account);
-
-            Authorization?.Refresh();
-
-            return RedirectToAction("Index");
-        }
+        return RedirectToAction("Index");
     }
 }

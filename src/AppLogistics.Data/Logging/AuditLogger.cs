@@ -4,74 +4,73 @@ using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace AppLogistics.Data.Logging
+namespace AppLogistics.Data.Logging;
+
+public class AuditLogger : IAuditLogger
 {
-    public class AuditLogger : IAuditLogger
+    private int? AccountId { get; }
+    private DbContext Context { get; }
+    private List<LoggableEntity> Entities { get; }
+
+    public AuditLogger(DbContext context, int? accountId)
     {
-        private int? AccountId { get; }
-        private DbContext Context { get; }
-        private List<LoggableEntity> Entities { get; }
+        Context = context;
+        AccountId = accountId;
+        Entities = new List<LoggableEntity>();
+    }
 
-        public AuditLogger(DbContext context, int? accountId)
+    public void Log(IEnumerable<EntityEntry<BaseModel>> entries)
+    {
+        foreach (EntityEntry<BaseModel> entry in entries)
         {
-            Context = context;
-            AccountId = accountId;
-            Entities = new List<LoggableEntity>();
-        }
-
-        public void Log(IEnumerable<EntityEntry<BaseModel>> entries)
-        {
-            foreach (EntityEntry<BaseModel> entry in entries)
+            switch (entry.State)
             {
-                switch (entry.State)
-                {
-                    case EntityState.Added:
-                    case EntityState.Deleted:
-                    case EntityState.Modified:
-                        LoggableEntity entity = new LoggableEntity(entry);
-                        if (entity.Properties.Any())
-                        {
-                            Log(entity);
-                        }
-
-                        break;
-                }
-            }
-        }
-
-        public void Log(LoggableEntity entity)
-        {
-            Entities.Add(entity);
-        }
-
-        public void Save()
-        {
-            if (Entities.Count > 0)
-            {
-                Context.ChangeTracker.AutoDetectChangesEnabled = false;
-
-                foreach (LoggableEntity entity in Entities)
-                {
-                    AuditLog log = new AuditLog
+                case EntityState.Added:
+                case EntityState.Deleted:
+                case EntityState.Modified:
+                    LoggableEntity entity = new LoggableEntity(entry);
+                    if (entity.Properties.Any())
                     {
-                        Changes = entity.ToString(),
-                        EntityName = entity.Name,
-                        Action = entity.Action,
-                        EntityId = entity.Id(),
-                        AccountId = AccountId
-                    };
+                        Log(entity);
+                    }
 
-                    Context.Add(log);
-                }
-
-                Context.SaveChanges();
-                Entities.Clear();
+                    break;
             }
         }
+    }
 
-        public void Dispose()
+    public void Log(LoggableEntity entity)
+    {
+        Entities.Add(entity);
+    }
+
+    public void Save()
+    {
+        if (Entities.Count > 0)
         {
-            Context.Dispose();
+            Context.ChangeTracker.AutoDetectChangesEnabled = false;
+
+            foreach (LoggableEntity entity in Entities)
+            {
+                AuditLog log = new AuditLog
+                {
+                    Changes = entity.ToString(),
+                    EntityName = entity.Name,
+                    Action = entity.Action,
+                    EntityId = entity.Id(),
+                    AccountId = AccountId
+                };
+
+                Context.Add(log);
+            }
+
+            Context.SaveChanges();
+            Entities.Clear();
         }
+    }
+
+    public void Dispose()
+    {
+        Context.Dispose();
     }
 }

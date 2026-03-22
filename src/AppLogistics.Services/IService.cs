@@ -1,9 +1,8 @@
 ﻿using System;
 
-namespace AppLogistics.Services
+namespace AppLogistics.Services;
+
+public interface IService : IDisposable
 {
-    public interface IService : IDisposable
-    {
-        int CurrentAccountId { get; set; }
-    }
+    int CurrentAccountId { get; set; }
 }

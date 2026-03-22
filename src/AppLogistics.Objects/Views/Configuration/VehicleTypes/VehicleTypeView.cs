@@ -1,13 +1,12 @@
 using NonFactors.Mvc.Lookup;
 using System.ComponentModel.DataAnnotations;
 
-namespace AppLogistics.Objects
+namespace AppLogistics.Objects;
+
+public class VehicleTypeView : BaseView<VehicleType>
 {
-    public class VehicleTypeView : BaseView<VehicleType>
-    {
-        [Required]
-        [LookupColumn]
-        [StringLength(32)]
-        public string Name { get; set; }
-    }
+    [Required]
+    [LookupColumn]
+    [StringLength(32)]
+    public string Name { get; set; }
 }

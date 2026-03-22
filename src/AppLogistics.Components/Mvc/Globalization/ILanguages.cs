@@ -1,11 +1,10 @@
-﻿namespace AppLogistics.Components.Mvc
-{
-    public interface ILanguages
-    {
-        Language Default { get; }
-        Language[] Supported { get; }
-        Language Current { get; set; }
+﻿namespace AppLogistics.Components.Mvc;
 
-        Language this[string abbreviation] { get; }
-    }
+public interface ILanguages
+{
+    Language Default { get; }
+    Language[] Supported { get; }
+    Language Current { get; set; }
+
+    Language this[string abbreviation] { get; }
 }

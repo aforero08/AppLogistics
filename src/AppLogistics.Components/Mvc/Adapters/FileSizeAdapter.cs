@@ -2,25 +2,24 @@
 using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using System.Globalization;
 
-namespace AppLogistics.Components.Mvc
+namespace AppLogistics.Components.Mvc;
+
+public class FileSizeAdapter : AttributeAdapterBase<FileSizeAttribute>
 {
-    public class FileSizeAdapter : AttributeAdapterBase<FileSizeAttribute>
+    public FileSizeAdapter(FileSizeAttribute attribute)
+        : base(attribute, null)
     {
-        public FileSizeAdapter(FileSizeAttribute attribute)
-            : base(attribute, null)
-        {
-        }
+    }
 
-        public override void AddValidation(ClientModelValidationContext context)
-        {
-            context.Attributes["data-val"] = "true";
-            context.Attributes["data-val-filesize"] = GetErrorMessage(context);
-            context.Attributes["data-val-filesize-max"] = (Attribute.MaximumMB * 1024 * 1024).ToString(CultureInfo.InvariantCulture);
-        }
+    public override void AddValidation(ClientModelValidationContext context)
+    {
+        context.Attributes["data-val"] = "true";
+        context.Attributes["data-val-filesize"] = GetErrorMessage(context);
+        context.Attributes["data-val-filesize-max"] = (Attribute.MaximumMB * 1024 * 1024).ToString(CultureInfo.InvariantCulture);
+    }
 
-        public override string GetErrorMessage(ModelValidationContextBase validationContext)
-        {
-            return GetErrorMessage(validationContext.ModelMetadata);
-        }
+    public override string GetErrorMessage(ModelValidationContextBase validationContext)
+    {
+        return GetErrorMessage(validationContext.ModelMetadata);
     }
 }

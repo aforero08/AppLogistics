@@ -4,45 +4,44 @@ using NSubstitute;
 using System;
 using Xunit;
 
-namespace AppLogistics.Components.Mvc.Tests
+namespace AppLogistics.Components.Mvc.Tests;
+
+public class TrimmingModelBinderProviderTests
 {
-    public class TrimmingModelBinderProviderTests
+    #region GetBinder(ModelBinderProviderContext context)
+
+    [Fact]
+    public void GetBinder_ForLookupFilterReturnsNull()
     {
-        #region GetBinder(ModelBinderProviderContext context)
+        IModelMetadataProvider provider = new EmptyModelMetadataProvider();
+        ModelBinderProviderContext context = Substitute.For<ModelBinderProviderContext>();
 
-        [Fact]
-        public void GetBinder_ForLookupFilterReturnsNull()
-        {
-            IModelMetadataProvider provider = new EmptyModelMetadataProvider();
-            ModelBinderProviderContext context = Substitute.For<ModelBinderProviderContext>();
+        context.Metadata.Returns(provider.GetMetadataForProperty(typeof(LookupFilter), "Search"));
 
-            context.Metadata.Returns(provider.GetMetadataForProperty(typeof(LookupFilter), "Search"));
-
-            Assert.Null(new TrimmingModelBinderProvider().GetBinder(context));
-        }
-
-        [Fact]
-        public void GetBinder_ForString()
-        {
-            IModelMetadataProvider provider = new EmptyModelMetadataProvider();
-            ModelBinderProviderContext context = Substitute.For<ModelBinderProviderContext>();
-
-            context.Metadata.Returns(provider.GetMetadataForType(typeof(string)));
-
-            Assert.IsType<TrimmingModelBinder>(new TrimmingModelBinderProvider().GetBinder(context));
-        }
-
-        [Fact]
-        public void GetBinder_ForNotStringReturnsNull()
-        {
-            IModelMetadataProvider provider = new EmptyModelMetadataProvider();
-            ModelBinderProviderContext context = Substitute.For<ModelBinderProviderContext>();
-
-            context.Metadata.Returns(provider.GetMetadataForType(typeof(DateTime)));
-
-            Assert.Null(new TrimmingModelBinderProvider().GetBinder(context));
-        }
-
-        #endregion GetBinder(ModelBinderProviderContext context)
+        Assert.Null(new TrimmingModelBinderProvider().GetBinder(context));
     }
+
+    [Fact]
+    public void GetBinder_ForString()
+    {
+        IModelMetadataProvider provider = new EmptyModelMetadataProvider();
+        ModelBinderProviderContext context = Substitute.For<ModelBinderProviderContext>();
+
+        context.Metadata.Returns(provider.GetMetadataForType(typeof(string)));
+
+        Assert.IsType<TrimmingModelBinder>(new TrimmingModelBinderProvider().GetBinder(context));
+    }
+
+    [Fact]
+    public void GetBinder_ForNotStringReturnsNull()
+    {
+        IModelMetadataProvider provider = new EmptyModelMetadataProvider();
+        ModelBinderProviderContext context = Substitute.For<ModelBinderProviderContext>();
+
+        context.Metadata.Returns(provider.GetMetadataForType(typeof(DateTime)));
+
+        Assert.Null(new TrimmingModelBinderProvider().GetBinder(context));
+    }
+
+    #endregion GetBinder(ModelBinderProviderContext context)
 }

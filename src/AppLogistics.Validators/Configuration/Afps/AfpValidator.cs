@@ -3,58 +3,57 @@ using AppLogistics.Objects;
 using AppLogistics.Resources;
 using System.Linq;
 
-namespace AppLogistics.Validators
+namespace AppLogistics.Validators;
+
+public class AfpValidator : BaseValidator, IAfpValidator
 {
-    public class AfpValidator : BaseValidator, IAfpValidator
+    public AfpValidator(IUnitOfWork unitOfWork)
+        : base(unitOfWork)
     {
-        public AfpValidator(IUnitOfWork unitOfWork)
-            : base(unitOfWork)
+    }
+
+    public bool CanCreate(AfpView view)
+    {
+        var alreadyExists = UnitOfWork.Select<Afp>()
+            .Where(a => a.Name.ToUpper().Equals(view.Name.ToUpper()))
+            .Any();
+
+        if (alreadyExists)
         {
+            Alerts.AddError(Validation.For<AfpView>("DuplicateName"));
+            return false;
         }
 
-        public bool CanCreate(AfpView view)
+        return ModelState.IsValid;
+    }
+
+    public bool CanEdit(AfpView view)
+    {
+        var alreadyExists = UnitOfWork.Select<Afp>()
+            .Where(a => a.Name.ToUpper().Equals(view.Name.ToUpper()))
+            .Any();
+
+        if (alreadyExists)
         {
-            var alreadyExists = UnitOfWork.Select<Afp>()
-                .Where(a => a.Name.ToUpper().Equals(view.Name.ToUpper()))
-                .Any();
-
-            if (alreadyExists)
-            {
-                Alerts.AddError(Validation.For<AfpView>("DuplicateName"));
-                return false;
-            }
-
-            return ModelState.IsValid;
+            Alerts.AddError(Validation.For<AfpView>("DuplicateName"));
+            return false;
         }
 
-        public bool CanEdit(AfpView view)
+        return ModelState.IsValid;
+    }
+
+    public bool CanDelete(int id)
+    {
+        var hasReferencedEmployees = UnitOfWork.Select<Employee>()
+            .Where(c => c.AfpId.Equals(id))
+            .Any();
+
+        if (hasReferencedEmployees)
         {
-            var alreadyExists = UnitOfWork.Select<Afp>()
-                .Where(a => a.Name.ToUpper().Equals(view.Name.ToUpper()))
-                .Any();
-
-            if (alreadyExists)
-            {
-                Alerts.AddError(Validation.For<AfpView>("DuplicateName"));
-                return false;
-            }
-
-            return ModelState.IsValid;
+            Alerts.AddError(Validation.For<AfpView>("AssociatedEmployees"));
+            return false;
         }
 
-        public bool CanDelete(int id)
-        {
-            var hasReferencedEmployees = UnitOfWork.Select<Employee>()
-                .Where(c => c.AfpId.Equals(id))
-                .Any();
-
-            if (hasReferencedEmployees)
-            {
-                Alerts.AddError(Validation.For<AfpView>("AssociatedEmployees"));
-                return false;
-            }
-
-            return ModelState.IsValid;
-        }
+        return ModelState.IsValid;
     }
 }

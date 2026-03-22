@@ -1,10 +1,9 @@
 ﻿using System;
 
-namespace AppLogistics.Components.Mvc
+namespace AppLogistics.Components.Mvc;
+
+[AttributeUsage(AttributeTargets.Property)]
+public class IndexAttribute : Attribute
 {
-    [AttributeUsage(AttributeTargets.Property)]
-    public class IndexAttribute : Attribute
-    {
-        public bool IsUnique { get; set; }
-    }
+    public bool IsUnique { get; set; }
 }

@@ -1,23 +1,22 @@
 ﻿using System.Collections.Generic;
 
-namespace AppLogistics.Components.Extensions
+namespace AppLogistics.Components.Extensions;
+
+public class MvcTreeNode
 {
-    public class MvcTreeNode
+    public int? Id { get; set; }
+    public string Title { get; set; }
+    public List<MvcTreeNode> Children { get; set; }
+
+    public MvcTreeNode(int? id, string title)
     {
-        public int? Id { get; set; }
-        public string Title { get; set; }
-        public List<MvcTreeNode> Children { get; set; }
+        Id = id;
+        Title = title;
+        Children = new List<MvcTreeNode>();
+    }
 
-        public MvcTreeNode(int? id, string title)
-        {
-            Id = id;
-            Title = title;
-            Children = new List<MvcTreeNode>();
-        }
-
-        public MvcTreeNode(string title)
-            : this(null, title)
-        {
-        }
+    public MvcTreeNode(string title)
+        : this(null, title)
+    {
     }
 }

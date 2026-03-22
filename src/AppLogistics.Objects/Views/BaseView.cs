@@ -2,52 +2,51 @@
 using AutoMapper;
 using System;
 
-namespace AppLogistics.Objects
+namespace AppLogistics.Objects;
+
+public abstract class BaseView
 {
-    public abstract class BaseView
+    public virtual int Id
     {
-        public virtual int Id
-        {
-            get;
-            set;
-        }
+        get;
+        set;
+    }
 
-        public virtual DateTime CreationDate
+    public virtual DateTime CreationDate
+    {
+        get
         {
-            get
+            if (!IsCreationDateSet)
             {
-                if (!IsCreationDateSet)
-                {
-                    CreationDate = DateTime.Now.UtcToDefaultTimeZone();
-                }
-
-                return InternalCreationDate;
+                CreationDate = DateTime.Now.UtcToDefaultTimeZone();
             }
-            protected set
-            {
-                IsCreationDateSet = true;
-                InternalCreationDate = value;
-            }
-        }
 
-        private bool IsCreationDateSet
-        {
-            get;
-            set;
+            return InternalCreationDate;
         }
-
-        private DateTime InternalCreationDate
+        protected set
         {
-            get;
-            set;
+            IsCreationDateSet = true;
+            InternalCreationDate = value;
         }
     }
 
-    public abstract class BaseView<TModel> : BaseView
+    private bool IsCreationDateSet
     {
-        internal virtual void Map(Profile profile)
-        {
-            profile.CreateMap(typeof(TModel), GetType()).ReverseMap();
-        }
+        get;
+        set;
+    }
+
+    private DateTime InternalCreationDate
+    {
+        get;
+        set;
+    }
+}
+
+public abstract class BaseView<TModel> : BaseView
+{
+    internal virtual void Map(Profile profile)
+    {
+        profile.CreateMap(typeof(TModel), GetType()).ReverseMap();
     }
 }

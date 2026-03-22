@@ -1,9 +1,8 @@
 ﻿using AppLogistics.Objects;
 
-namespace AppLogistics.Validators
+namespace AppLogistics.Validators;
+
+public interface IServiceReportValidator : IValidator
 {
-    public interface IServiceReportValidator : IValidator
-    {
-        bool CanQuery(ServiceReportQueryView query);
-    }
+    bool CanQuery(ServiceReportQueryView query);
 }

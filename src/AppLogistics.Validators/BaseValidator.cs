@@ -6,46 +6,45 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System;
 using System.Linq.Expressions;
 
-namespace AppLogistics.Validators
+namespace AppLogistics.Validators;
+
+public abstract class BaseValidator : IValidator
 {
-    public abstract class BaseValidator : IValidator
+    public ModelStateDictionary ModelState { get; set; }
+    public int CurrentAccountId { get; set; }
+    public Alerts Alerts { get; set; }
+
+    protected IUnitOfWork UnitOfWork { get; }
+
+    protected BaseValidator(IUnitOfWork unitOfWork)
     {
-        public ModelStateDictionary ModelState { get; set; }
-        public int CurrentAccountId { get; set; }
-        public Alerts Alerts { get; set; }
+        UnitOfWork = unitOfWork;
 
-        protected IUnitOfWork UnitOfWork { get; }
+        ModelState = new ModelStateDictionary();
+        Alerts = new Alerts();
+    }
 
-        protected BaseValidator(IUnitOfWork unitOfWork)
+    protected bool IsSpecified<TView>(TView view, Expression<Func<TView, object>> property) where TView : BaseView
+    {
+        bool isSpecified = property.Compile().Invoke(view) != null;
+
+        if (!isSpecified)
         {
-            UnitOfWork = unitOfWork;
-
-            ModelState = new ModelStateDictionary();
-            Alerts = new Alerts();
-        }
-
-        protected bool IsSpecified<TView>(TView view, Expression<Func<TView, object>> property) where TView : BaseView
-        {
-            bool isSpecified = property.Compile().Invoke(view) != null;
-
-            if (!isSpecified)
+            if (property.Body is UnaryExpression unary)
             {
-                if (property.Body is UnaryExpression unary)
-                {
-                    ModelState.AddModelError(property, Validation.For("Required", Resource.ForProperty(unary.Operand)));
-                }
-                else
-                {
-                    ModelState.AddModelError(property, Validation.For("Required", Resource.ForProperty(property)));
-                }
+                ModelState.AddModelError(property, Validation.For("Required", Resource.ForProperty(unary.Operand)));
             }
-
-            return isSpecified;
+            else
+            {
+                ModelState.AddModelError(property, Validation.For("Required", Resource.ForProperty(property)));
+            }
         }
 
-        public void Dispose()
-        {
-            UnitOfWork.Dispose();
-        }
+        return isSpecified;
+    }
+
+    public void Dispose()
+    {
+        UnitOfWork.Dispose();
     }
 }

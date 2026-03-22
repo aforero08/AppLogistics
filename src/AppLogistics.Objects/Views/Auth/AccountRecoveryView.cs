@@ -1,12 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace AppLogistics.Objects
+namespace AppLogistics.Objects;
+
+public class AccountRecoveryView : BaseView<Account>
 {
-    public class AccountRecoveryView : BaseView<Account>
-    {
-        [Required]
-        [EmailAddress]
-        [StringLength(256)]
-        public string Email { get; set; }
-    }
+    [Required]
+    [EmailAddress]
+    [StringLength(256)]
+    public string Email { get; set; }
 }

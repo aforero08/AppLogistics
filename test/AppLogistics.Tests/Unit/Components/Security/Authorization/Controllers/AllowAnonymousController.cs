@@ -2,19 +2,18 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics.CodeAnalysis;
 
-namespace AppLogistics.Components.Security.Tests
+namespace AppLogistics.Components.Security.Tests;
+
+[AllowAnonymous]
+[ExcludeFromCodeCoverage]
+public class AllowAnonymousController : AuthorizedController
 {
+    [HttpGet]
+    [Authorize]
     [AllowAnonymous]
-    [ExcludeFromCodeCoverage]
-    public class AllowAnonymousController : AuthorizedController
+    [AllowUnauthorized]
+    public ViewResult AuthorizedAction()
     {
-        [HttpGet]
-        [Authorize]
-        [AllowAnonymous]
-        [AllowUnauthorized]
-        public ViewResult AuthorizedAction()
-        {
-            return null;
-        }
+        return null;
     }
 }

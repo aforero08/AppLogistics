@@ -1,11 +1,10 @@
 ﻿using AppLogistics.Objects;
 using System.ComponentModel.DataAnnotations;
 
-namespace AppLogistics.Tests
+namespace AppLogistics.Tests;
+
+public class TestModel : BaseModel
 {
-    public class TestModel : BaseModel
-    {
-        [StringLength(128)]
-        public string Title { get; set; }
-    }
+    [StringLength(128)]
+    public string Title { get; set; }
 }

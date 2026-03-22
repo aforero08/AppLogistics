@@ -1,11 +1,10 @@
 using AppLogistics.Objects;
 
-namespace AppLogistics.Validators
+namespace AppLogistics.Validators;
+
+public interface IEpsValidator : IValidator
 {
-    public interface IEpsValidator : IValidator
-    {
-        bool CanCreate(EpsView view);
-        bool CanEdit(EpsView view);
-        bool CanDelete(int id);
-    }
+    bool CanCreate(EpsView view);
+    bool CanEdit(EpsView view);
+    bool CanDelete(int id);
 }

@@ -4,20 +4,19 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using System.Threading.Tasks;
 
-namespace AppLogistics.Components.Security
-{
-    public class AuthenticationEvents : CookieAuthenticationEvents
-    {
-        public override Task RedirectToLogin(RedirectContext<CookieAuthenticationOptions> context)
-        {
-            LinkGenerator link = context.HttpContext.RequestServices.GetRequiredService<LinkGenerator>();
-            context.RedirectUri = link.GetUriByAction(
-                context.HttpContext,
-                "Login",
-                "Auth",
-                new { area = "", returnUrl = $"{context.Request.PathBase}{context.Request.Path}" })!;
+namespace AppLogistics.Components.Security;
 
-            return base.RedirectToLogin(context);
-        }
+public class AuthenticationEvents : CookieAuthenticationEvents
+{
+    public override Task RedirectToLogin(RedirectContext<CookieAuthenticationOptions> context)
+    {
+        LinkGenerator link = context.HttpContext.RequestServices.GetRequiredService<LinkGenerator>();
+        context.RedirectUri = link.GetUriByAction(
+            context.HttpContext,
+            "Login",
+            "Auth",
+            new { area = "", returnUrl = $"{context.Request.PathBase}{context.Request.Path}" })!;
+
+        return base.RedirectToLogin(context);
     }
 }

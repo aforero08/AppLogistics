@@ -4,53 +4,52 @@ using AppLogistics.Resources;
 using System;
 using System.Linq;
 
-namespace AppLogistics.Validators
+namespace AppLogistics.Validators;
+
+public class RateValidator : BaseValidator, IRateValidator
 {
-    public class RateValidator : BaseValidator, IRateValidator
+    public RateValidator(IUnitOfWork unitOfWork)
+        : base(unitOfWork)
     {
-        public RateValidator(IUnitOfWork unitOfWork)
-            : base(unitOfWork)
+    }
+
+    public bool CanCreate(RateCreateEditView view)
+    {
+        return IsUniqueName(view.Id, view.Name) && ModelState.IsValid;
+    }
+
+    public bool CanEdit(RateCreateEditView view)
+    {
+        return IsUniqueName(view.Id, view.Name) && ModelState.IsValid;
+    }
+
+    public bool CanDelete(int id)
+    {
+        var hasReferencedServices = UnitOfWork.Select<Service>()
+            .Where(c => c.RateId.Equals(id))
+            .Any();
+
+        if (hasReferencedServices)
         {
+            Alerts.AddError(Validation.For<RateCreateEditView>("AssociatedServices"));
+            return false;
         }
 
-        public bool CanCreate(RateCreateEditView view)
+        return ModelState.IsValid;
+    }
+
+    private bool IsUniqueName(int rateId, string rateName)
+    {
+        var alreadyExists = UnitOfWork.Select<Rate>()
+            .Where(r => r.Name ==rateName && r.Id != rateId)
+            .Any();
+
+        if (alreadyExists)
         {
-            return IsUniqueName(view.Id, view.Name) && ModelState.IsValid;
+            Alerts.AddError(Validation.For<RateCreateEditView>("NotUniqueName"));
+            return false;
         }
 
-        public bool CanEdit(RateCreateEditView view)
-        {
-            return IsUniqueName(view.Id, view.Name) && ModelState.IsValid;
-        }
-
-        public bool CanDelete(int id)
-        {
-            var hasReferencedServices = UnitOfWork.Select<Service>()
-                .Where(c => c.RateId.Equals(id))
-                .Any();
-
-            if (hasReferencedServices)
-            {
-                Alerts.AddError(Validation.For<RateCreateEditView>("AssociatedServices"));
-                return false;
-            }
-
-            return ModelState.IsValid;
-        }
-
-        private bool IsUniqueName(int rateId, string rateName)
-        {
-            var alreadyExists = UnitOfWork.Select<Rate>()
-                .Where(r => r.Name ==rateName && r.Id != rateId)
-                .Any();
-
-            if (alreadyExists)
-            {
-                Alerts.AddError(Validation.For<RateCreateEditView>("NotUniqueName"));
-                return false;
-            }
-
-            return true;
-        }
+        return true;
     }
 }
