@@ -175,7 +175,7 @@ public class Startup
         services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
         services.AddSingleton<IValidationAttributeAdapterProvider, ValidationAdapterProvider>();
         services.AddSingleton<IAuthorization>(provider => new Authorization(typeof(BaseController).Assembly, provider));
-        services.AddSingleton(new MapperConfiguration(mapper => mapper.AddMaps(typeof(BaseView).Assembly)).CreateMapper());
+        services.AddAutoMapper(mapper => mapper.AddMaps(typeof(BaseView).Assembly));
 
         Language[] supported = Config.GetSection("Languages:Supported").Get<Language[]>();
         services.AddSingleton<ILanguages>(new Languages(Config["Languages:Default"], supported));

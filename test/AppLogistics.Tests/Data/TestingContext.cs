@@ -3,6 +3,7 @@ using AppLogistics.Objects;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging.Abstractions;
 using MvcTemplate.Objects.Mapping;
 using System;
 using System.Linq;
@@ -17,7 +18,7 @@ public static class TestingContext
     static TestingContext()
     {
         IConfiguration config = new ConfigurationBuilder().AddJsonFile($"configuration.testing.json").AddEnvironmentVariables("MvcTemplate__Testing__").Build();
-        Mapper = new MapperConfiguration(mapper => mapper.AddProfile(new MappingProfile())).CreateMapper();
+        Mapper = new MapperConfiguration(mapper => mapper.AddProfile(new MappingProfile()), new NullLoggerFactory()).CreateMapper();
         Options = new DbContextOptionsBuilder<Context>().UseSqlServer(config["Data:Connection"]).Options;
 
         using Context context = new TestContext(Options);
