@@ -19,7 +19,7 @@ public static class HtmlHelperFactory
 {
     public static IHtmlHelper CreateHtmlHelper()
     {
-        IHtmlHelper<Object> html = Substitute.For<IHtmlHelper<Object>>();
+        IHtmlHelper<object> html = Substitute.For<IHtmlHelper<object>>();
         ViewContext context = CreateViewContext();
         html.ViewContext.Returns(context);
 
@@ -59,7 +59,7 @@ public static class HtmlHelperFactory
 
         url.ActionContext.Returns(context);
         factory.GetUrlHelper(context).Returns(url);
-        url.Content(Arg.Any<String>()).Returns(info => info.Arg<String>());
+        url.Content(Arg.Any<string>()).Returns(info => info.Arg<string>());
 
         return factory;
     }

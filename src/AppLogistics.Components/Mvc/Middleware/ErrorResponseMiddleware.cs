@@ -42,7 +42,7 @@ public class ErrorResponseMiddleware
         }
     }
 
-    private async Task View(HttpContext context, String path)
+    private async Task View(HttpContext context, string path)
     {
         Match abbreviation = Regex.Match(context.Request.Path, "^/(?<abbreviation>\\w{2})(/|$)");
 

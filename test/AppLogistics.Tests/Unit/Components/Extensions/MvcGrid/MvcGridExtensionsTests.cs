@@ -66,14 +66,14 @@ public class MvcGridExtensionsTests
     public void AddAction_NoId_Throws()
     {
         IAuthorization authorization = html.Grid.ViewContext!.HttpContext.RequestServices.GetRequiredService<IAuthorization>();
-        IGridColumnsOf<Object> gridColumns = new GridColumns<Object>(new Grid<Object>(Array.Empty<Object>()));
+        IGridColumnsOf<object> gridColumns = new GridColumns<object>(new Grid<object>(Array.Empty<object>()));
         authorization.IsGrantedFor(Arg.Any<int?>(), Arg.Any<string>(), Arg.Any<string>(), "Details").Returns(true);
         gridColumns.Grid.ViewContext = html.Grid.ViewContext;
 
-        IGridColumn<Object, IHtmlContent> column = gridColumns.AddAction("Delete", "fa fa-times");
+        IGridColumn<object, IHtmlContent> column = gridColumns.AddAction("Delete", "fa fa-times");
 
-        String actual = Assert.Throws<Exception>(() => column.ValueFor(new GridRow<Object>(new Object(), 0))).Message;
-        String expected = "Object type does not have an id.";
+        string actual = Assert.Throws<Exception>(() => column.ValueFor(new GridRow<object>(new object(), 0))).Message;
+        string expected = "Object type does not have an id.";
 
         Assert.Equal(expected, actual);
     }
@@ -111,9 +111,9 @@ public class MvcGridExtensionsTests
     [Fact]
     public void AddBoolean_Column()
     {
-        Expression<Func<AllTypesView, Boolean>> expression = model => model.BooleanField;
+        Expression<Func<AllTypesView, bool>> expression = model => model.BooleanField;
 
-        IGridColumn<AllTypesView, Boolean> actual = columns.AddBoolean(expression);
+        IGridColumn<AllTypesView, bool> actual = columns.AddBoolean(expression);
 
         Assert.Equal("text-start", actual.CssClasses);
         Assert.Equal(expression, actual.Expression);
@@ -126,7 +126,7 @@ public class MvcGridExtensionsTests
     public void AddBoolean_True()
     {
         GridRow<AllTypesView> row = new(new AllTypesView { BooleanField = true }, 0);
-        IGridColumn<AllTypesView, Boolean> column = columns.AddBoolean(model => model.BooleanField);
+        IGridColumn<AllTypesView, bool> column = columns.AddBoolean(model => model.BooleanField);
 
         Assert.Equal(Resource.ForString("Yes"), column.ValueFor(row).ToString());
     }
@@ -135,7 +135,7 @@ public class MvcGridExtensionsTests
     public void AddBoolean_False()
     {
         GridRow<AllTypesView> row = new(new AllTypesView { BooleanField = false }, 0);
-        IGridColumn<AllTypesView, Boolean> column = columns.AddBoolean(model => model.BooleanField);
+        IGridColumn<AllTypesView, bool> column = columns.AddBoolean(model => model.BooleanField);
 
         Assert.Equal(Resource.ForString("No"), column.ValueFor(row).ToString());
     }
@@ -143,9 +143,9 @@ public class MvcGridExtensionsTests
     [Fact]
     public void AddBoolean_Nullable_Column()
     {
-        Expression<Func<AllTypesView, Boolean?>> expression = model => model.NullableBooleanField;
+        Expression<Func<AllTypesView, bool?>> expression = model => model.NullableBooleanField;
 
-        IGridColumn<AllTypesView, Boolean?> actual = columns.AddBoolean(expression);
+        IGridColumn<AllTypesView, bool?> actual = columns.AddBoolean(expression);
 
         Assert.Equal("nullable-boolean-field", actual.Name);
         Assert.Equal("text-start", actual.CssClasses);
@@ -158,7 +158,7 @@ public class MvcGridExtensionsTests
     public void AddBoolean_Nullable()
     {
         GridRow<AllTypesView> row = new(new AllTypesView { NullableBooleanField = null }, 0);
-        IGridColumn<AllTypesView, Boolean?> column = columns.AddBoolean(model => model.NullableBooleanField);
+        IGridColumn<AllTypesView, bool?> column = columns.AddBoolean(model => model.NullableBooleanField);
 
         Assert.Empty(column.ValueFor(row).ToString());
     }
@@ -167,7 +167,7 @@ public class MvcGridExtensionsTests
     public void AddBoolean_Nullable_True()
     {
         GridRow<AllTypesView> row = new(new AllTypesView { NullableBooleanField = true }, 0);
-        IGridColumn<AllTypesView, Boolean?> column = columns.AddBoolean(model => model.NullableBooleanField);
+        IGridColumn<AllTypesView, bool?> column = columns.AddBoolean(model => model.NullableBooleanField);
 
         Assert.Equal(Resource.ForString("Yes"), column.ValueFor(row).ToString());
     }
@@ -176,7 +176,7 @@ public class MvcGridExtensionsTests
     public void AddBoolean_Nullable_False()
     {
         GridRow<AllTypesView> row = new(new AllTypesView { NullableBooleanField = false }, 0);
-        IGridColumn<AllTypesView, Boolean?> column = columns.AddBoolean(model => model.NullableBooleanField);
+        IGridColumn<AllTypesView, bool?> column = columns.AddBoolean(model => model.NullableBooleanField);
 
         Assert.Equal(Resource.ForString("No"), column.ValueFor(row).ToString());
     }
@@ -228,7 +228,7 @@ public class MvcGridExtensionsTests
     [Fact]
     public void AddProperty_SetsColumnName()
     {
-        Expression<Func<AllTypesView, SByte>> expression = model => model.NullableSByteField!.Value;
+        Expression<Func<AllTypesView, sbyte>> expression = model => model.NullableSByteField!.Value;
 
         Assert.Equal("nullable-s-byte-field-value", columns.AddProperty(expression).Name);
     }
@@ -415,7 +415,7 @@ public class MvcGridExtensionsTests
     [InlineData(" test", "test table-hover")]
     [InlineData("test ", "test  table-hover")]
     [InlineData(" test ", "test  table-hover")]
-    public void ApplyDefaults_Values(string css, String classes)
+    public void ApplyDefaults_Values(string css, string classes)
     {
         IGridColumn column = html.Grid.Columns.Add(model => model.ByteField);
         html.Grid.Attributes["class"] = css;
