@@ -18,8 +18,8 @@ public class VehicleTypeServiceTests
 
     public VehicleTypeServiceTests()
     {
-        context = TestingContext.Create();
-        service = new VehicleTypeService(new UnitOfWork(TestingContext.Create(), TestingContext.Mapper));
+        context = TestFixture.Create().Drop();
+        service = new VehicleTypeService(new UnitOfWork(TestFixture.Create(), TestFixture.Mapper));
 
         context.Set<VehicleType>().Add(vehicleType = ObjectsFactory.CreateVehicleType());
         context.SaveChanges();
@@ -31,7 +31,7 @@ public class VehicleTypeServiceTests
     public void Get_ReturnsViewById()
     {
         VehicleTypeView actual = service.Get<VehicleTypeView>(vehicleType.Id);
-        VehicleTypeView expected = TestingContext.Mapper.Map<VehicleTypeView>(vehicleType);
+        VehicleTypeView expected = TestFixture.Mapper.Map<VehicleTypeView>(vehicleType);
 
         Assert.Equal(expected.CreationDate, actual.CreationDate);
         Assert.Equal(expected.Name, actual.Name);
@@ -48,7 +48,7 @@ public class VehicleTypeServiceTests
         VehicleTypeView[] actual = service.GetViews().ToArray();
         VehicleTypeView[] expected = context
             .Set<VehicleType>()
-            .ProjectTo<VehicleTypeView>(TestingContext.Mapper.ConfigurationProvider)
+            .ProjectTo<VehicleTypeView>(TestFixture.Mapper.ConfigurationProvider)
             .OrderByDescending(view => view.CreationDate)
             .ToArray();
 

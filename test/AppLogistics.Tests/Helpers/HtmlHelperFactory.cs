@@ -1,4 +1,4 @@
-﻿using AppLogistics.Components.Security;
+using AppLogistics.Components.Security;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

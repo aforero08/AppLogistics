@@ -19,8 +19,8 @@ public class ServiceServiceTests
 
     public ServiceServiceTests()
     {
-        context = TestingContext.Create();
-        serviceService = new ServiceService(new UnitOfWork(TestingContext.Create(), TestingContext.Mapper));
+        context = TestFixture.Create().Drop();
+        serviceService = new ServiceService(new UnitOfWork(TestFixture.Create(), TestFixture.Mapper));
 
         context.Set<Service>().Add(service = ObjectsFactory.CreateService());
         context.Set<Rate>().Add(rate = ObjectsFactory.CreateRate(1));
@@ -33,7 +33,7 @@ public class ServiceServiceTests
     public void Get_ReturnsViewById()
     {
         ServiceView actual = serviceService.Get<ServiceView>(service.Id);
-        ServiceView expected = TestingContext.Mapper.Map<ServiceView>(service);
+        ServiceView expected = TestFixture.Mapper.Map<ServiceView>(service);
 
         Assert.Equal(expected.CustomsInformation, actual.CustomsInformation);
         Assert.Equal(expected.VehicleNumber, actual.VehicleNumber);
@@ -58,7 +58,7 @@ public class ServiceServiceTests
         ServiceView[] actual = serviceService.GetViews().ToArray();
         ServiceView[] expected = context
             .Set<Service>()
-            .ProjectTo<ServiceView>(TestingContext.Mapper.ConfigurationProvider)
+            .ProjectTo<ServiceView>(TestFixture.Mapper.ConfigurationProvider)
             .OrderByDescending(view => view.CreationDate)
             .ToArray();
 

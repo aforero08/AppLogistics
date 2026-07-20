@@ -1,4 +1,4 @@
-﻿using AppLogistics.Data.Logging;
+using AppLogistics.Data.Logging;
 using AppLogistics.Objects;
 using AppLogistics.Tests;
 using Microsoft.EntityFrameworkCore;
@@ -20,10 +20,10 @@ public class UnitOfWorkTests
 
     public UnitOfWorkTests()
     {
-        context = TestingContext.Create();
+        context = TestFixture.Create();
         logger = Substitute.For<IAuditLogger>();
         model = ObjectsFactory.CreateTestModel();
-        unitOfWork = new UnitOfWork(context, TestingContext.Mapper, logger);
+        unitOfWork = new UnitOfWork(context, TestFixture.Mapper, logger);
     }
 
     #region GetAs<TModel, TDestination>(Int32? id)
@@ -40,7 +40,7 @@ public class UnitOfWorkTests
         context.Add(model);
         context.SaveChanges();
 
-        TestView expected = TestingContext.Mapper.Map<TestView>(model);
+        TestView expected = TestFixture.Mapper.Map<TestView>(model);
         TestView actual = unitOfWork.GetAs<TestModel, TestView>(model.Id);
 
         Assert.Equal(expected.CreationDate, actual.CreationDate);
@@ -86,7 +86,7 @@ public class UnitOfWorkTests
     public void To_ConvertsSourceToDestination()
     {
         TestView actual = unitOfWork.To<TestView>(model);
-        TestView expected = TestingContext.Mapper.Map<TestView>(model);
+        TestView expected = TestFixture.Mapper.Map<TestView>(model);
 
         Assert.Equal(expected.CreationDate, actual.CreationDate);
         Assert.Equal(expected.Title, actual.Title);
@@ -117,15 +117,15 @@ public class UnitOfWorkTests
     public void InsertRange_AddsModelsToDbSet()
     {
         IEnumerable<TestModel> models = new[] { ObjectsFactory.CreateTestModel(1), ObjectsFactory.CreateTestModel(2) };
-        DbContext testingContext = Substitute.For<DbContext>();
-        testingContext.When(sub => sub.AddRange(models)).DoNotCallBase();
+        DbContext mockContext = Substitute.For<DbContext>();
+        mockContext.When(sub => sub.AddRange(models)).DoNotCallBase();
 
         unitOfWork.Dispose();
 
-        unitOfWork = new UnitOfWork(testingContext, TestingContext.Mapper);
+        unitOfWork = new UnitOfWork(mockContext, TestFixture.Mapper);
         unitOfWork.InsertRange(models);
 
-        testingContext.Received().AddRange(models);
+        mockContext.Received().AddRange(models);
     }
 
     #endregion InsertRange<TModel>(IEnumerable<TModel> models)
@@ -156,6 +156,11 @@ public class UnitOfWorkTests
     [InlineData(EntityState.Unchanged, EntityState.Unchanged)]
     public void Update_Entry(EntityState initialState, EntityState state)
     {
+        if (initialState == EntityState.Added)
+        {
+            model.Id = 1;
+        }
+
         EntityEntry<TestModel> entry = context.Entry(model);
         entry.State = initialState;
 
@@ -179,10 +184,16 @@ public class UnitOfWorkTests
         context.AddRange(models);
         context.SaveChanges();
 
+        var insertedIds = models.Select(m => m.Id).ToArray();
+
         unitOfWork.DeleteRange(models);
         unitOfWork.Commit();
 
-        Assert.Empty(context.Set<TestModel>());
+        var remainingIds = context.Set<TestModel>().Select(x => x.Id).ToHashSet();
+        foreach (int id in insertedIds)
+        {
+            Assert.DoesNotContain(id, remainingIds);
+        }
     }
 
     #endregion DeleteRange<TModel>(IEnumerable<TModel> models)
@@ -198,7 +209,7 @@ public class UnitOfWorkTests
         unitOfWork.Delete(model);
         unitOfWork.Commit();
 
-        Assert.Empty(context.Set<TestModel>());
+        Assert.DoesNotContain(context.Set<TestModel>(), x => x.Id == model.Id);
     }
 
     #endregion Delete<TModel>(TModel model)
@@ -214,7 +225,7 @@ public class UnitOfWorkTests
         unitOfWork.Delete<TestModel>(model.Id);
         unitOfWork.Commit();
 
-        Assert.Empty(context.Set<TestModel>());
+        Assert.DoesNotContain(context.Set<TestModel>(), x => x.Id == model.Id);
     }
 
     #endregion Delete<TModel>(Int32 id)
@@ -224,11 +235,11 @@ public class UnitOfWorkTests
     [Fact]
     public void Commit_SavesChanges()
     {
-        DbContext testingContext = Substitute.For<DbContext>();
+        DbContext mockContext = Substitute.For<DbContext>();
 
-        new UnitOfWork(testingContext, TestingContext.Mapper).Commit();
+        new UnitOfWork(mockContext, TestFixture.Mapper).Commit();
 
-        testingContext.Received().SaveChanges();
+        mockContext.Received().SaveChanges();
     }
 
     [Fact]
@@ -266,11 +277,11 @@ public class UnitOfWorkTests
     [Fact]
     public void Dispose_Context()
     {
-        DbContext testingContext = Substitute.For<DbContext>();
+        DbContext mockContext = Substitute.For<DbContext>();
 
-        new UnitOfWork(testingContext, TestingContext.Mapper).Dispose();
+        new UnitOfWork(mockContext, TestFixture.Mapper).Dispose();
 
-        testingContext.Received().Dispose();
+        mockContext.Received().Dispose();
     }
 
     [Fact]

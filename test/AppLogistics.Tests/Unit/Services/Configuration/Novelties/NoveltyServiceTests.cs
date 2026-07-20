@@ -18,8 +18,8 @@ public class NoveltyServiceTests
 
     public NoveltyServiceTests()
     {
-        context = TestingContext.Create();
-        service = new NoveltyService(new UnitOfWork(TestingContext.Create(), TestingContext.Mapper));
+        context = TestFixture.Create().Drop();
+        service = new NoveltyService(new UnitOfWork(TestFixture.Create(), TestFixture.Mapper));
 
         context.Set<Novelty>().Add(novelty = ObjectsFactory.CreateNovelty());
         context.SaveChanges();
@@ -31,7 +31,7 @@ public class NoveltyServiceTests
     public void Get_ReturnsViewById()
     {
         NoveltyView actual = service.Get<NoveltyView>(novelty.Id);
-        NoveltyView expected = TestingContext.Mapper.Map<NoveltyView>(novelty);
+        NoveltyView expected = TestFixture.Mapper.Map<NoveltyView>(novelty);
 
         Assert.Equal(expected.CreationDate, actual.CreationDate);
         Assert.Equal(expected.Description, actual.Description);
@@ -49,7 +49,7 @@ public class NoveltyServiceTests
         NoveltyView[] actual = service.GetViews().ToArray();
         NoveltyView[] expected = context
             .Set<Novelty>()
-            .ProjectTo<NoveltyView>(TestingContext.Mapper.ConfigurationProvider)
+            .ProjectTo<NoveltyView>(TestFixture.Mapper.ConfigurationProvider)
             .OrderByDescending(view => view.CreationDate)
             .ToArray();
 

@@ -1,4 +1,4 @@
-﻿using AppLogistics.Objects;
+using AppLogistics.Objects;
 using System;
 using System.Collections.Generic;
 
@@ -12,6 +12,7 @@ public static class ObjectsFactory
     {
         return new Account
         {
+            Id = id,
             Username = "Username" + id,
             Passhash = "Passhash" + id,
 
@@ -123,6 +124,7 @@ public static class ObjectsFactory
     {
         return new Role
         {
+            Id = id,
             Title = "Title" + id,
 
             Accounts = new List<Account>(),
@@ -497,6 +499,7 @@ public static class ObjectsFactory
             Name = "Name" + id,
             Address = "Address" + id,
             BornDate = DateTime.Today,
+            BirthPlace = "BirthPlace" + id,
             Comments = "Comments" + id,
             DocumentNumber = "DocumentNumber" + id,
             Email = "Email" + id,
@@ -586,6 +589,7 @@ public static class ObjectsFactory
             Address = "Address" + id,
             AfpId = id,
             BornDate = DateTime.Now,
+            BirthPlace = "BirthPlace" + id,
             Comments = "Comments" + id,
             CountryId = id,
             DocumentNumber = "DocumentNumber" + id,

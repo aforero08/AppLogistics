@@ -1,4 +1,4 @@
-﻿using AppLogistics.Objects;
+using AppLogistics.Objects;
 using AppLogistics.Tests;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
@@ -17,13 +17,13 @@ public class LoggableEntityTests
 
     public LoggableEntityTests()
     {
-        using (DbContext tempContext = TestingContext.Create())
+        using (DbContext tempContext = TestFixture.Create())
         {
             tempContext.Add(model = ObjectsFactory.CreateTestModel());
             tempContext.SaveChanges();
         }
 
-        context = TestingContext.Create();
+        context = TestFixture.Create();
         entry = context.Entry<BaseModel>(model);
     }
 
@@ -57,7 +57,7 @@ public class LoggableEntityTests
     {
         string title = model.Title;
 
-        context = TestingContext.Create();
+        context = TestFixture.Create();
         context.Set<TestModel>().Attach(model);
 
         entry = context.Entry<BaseModel>(model);

@@ -1,4 +1,4 @@
-﻿using AppLogistics.Components.Security;
+using AppLogistics.Components.Security;
 using AppLogistics.Data.Migrations;
 using AppLogistics.Objects;
 using AppLogistics.Tests;
@@ -53,8 +53,8 @@ public class ResourcesTests
     [Fact]
     public void Resources_HasAllPermissionAreaTitles()
     {
-        using DbContext context = TestingContext.Create();
-        using (DatabaseConfiguration configuration = new DatabaseConfiguration(context, Substitute.For<IConfiguration>(), Substitute.For<IHasher>(), TestingContext.Mapper))
+        using DbContext context = TestFixture.Create();
+        using (DatabaseConfiguration configuration = new DatabaseConfiguration(context, Substitute.For<IConfiguration>(), Substitute.For<IHasher>(), TestFixture.Mapper))
         {
             configuration.SeedData();
 
@@ -69,8 +69,8 @@ public class ResourcesTests
     [Fact]
     public void Resources_HasAllPermissionControllerTitles()
     {
-        using DbContext context = TestingContext.Create();
-        using (DatabaseConfiguration configuration = new DatabaseConfiguration(context, Substitute.For<IConfiguration>(), Substitute.For<IHasher>(), TestingContext.Mapper))
+        using DbContext context = TestFixture.Create();
+        using (DatabaseConfiguration configuration = new DatabaseConfiguration(context, Substitute.For<IConfiguration>(), Substitute.For<IHasher>(), TestFixture.Mapper))
         {
             configuration.SeedData();
 
@@ -85,8 +85,8 @@ public class ResourcesTests
     [Fact]
     public void Resources_HasAllPermissionActionTitles()
     {
-        using DbContext context = TestingContext.Create();
-        using (DatabaseConfiguration configuration = new DatabaseConfiguration(context, Substitute.For<IConfiguration>(), Substitute.For<IHasher>(), TestingContext.Mapper))
+        using DbContext context = TestFixture.Create();
+        using (DatabaseConfiguration configuration = new DatabaseConfiguration(context, Substitute.For<IConfiguration>(), Substitute.For<IHasher>(), TestFixture.Mapper))
         {
             configuration.SeedData();
 

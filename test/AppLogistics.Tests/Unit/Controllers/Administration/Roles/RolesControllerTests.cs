@@ -1,4 +1,4 @@
-﻿using AppLogistics.Components.Security;
+using AppLogistics.Components.Security;
 using AppLogistics.Controllers.Tests;
 using AppLogistics.Objects;
 using AppLogistics.Services;

@@ -1,4 +1,4 @@
-﻿namespace AppLogistics.Tests;
+namespace AppLogistics.Tests;
 
 public class Program
 {

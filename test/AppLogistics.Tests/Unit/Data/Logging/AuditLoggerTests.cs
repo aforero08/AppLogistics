@@ -1,4 +1,4 @@
-﻿using AppLogistics.Objects;
+using AppLogistics.Objects;
 using AppLogistics.Tests;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
@@ -18,9 +18,9 @@ public class AuditLoggerTests
 
     public AuditLoggerTests()
     {
-        context = TestingContext.Create();
+        context = TestFixture.Create();
         logger = new AuditLogger(context, 1);
-        DbContext dataContext = TestingContext.Create();
+        DbContext dataContext = TestFixture.Create();
         TestModel model = ObjectsFactory.CreateTestModel();
 
         entry = dataContext.Entry<BaseModel>(dataContext.Add(model).Entity);
@@ -34,11 +34,15 @@ public class AuditLoggerTests
     {
         entry.State = EntityState.Added;
 
+        int before = context.Set<AuditLog>().Count();
+
         logger.Log(new[] { entry });
         logger.Save();
 
         LoggableEntity expected = new LoggableEntity(entry);
-        AuditLog actual = context.Set<AuditLog>().Single();
+        AuditLog actual = context.Set<AuditLog>().OrderBy(l => l.Id).Last();
+
+        Assert.Equal(before + 1, context.Set<AuditLog>().Count());
 
         Assert.Equal(expected.ToString(), actual.Changes);
         Assert.Equal(expected.Name, actual.EntityName);
@@ -53,11 +57,15 @@ public class AuditLoggerTests
         (entry.Entity as TestModel).Title += "Test";
         entry.State = EntityState.Modified;
 
+        int before = context.Set<AuditLog>().Count();
+
         logger.Log(new[] { entry });
         logger.Save();
 
         LoggableEntity expected = new LoggableEntity(entry);
-        AuditLog actual = context.Set<AuditLog>().Single();
+        AuditLog actual = context.Set<AuditLog>().OrderBy(l => l.Id).Last();
+
+        Assert.Equal(before + 1, context.Set<AuditLog>().Count());
 
         Assert.Equal(expected.ToString(), actual.Changes);
         Assert.Equal(expected.Name, actual.EntityName);
@@ -71,10 +79,12 @@ public class AuditLoggerTests
     {
         entry.State = EntityState.Modified;
 
+        int before = context.Set<AuditLog>().Count();
+
         logger.Log(new[] { entry });
         logger.Save();
 
-        Assert.Empty(context.Set<AuditLog>());
+        Assert.Equal(before, context.Set<AuditLog>().Count());
     }
 
     [Fact]
@@ -82,11 +92,15 @@ public class AuditLoggerTests
     {
         entry.State = EntityState.Deleted;
 
+        int before = context.Set<AuditLog>().Count();
+
         logger.Log(new[] { entry });
         logger.Save();
 
         LoggableEntity expected = new LoggableEntity(entry);
-        AuditLog actual = context.Set<AuditLog>().Single();
+        AuditLog actual = context.Set<AuditLog>().OrderBy(l => l.Id).Last();
+
+        Assert.Equal(before + 1, context.Set<AuditLog>().Count());
 
         Assert.Equal(expected.ToString(), actual.Changes);
         Assert.Equal(expected.Name, actual.EntityName);
@@ -120,9 +134,11 @@ public class AuditLoggerTests
     {
         entry.State = EntityState.Added;
 
+        int before = context.Set<AuditLog>().Count();
+
         logger.Log(new[] { entry });
 
-        Assert.Empty(context.Set<AuditLog>());
+        Assert.Equal(before, context.Set<AuditLog>().Count());
     }
 
     #endregion Log(IEnumerable<EntityEntry<BaseModel>> entries)
@@ -134,11 +150,15 @@ public class AuditLoggerTests
     {
         LoggableEntity entity = new LoggableEntity(entry);
 
+        int before = context.Set<AuditLog>().Count();
+
         logger.Log(entity);
         logger.Save();
 
-        AuditLog actual = context.Set<AuditLog>().Single();
+        AuditLog actual = context.Set<AuditLog>().OrderBy(l => l.Id).Last();
         LoggableEntity expected = entity;
+
+        Assert.Equal(before + 1, context.Set<AuditLog>().Count());
 
         Assert.Equal(expected.ToString(), actual.Changes);
         Assert.Equal(expected.Name, actual.EntityName);
@@ -152,9 +172,11 @@ public class AuditLoggerTests
     {
         entry.State = EntityState.Added;
 
+        int before = context.Set<AuditLog>().Count();
+
         logger.Log(new LoggableEntity(entry));
 
-        Assert.Empty(context.Set<AuditLog>());
+        Assert.Equal(before, context.Set<AuditLog>().Count());
     }
 
     #endregion Log(LoggableEntity entity)
@@ -169,12 +191,16 @@ public class AuditLoggerTests
         LoggableEntity entity = new LoggableEntity(entry);
         logger = new AuditLogger(context, expectedAccountId);
 
+        int before = context.Set<AuditLog>().Count();
+
         logger.Log(entity);
         logger.Save();
         logger.Save();
 
-        AuditLog actual = context.Set<AuditLog>().Single();
+        AuditLog actual = context.Set<AuditLog>().OrderBy(l => l.Id).Last();
         LoggableEntity expected = entity;
+
+        Assert.Equal(before + 1, context.Set<AuditLog>().Count());
 
         Assert.Equal(expectedAccountId, actual.AccountId);
         Assert.Equal(expected.ToString(), actual.Changes);
@@ -190,12 +216,12 @@ public class AuditLoggerTests
     [Fact]
     public void Dispose_Context()
     {
-        DbContext testingContext = Substitute.For<DbContext>();
-        testingContext.ChangeTracker.Returns(context.ChangeTracker);
+        DbContext TestFixture = Substitute.For<DbContext>();
+        TestFixture.ChangeTracker.Returns(context.ChangeTracker);
 
-        new AuditLogger(testingContext, 0).Dispose();
+        new AuditLogger(TestFixture, 0).Dispose();
 
-        testingContext.Received().Dispose();
+        TestFixture.Received().Dispose();
     }
 
     [Fact]

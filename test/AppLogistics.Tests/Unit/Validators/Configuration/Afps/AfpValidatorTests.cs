@@ -15,8 +15,8 @@ public class AfpValidatorTests
 
     public AfpValidatorTests()
     {
-        context = TestingContext.Create();
-        validator = new AfpValidator(new UnitOfWork(TestingContext.Create(), TestingContext.Mapper));
+        context = TestFixture.Create().Drop();
+        validator = new AfpValidator(new UnitOfWork(context, TestFixture.Mapper));
 
         context.Set<Afp>().Add(afp = ObjectsFactory.CreateAfp());
         context.SaveChanges();

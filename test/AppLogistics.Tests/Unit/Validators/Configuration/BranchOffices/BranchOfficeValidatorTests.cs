@@ -15,8 +15,8 @@ public class BranchOfficeValidatorTests
 
     public BranchOfficeValidatorTests()
     {
-        context = TestingContext.Create();
-        validator = new BranchOfficeValidator(new UnitOfWork(TestingContext.Create(), TestingContext.Mapper));
+        context = TestFixture.Create().Drop();
+        validator = new BranchOfficeValidator(new UnitOfWork(context, TestFixture.Mapper));
 
         context.Set<BranchOffice>().Add(branchOffice = ObjectsFactory.CreateBranchOffice());
         context.SaveChanges();

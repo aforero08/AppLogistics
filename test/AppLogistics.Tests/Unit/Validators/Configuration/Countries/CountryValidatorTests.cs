@@ -15,8 +15,8 @@ public class CountryValidatorTests
 
     public CountryValidatorTests()
     {
-        context = TestingContext.Create();
-        validator = new CountryValidator(new UnitOfWork(TestingContext.Create(), TestingContext.Mapper));
+        context = TestFixture.Create().Drop();
+        validator = new CountryValidator(new UnitOfWork(context, TestFixture.Mapper));
 
         context.Set<Country>().Add(country = ObjectsFactory.CreateCountry());
         context.SaveChanges();

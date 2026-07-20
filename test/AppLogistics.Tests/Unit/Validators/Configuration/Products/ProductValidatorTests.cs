@@ -15,8 +15,8 @@ public class ProductValidatorTests
 
     public ProductValidatorTests()
     {
-        context = TestingContext.Create();
-        validator = new ProductValidator(new UnitOfWork(TestingContext.Create(), TestingContext.Mapper));
+        context = TestFixture.Create().Drop();
+        validator = new ProductValidator(new UnitOfWork(context, TestFixture.Mapper));
 
         context.Set<Product>().Add(product = ObjectsFactory.CreateProduct());
         context.SaveChanges();

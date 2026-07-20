@@ -18,8 +18,8 @@ public class ActivityServiceTests
 
     public ActivityServiceTests()
     {
-        context = TestingContext.Create();
-        service = new ActivityService(new UnitOfWork(TestingContext.Create(), TestingContext.Mapper));
+        context = TestFixture.Create().Drop();
+        service = new ActivityService(new UnitOfWork(TestFixture.Create(), TestFixture.Mapper));
 
         context.Set<Activity>().Add(activity = ObjectsFactory.CreateActivity());
         context.SaveChanges();
@@ -31,7 +31,7 @@ public class ActivityServiceTests
     public void Get_ReturnsViewById()
     {
         ActivityView actual = service.Get<ActivityView>(activity.Id);
-        ActivityView expected = TestingContext.Mapper.Map<ActivityView>(activity);
+        ActivityView expected = TestFixture.Mapper.Map<ActivityView>(activity);
 
         Assert.Equal(expected.CreationDate, actual.CreationDate);
         Assert.Equal(expected.Name, actual.Name);
@@ -48,7 +48,7 @@ public class ActivityServiceTests
         ActivityView[] actual = service.GetViews().ToArray();
         ActivityView[] expected = context
             .Set<Activity>()
-            .ProjectTo<ActivityView>(TestingContext.Mapper.ConfigurationProvider)
+            .ProjectTo<ActivityView>(TestFixture.Mapper.ConfigurationProvider)
             .OrderByDescending(view => view.CreationDate)
             .ToArray();
 

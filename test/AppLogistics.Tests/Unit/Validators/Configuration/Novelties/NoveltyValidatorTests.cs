@@ -15,8 +15,8 @@ public class NoveltyValidatorTests
 
     public NoveltyValidatorTests()
     {
-        context = TestingContext.Create();
-        validator = new NoveltyValidator(new UnitOfWork(TestingContext.Create(), TestingContext.Mapper));
+        context = TestFixture.Create().Drop();
+        validator = new NoveltyValidator(new UnitOfWork(context, TestFixture.Mapper));
 
         context.Set<Novelty>().Add(novelty = ObjectsFactory.CreateNovelty());
         context.SaveChanges();

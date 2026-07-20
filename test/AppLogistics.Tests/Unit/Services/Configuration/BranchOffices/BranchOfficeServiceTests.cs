@@ -18,8 +18,8 @@ public class BranchOfficeServiceTests
 
     public BranchOfficeServiceTests()
     {
-        context = TestingContext.Create();
-        service = new BranchOfficeService(new UnitOfWork(TestingContext.Create(), TestingContext.Mapper));
+        context = TestFixture.Create().Drop();
+        service = new BranchOfficeService(new UnitOfWork(TestFixture.Create(), TestFixture.Mapper));
 
         context.Set<BranchOffice>().Add(branchOffice = ObjectsFactory.CreateBranchOffice());
         context.SaveChanges();
@@ -31,7 +31,7 @@ public class BranchOfficeServiceTests
     public void Get_ReturnsViewById()
     {
         BranchOfficeView actual = service.Get<BranchOfficeView>(branchOffice.Id);
-        BranchOfficeView expected = TestingContext.Mapper.Map<BranchOfficeView>(branchOffice);
+        BranchOfficeView expected = TestFixture.Mapper.Map<BranchOfficeView>(branchOffice);
 
         Assert.Equal(expected.CreationDate, actual.CreationDate);
         Assert.Equal(expected.Name, actual.Name);
@@ -48,7 +48,7 @@ public class BranchOfficeServiceTests
         BranchOfficeView[] actual = service.GetViews().ToArray();
         BranchOfficeView[] expected = context
             .Set<BranchOffice>()
-            .ProjectTo<BranchOfficeView>(TestingContext.Mapper.ConfigurationProvider)
+            .ProjectTo<BranchOfficeView>(TestFixture.Mapper.ConfigurationProvider)
             .OrderByDescending(view => view.CreationDate)
             .ToArray();
 

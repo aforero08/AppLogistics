@@ -2,9 +2,12 @@ trigger:
   branches:
     include:
     - develop
+    - upgrade-to-NET6
   paths:
     include:
     - src/**
+    - test/**
+    - AppLogistics.sln
     - azure-pipelines.yml
 
 pool:
@@ -43,22 +46,9 @@ stages:
       displayName: 'Restore NuGet Packages'
       inputs:
         command: 'restore'
-        projects: 'src/**/*.csproj'
+        projects: 'AppLogistics.sln'
+        arguments: '--property:Configuration=$(buildConfiguration)'
 
-    # Install npm dependencies
-    - task: Npm@1
-      displayName: 'npm install'
-      inputs:
-        command: 'install'
-        workingDir: 'src/AppLogistics.Web'
-
-    # Build npm assets
-    - task: Npm@1
-      displayName: 'npm run build'
-      inputs:
-        command: 'custom'
-        customCommand: 'run build'
-        workingDir: 'src/AppLogistics.Web'
 
     # Build the project
     - task: DotNetCoreCLI@2
@@ -75,7 +65,6 @@ stages:
         command: 'test'
         projects: 'test/**/*.csproj'
         arguments: '--configuration $(buildConfiguration) --collect:"XPlat Code Coverage"'
-      continueOnError: true
 
     # Publish the application
     - task: DotNetCoreCLI@2

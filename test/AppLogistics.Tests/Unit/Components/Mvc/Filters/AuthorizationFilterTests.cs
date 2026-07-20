@@ -1,4 +1,4 @@
-﻿using AppLogistics.Components.Security;
+using AppLogistics.Components.Security;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Abstractions;

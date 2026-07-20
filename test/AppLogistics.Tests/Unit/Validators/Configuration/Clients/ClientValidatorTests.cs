@@ -15,8 +15,8 @@ public class ClientValidatorTests
 
     public ClientValidatorTests()
     {
-        context = TestingContext.Create();
-        validator = new ClientValidator(new UnitOfWork(TestingContext.Create(), TestingContext.Mapper));
+        context = TestFixture.Create().Drop();
+        validator = new ClientValidator(new UnitOfWork(context, TestFixture.Mapper));
 
         context.Set<Client>().Add(client = ObjectsFactory.CreateClient());
         context.SaveChanges();

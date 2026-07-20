@@ -18,8 +18,8 @@ public class EmployeeServiceTests
 
     public EmployeeServiceTests()
     {
-        context = TestingContext.Create();
-        service = new EmployeeService(new UnitOfWork(TestingContext.Create(), TestingContext.Mapper));
+        context = TestFixture.Create().Drop();
+        service = new EmployeeService(new UnitOfWork(TestFixture.Create(), TestFixture.Mapper));
 
         context.Set<Employee>().Add(employee = ObjectsFactory.CreateEmployee());
         context.SaveChanges();
@@ -31,7 +31,7 @@ public class EmployeeServiceTests
     public void Get_ReturnsViewById()
     {
         EmployeeView actual = service.Get<EmployeeView>(employee.Id);
-        EmployeeView expected = TestingContext.Mapper.Map<EmployeeView>(employee);
+        EmployeeView expected = TestFixture.Mapper.Map<EmployeeView>(employee);
 
         Assert.Equal(expected.HasDisciplinaryBackground, actual.HasDisciplinaryBackground);
         Assert.Equal(expected.HasInternalRegulations, actual.HasInternalRegulations);
@@ -82,7 +82,7 @@ public class EmployeeServiceTests
         EmployeeView[] actual = service.GetViews().ToArray();
         EmployeeView[] expected = context
             .Set<Employee>()
-            .ProjectTo<EmployeeView>(TestingContext.Mapper.ConfigurationProvider)
+            .ProjectTo<EmployeeView>(TestFixture.Mapper.ConfigurationProvider)
             .OrderByDescending(view => view.CreationDate)
             .ToArray();
 
@@ -137,6 +137,14 @@ public class EmployeeServiceTests
     {
         EmployeeCreateEditView view = ObjectsFactory.CreateEmployeeCreateEditView(1);
         view.Id = 0;
+        view.AfpId = employee.AfpId;
+        view.CountryId = employee.CountryId;
+        view.DocumentTypeId = employee.DocumentTypeId;
+        view.EducationLevelId = employee.EducationLevelId;
+        view.EpsId = employee.EpsId;
+        view.EthnicGroupId = employee.EthnicGroupId;
+        view.MaritalStatusId = employee.MaritalStatusId;
+        view.SexId = employee.SexId;
 
         service.Create(view);
 

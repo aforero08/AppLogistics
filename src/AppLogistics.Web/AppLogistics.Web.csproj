@@ -17,7 +17,7 @@
     <DebugType Condition="'$(Configuration)'=='Debug'">portable</DebugType>
     <DebugSymbols Condition="'$(Configuration)'=='Debug'">true</DebugSymbols>
     <CopyLocalLockFileAssemblies Condition="'$(Configuration)'=='Debug'">true</CopyLocalLockFileAssemblies>
-    <PreserveCompilationContext>true</PreserveCompilationContext>
+    <PreserveCompilationContext Condition="'$(Configuration)'=='Debug'">true</PreserveCompilationContext>
     <UserSecretsId>cc495ebc-d983-42ed-8b3c-2beb14443922</UserSecretsId>
   </PropertyGroup>
 
@@ -37,16 +37,14 @@
     <Content Update="wwwroot\Content\Private\**" CopyToPublishDirectory="Always" />
     <Content Update="wwwroot\Scripts\Application\**\*.min.js" CopyToPublishDirectory="Always" />
     <Content Update="wwwroot\Content\Application\**\*.min.css" CopyToPublishDirectory="Always" />
-    <PackageReference Include="Genny" Version="2.2.1" />
+    <PackageReference Include="Genny" Version="2.2.1" Condition="'$(Configuration)'=='Debug'" />
     <PackageReference Include="Humanizer.Core" Version="2.14.1" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.36">
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.28">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.18" />
     <PackageReference Include="NonFactors.Grid.Mvc6" Version="7.0.0" />
-    <PackageReference Include="NonFactors.Lookup.Mvc6" Version="6.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="6.0.1" />
+    <PackageReference Include="NonFactors.Lookup.Mvc6" Version="6.3.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -59,12 +57,12 @@
   </ItemGroup>
 
   <Target Name="PrePublishScript" BeforeTargets="PrepareForPublish">
-    <Exec Command="npm install --no-save" />
+    <Exec Command="npm ci" />
     <Exec Command="npm run build" />
   </Target>
 
   <ItemGroup>
-    <DotNetCliToolReference Include="Genny" Version="2.2.1" />
+    <DotNetCliToolReference Include="Genny" Version="2.2.1" Condition="'$(Configuration)'=='Debug'" />
   </ItemGroup>
 
 </Project>

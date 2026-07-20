@@ -1,4 +1,4 @@
-﻿using AppLogistics.Tests;
+using AppLogistics.Tests;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System;
@@ -13,7 +13,7 @@ public class LoggablePropertyTests
 
     public LoggablePropertyTests()
     {
-        using (DbContext context = TestingContext.Create())
+        using (DbContext context = TestFixture.Create())
         {
             TestModel model = new TestModel { Id = 1 };
 

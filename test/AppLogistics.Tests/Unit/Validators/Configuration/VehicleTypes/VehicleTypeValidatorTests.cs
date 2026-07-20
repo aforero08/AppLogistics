@@ -15,8 +15,8 @@ public class VehicleTypeValidatorTests
 
     public VehicleTypeValidatorTests()
     {
-        context = TestingContext.Create();
-        validator = new VehicleTypeValidator(new UnitOfWork(TestingContext.Create(), TestingContext.Mapper));
+        context = TestFixture.Create().Drop();
+        validator = new VehicleTypeValidator(new UnitOfWork(context, TestFixture.Mapper));
 
         context.Set<VehicleType>().Add(vehicleType = ObjectsFactory.CreateVehicleType());
         context.SaveChanges();

@@ -1,4 +1,4 @@
-﻿using AppLogistics.Resources;
+using AppLogistics.Resources;
 using Xunit;
 
 namespace AppLogistics.Components.Mvc.Tests;

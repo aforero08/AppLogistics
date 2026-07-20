@@ -1,4 +1,4 @@
-﻿using AppLogistics.Components.Mvc;
+using AppLogistics.Components.Mvc;
 using AppLogistics.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;

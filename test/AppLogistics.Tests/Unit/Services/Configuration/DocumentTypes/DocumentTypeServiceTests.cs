@@ -18,8 +18,8 @@ public class DocumentTypeServiceTests
 
     public DocumentTypeServiceTests()
     {
-        context = TestingContext.Create();
-        service = new DocumentTypeService(new UnitOfWork(TestingContext.Create(), TestingContext.Mapper));
+        context = TestFixture.Create().Drop();
+        service = new DocumentTypeService(new UnitOfWork(TestFixture.Create(), TestFixture.Mapper));
 
         context.Set<DocumentType>().Add(documentType = ObjectsFactory.CreateDocumentType());
         context.SaveChanges();
@@ -31,7 +31,7 @@ public class DocumentTypeServiceTests
     public void Get_ReturnsViewById()
     {
         DocumentTypeView actual = service.Get<DocumentTypeView>(documentType.Id);
-        DocumentTypeView expected = TestingContext.Mapper.Map<DocumentTypeView>(documentType);
+        DocumentTypeView expected = TestFixture.Mapper.Map<DocumentTypeView>(documentType);
 
         Assert.Equal(expected.CreationDate, actual.CreationDate);
         Assert.Equal(expected.ShortName, actual.ShortName);
@@ -49,7 +49,7 @@ public class DocumentTypeServiceTests
         DocumentTypeView[] actual = service.GetViews().ToArray();
         DocumentTypeView[] expected = context
             .Set<DocumentType>()
-            .ProjectTo<DocumentTypeView>(TestingContext.Mapper.ConfigurationProvider)
+            .ProjectTo<DocumentTypeView>(TestFixture.Mapper.ConfigurationProvider)
             .OrderByDescending(view => view.CreationDate)
             .ToArray();
 

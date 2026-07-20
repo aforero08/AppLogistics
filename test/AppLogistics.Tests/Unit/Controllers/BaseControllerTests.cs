@@ -1,4 +1,4 @@
-﻿using AppLogistics.Components.Notifications;
+using AppLogistics.Components.Notifications;
 using AppLogistics.Components.Security;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

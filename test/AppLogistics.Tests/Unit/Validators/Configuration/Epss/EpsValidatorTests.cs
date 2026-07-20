@@ -15,8 +15,8 @@ public class EpsValidatorTests
 
     public EpsValidatorTests()
     {
-        context = TestingContext.Create();
-        validator = new EpsValidator(new UnitOfWork(TestingContext.Create(), TestingContext.Mapper));
+        context = TestFixture.Create().Drop();
+        validator = new EpsValidator(new UnitOfWork(context, TestFixture.Mapper));
 
         context.Set<Eps>().Add(eps = ObjectsFactory.CreateEps());
         context.SaveChanges();

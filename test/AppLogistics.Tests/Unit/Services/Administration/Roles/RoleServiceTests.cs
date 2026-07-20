@@ -1,4 +1,4 @@
-﻿using AppLogistics.Components.Extensions;
+using AppLogistics.Components.Extensions;
 using AppLogistics.Data.Core;
 using AppLogistics.Objects;
 using AppLogistics.Resources;
@@ -22,8 +22,9 @@ public class RoleServiceTests
 
     public RoleServiceTests()
     {
-        context = TestingContext.Create();
-        service = Substitute.ForPartsOf<RoleService>(new UnitOfWork(TestingContext.Create(), TestingContext.Mapper));
+        context = TestFixture.Create().Drop();
+        UnitOfWork unitOfWork = new UnitOfWork(context, TestFixture.Mapper);
+        service = Substitute.ForPartsOf<RoleService>(unitOfWork);
 
         SetUpData();
     }
@@ -121,7 +122,7 @@ public class RoleServiceTests
         RoleView[] expected = context
             .Set<Role>()
             .AsNoTracking()
-            .ProjectTo<RoleView>(TestingContext.Mapper.ConfigurationProvider)
+            .ProjectTo<RoleView>(TestFixture.Mapper.ConfigurationProvider)
             .OrderByDescending(view => view.Id)
             .ToArray();
 
@@ -149,7 +150,7 @@ public class RoleServiceTests
     {
         service.When(sub => sub.SeedPermissions(Arg.Any<RoleView>())).DoNotCallBase();
 
-        RoleView expected = TestingContext.Mapper.Map<RoleView>(role);
+        RoleView expected = TestFixture.Mapper.Map<RoleView>(role);
         RoleView actual = service.GetView(role.Id);
 
         Assert.Equal(expected.CreationDate, actual.CreationDate);

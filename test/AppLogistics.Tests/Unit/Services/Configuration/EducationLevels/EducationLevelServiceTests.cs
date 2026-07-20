@@ -18,8 +18,8 @@ public class EducationLevelServiceTests
 
     public EducationLevelServiceTests()
     {
-        context = TestingContext.Create();
-        service = new EducationLevelService(new UnitOfWork(TestingContext.Create(), TestingContext.Mapper));
+        context = TestFixture.Create().Drop();
+        service = new EducationLevelService(new UnitOfWork(TestFixture.Create(), TestFixture.Mapper));
 
         context.Set<EducationLevel>().Add(educationLevel = ObjectsFactory.CreateEducationLevel());
         context.SaveChanges();
@@ -31,7 +31,7 @@ public class EducationLevelServiceTests
     public void Get_ReturnsViewById()
     {
         EducationLevelView actual = service.Get<EducationLevelView>(educationLevel.Id);
-        EducationLevelView expected = TestingContext.Mapper.Map<EducationLevelView>(educationLevel);
+        EducationLevelView expected = TestFixture.Mapper.Map<EducationLevelView>(educationLevel);
 
         Assert.Equal(expected.CreationDate, actual.CreationDate);
         Assert.Equal(expected.Name, actual.Name);
@@ -48,7 +48,7 @@ public class EducationLevelServiceTests
         EducationLevelView[] actual = service.GetViews().ToArray();
         EducationLevelView[] expected = context
             .Set<EducationLevel>()
-            .ProjectTo<EducationLevelView>(TestingContext.Mapper.ConfigurationProvider)
+            .ProjectTo<EducationLevelView>(TestFixture.Mapper.ConfigurationProvider)
             .OrderByDescending(view => view.CreationDate)
             .ToArray();
 

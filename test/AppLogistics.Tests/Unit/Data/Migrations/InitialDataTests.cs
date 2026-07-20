@@ -1,4 +1,4 @@
-﻿using AppLogistics.Components.Security;
+using AppLogistics.Components.Security;
 using AppLogistics.Objects;
 using AppLogistics.Tests;
 using Microsoft.Extensions.Configuration;
@@ -17,8 +17,8 @@ public class InitialDataTests
 
     public InitialDataTests()
     {
-        context = TestingContext.Create();
-        dbConfiguration = new DatabaseConfiguration(context, Substitute.For<IConfiguration>(), Substitute.For<IHasher>(), TestingContext.Mapper);
+        context = TestFixture.Create();
+        dbConfiguration = new DatabaseConfiguration(context, Substitute.For<IConfiguration>(), Substitute.For<IHasher>(), TestFixture.Mapper);
         dbConfiguration.SeedData();
     }
 

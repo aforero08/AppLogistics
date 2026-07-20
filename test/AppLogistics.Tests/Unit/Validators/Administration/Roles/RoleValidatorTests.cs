@@ -1,4 +1,4 @@
-﻿using AppLogistics.Data.Core;
+using AppLogistics.Data.Core;
 using AppLogistics.Objects;
 using AppLogistics.Resources;
 using AppLogistics.Tests;
@@ -17,8 +17,8 @@ public class RoleValidatorTests
 
     public RoleValidatorTests()
     {
-        context = TestingContext.Create();
-        validator = new RoleValidator(new UnitOfWork(TestingContext.Create(), TestingContext.Mapper));
+        context = TestFixture.Create().Drop();
+        validator = new RoleValidator(new UnitOfWork(context, TestFixture.Mapper));
 
         context.Add(role = ObjectsFactory.CreateRole());
         context.SaveChanges();

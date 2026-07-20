@@ -18,8 +18,8 @@ public class EthnicGroupServiceTests
 
     public EthnicGroupServiceTests()
     {
-        context = TestingContext.Create();
-        service = new EthnicGroupService(new UnitOfWork(TestingContext.Create(), TestingContext.Mapper));
+        context = TestFixture.Create().Drop();
+        service = new EthnicGroupService(new UnitOfWork(TestFixture.Create(), TestFixture.Mapper));
 
         context.Set<EthnicGroup>().Add(ethnicGroup = ObjectsFactory.CreateEthnicGroup());
         context.SaveChanges();
@@ -31,7 +31,7 @@ public class EthnicGroupServiceTests
     public void Get_ReturnsViewById()
     {
         EthnicGroupView actual = service.Get<EthnicGroupView>(ethnicGroup.Id);
-        EthnicGroupView expected = TestingContext.Mapper.Map<EthnicGroupView>(ethnicGroup);
+        EthnicGroupView expected = TestFixture.Mapper.Map<EthnicGroupView>(ethnicGroup);
 
         Assert.Equal(expected.CreationDate, actual.CreationDate);
         Assert.Equal(expected.Name, actual.Name);
@@ -48,7 +48,7 @@ public class EthnicGroupServiceTests
         EthnicGroupView[] actual = service.GetViews().ToArray();
         EthnicGroupView[] expected = context
             .Set<EthnicGroup>()
-            .ProjectTo<EthnicGroupView>(TestingContext.Mapper.ConfigurationProvider)
+            .ProjectTo<EthnicGroupView>(TestFixture.Mapper.ConfigurationProvider)
             .OrderByDescending(view => view.CreationDate)
             .ToArray();
 

@@ -15,8 +15,8 @@ public class EthnicGroupValidatorTests
 
     public EthnicGroupValidatorTests()
     {
-        context = TestingContext.Create();
-        validator = new EthnicGroupValidator(new UnitOfWork(TestingContext.Create(), TestingContext.Mapper));
+        context = TestFixture.Create().Drop();
+        validator = new EthnicGroupValidator(new UnitOfWork(context, TestFixture.Mapper));
 
         context.Set<EthnicGroup>().Add(ethnicGroup = ObjectsFactory.CreateEthnicGroup());
         context.SaveChanges();

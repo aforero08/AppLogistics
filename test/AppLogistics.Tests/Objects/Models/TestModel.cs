@@ -1,4 +1,4 @@
-﻿using AppLogistics.Objects;
+using AppLogistics.Objects;
 using System.ComponentModel.DataAnnotations;
 
 namespace AppLogistics.Tests;

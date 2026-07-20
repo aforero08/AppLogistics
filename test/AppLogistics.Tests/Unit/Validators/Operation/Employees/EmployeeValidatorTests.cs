@@ -15,8 +15,8 @@ public class EmployeeValidatorTests
 
     public EmployeeValidatorTests()
     {
-        context = TestingContext.Create();
-        validator = new EmployeeValidator(new UnitOfWork(TestingContext.Create(), TestingContext.Mapper));
+        context = TestFixture.Create().Drop();
+        validator = new EmployeeValidator(new UnitOfWork(context, TestFixture.Mapper));
 
         context.Set<Employee>().Add(employee = ObjectsFactory.CreateEmployee());
         context.SaveChanges();

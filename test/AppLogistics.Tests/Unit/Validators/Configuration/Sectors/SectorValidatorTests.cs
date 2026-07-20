@@ -15,8 +15,8 @@ public class SectorValidatorTests
 
     public SectorValidatorTests()
     {
-        context = TestingContext.Create();
-        validator = new SectorValidator(new UnitOfWork(TestingContext.Create(), TestingContext.Mapper));
+        context = TestFixture.Create().Drop();
+        validator = new SectorValidator(new UnitOfWork(context, TestFixture.Mapper));
 
         context.Set<Sector>().Add(sector = ObjectsFactory.CreateSector());
         context.SaveChanges();

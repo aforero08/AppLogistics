@@ -18,8 +18,8 @@ public class EpsServiceTests
 
     public EpsServiceTests()
     {
-        context = TestingContext.Create();
-        service = new EpsService(new UnitOfWork(TestingContext.Create(), TestingContext.Mapper));
+        context = TestFixture.Create().Drop();
+        service = new EpsService(new UnitOfWork(TestFixture.Create(), TestFixture.Mapper));
 
         context.Set<Eps>().Add(eps = ObjectsFactory.CreateEps());
         context.SaveChanges();
@@ -31,7 +31,7 @@ public class EpsServiceTests
     public void Get_ReturnsViewById()
     {
         EpsView actual = service.Get<EpsView>(eps.Id);
-        EpsView expected = TestingContext.Mapper.Map<EpsView>(eps);
+        EpsView expected = TestFixture.Mapper.Map<EpsView>(eps);
 
         Assert.Equal(expected.CreationDate, actual.CreationDate);
         Assert.Equal(expected.Name, actual.Name);
@@ -49,7 +49,7 @@ public class EpsServiceTests
         EpsView[] actual = service.GetViews().ToArray();
         EpsView[] expected = context
             .Set<Eps>()
-            .ProjectTo<EpsView>(TestingContext.Mapper.ConfigurationProvider)
+            .ProjectTo<EpsView>(TestFixture.Mapper.ConfigurationProvider)
             .OrderByDescending(view => view.CreationDate)
             .ToArray();
 

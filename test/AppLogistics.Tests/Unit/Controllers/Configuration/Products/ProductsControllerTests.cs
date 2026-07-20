@@ -185,6 +185,8 @@ public class ProductsControllerTests : ControllerTests
     [Fact]
     public void DeleteConfirmed_DeletesProduct()
     {
+        validator.CanDelete(product.Id).Returns(true);
+
         controller.DeleteConfirmed(product.Id);
 
         service.Received().Delete(product.Id);
@@ -193,6 +195,8 @@ public class ProductsControllerTests : ControllerTests
     [Fact]
     public void Delete_RedirectsToIndex()
     {
+        validator.CanDelete(product.Id).Returns(true);
+
         object expected = RedirectToAction(controller, "Index");
         object actual = controller.DeleteConfirmed(product.Id);
 

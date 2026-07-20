@@ -15,8 +15,8 @@ public class MaritalStatusValidatorTests
 
     public MaritalStatusValidatorTests()
     {
-        context = TestingContext.Create();
-        validator = new MaritalStatusValidator(new UnitOfWork(TestingContext.Create(), TestingContext.Mapper));
+        context = TestFixture.Create().Drop();
+        validator = new MaritalStatusValidator(new UnitOfWork(context, TestFixture.Mapper));
 
         context.Set<MaritalStatus>().Add(maritalStatus = ObjectsFactory.CreateMaritalStatus());
         context.SaveChanges();

@@ -18,8 +18,8 @@ public class AfpServiceTests
 
     public AfpServiceTests()
     {
-        context = TestingContext.Create();
-        service = new AfpService(new UnitOfWork(TestingContext.Create(), TestingContext.Mapper));
+        context = TestFixture.Create().Drop();
+        service = new AfpService(new UnitOfWork(TestFixture.Create(), TestFixture.Mapper));
 
         context.Set<Afp>().Add(afp = ObjectsFactory.CreateAfp());
         context.SaveChanges();
@@ -31,7 +31,7 @@ public class AfpServiceTests
     public void Get_ReturnsViewById()
     {
         AfpView actual = service.Get<AfpView>(afp.Id);
-        AfpView expected = TestingContext.Mapper.Map<AfpView>(afp);
+        AfpView expected = TestFixture.Mapper.Map<AfpView>(afp);
 
         Assert.Equal(expected.CreationDate, actual.CreationDate);
         Assert.Equal(expected.Name, actual.Name);
@@ -49,7 +49,7 @@ public class AfpServiceTests
         AfpView[] actual = service.GetViews().ToArray();
         AfpView[] expected = context
             .Set<Afp>()
-            .ProjectTo<AfpView>(TestingContext.Mapper.ConfigurationProvider)
+            .ProjectTo<AfpView>(TestFixture.Mapper.ConfigurationProvider)
             .OrderByDescending(view => view.CreationDate)
             .ToArray();
 

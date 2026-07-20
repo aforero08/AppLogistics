@@ -1,4 +1,4 @@
-﻿using AppLogistics.Resources;
+using AppLogistics.Resources;
 using AppLogistics.Tests;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;

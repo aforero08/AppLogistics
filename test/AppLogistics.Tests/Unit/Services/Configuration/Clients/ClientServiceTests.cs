@@ -18,8 +18,8 @@ public class ClientServiceTests
 
     public ClientServiceTests()
     {
-        context = TestingContext.Create();
-        service = new ClientService(new UnitOfWork(TestingContext.Create(), TestingContext.Mapper));
+        context = TestFixture.Create().Drop();
+        service = new ClientService(new UnitOfWork(TestFixture.Create(), TestFixture.Mapper));
 
         context.Set<Client>().Add(client = ObjectsFactory.CreateClient());
         context.SaveChanges();
@@ -31,7 +31,7 @@ public class ClientServiceTests
     public void Get_ReturnsViewById()
     {
         ClientView actual = service.Get<ClientView>(client.Id);
-        ClientView expected = TestingContext.Mapper.Map<ClientView>(client);
+        ClientView expected = TestFixture.Mapper.Map<ClientView>(client);
 
         Assert.Equal(expected.CreationDate, actual.CreationDate);
         Assert.Equal(expected.Address, actual.Address);
@@ -52,7 +52,7 @@ public class ClientServiceTests
         ClientView[] actual = service.GetViews().ToArray();
         ClientView[] expected = context
             .Set<Client>()
-            .ProjectTo<ClientView>(TestingContext.Mapper.ConfigurationProvider)
+            .ProjectTo<ClientView>(TestFixture.Mapper.ConfigurationProvider)
             .OrderByDescending(view => view.CreationDate)
             .ToArray();
 

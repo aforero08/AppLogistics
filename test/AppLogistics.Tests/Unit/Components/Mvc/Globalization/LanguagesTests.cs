@@ -1,4 +1,4 @@
-﻿using System.Globalization;
+using System.Globalization;
 using System.Linq;
 using System.Threading;
 using Xunit;
@@ -21,7 +21,7 @@ public class LanguagesTests
             },
             new Language
             {
-                Name = "Lietuvių",
+                Name = "Lietuviu",
                 Abbreviation = "lt",
                 Culture = new CultureInfo("lt-LT")
             }
@@ -82,7 +82,7 @@ public class LanguagesTests
         Assert.Equal(new CultureInfo("en-GB"), actual[0].Culture);
         Assert.Equal("lt", actual[1].Abbreviation);
         Assert.Equal("en", actual[0].Abbreviation);
-        Assert.Equal("Lietuvių", actual[1].Name);
+        Assert.Equal("Lietuviu", actual[1].Name);
         Assert.Equal("English", actual[0].Name);
     }
 

@@ -187,6 +187,9 @@ public class EmployeesControllerTests : ControllerTests
     [Fact]
     public void DeleteConfirmed_DeletesEmployee()
     {
+        service.Get<EmployeeCreateEditView>(employeeView.Id).Returns(employeeCreateEditView);
+        validator.CanDelete(employeeCreateEditView).Returns(true);
+
         controller.DeleteConfirmed(employeeView.Id);
 
         service.Received().Delete(employeeView.Id);
@@ -195,6 +198,9 @@ public class EmployeesControllerTests : ControllerTests
     [Fact]
     public void Delete_RedirectsToIndex()
     {
+        service.Get<EmployeeCreateEditView>(employeeView.Id).Returns(employeeCreateEditView);
+        validator.CanDelete(employeeCreateEditView).Returns(true);
+
         object expected = RedirectToAction(controller, "Index");
         object actual = controller.DeleteConfirmed(employeeView.Id);
 

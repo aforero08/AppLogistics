@@ -18,8 +18,8 @@ public class ProductServiceTests
 
     public ProductServiceTests()
     {
-        context = TestingContext.Create();
-        service = new ProductService(new UnitOfWork(TestingContext.Create(), TestingContext.Mapper));
+        context = TestFixture.Create().Drop();
+        service = new ProductService(new UnitOfWork(TestFixture.Create(), TestFixture.Mapper));
 
         context.Set<Product>().Add(product = ObjectsFactory.CreateProduct());
         context.SaveChanges();
@@ -31,7 +31,7 @@ public class ProductServiceTests
     public void Get_ReturnsViewById()
     {
         ProductView actual = service.Get<ProductView>(product.Id);
-        ProductView expected = TestingContext.Mapper.Map<ProductView>(product);
+        ProductView expected = TestFixture.Mapper.Map<ProductView>(product);
 
         Assert.Equal(expected.CreationDate, actual.CreationDate);
         Assert.Equal(expected.Name, actual.Name);
@@ -48,7 +48,7 @@ public class ProductServiceTests
         ProductView[] actual = service.GetViews().ToArray();
         ProductView[] expected = context
             .Set<Product>()
-            .ProjectTo<ProductView>(TestingContext.Mapper.ConfigurationProvider)
+            .ProjectTo<ProductView>(TestFixture.Mapper.ConfigurationProvider)
             .OrderByDescending(view => view.CreationDate)
             .ToArray();
 

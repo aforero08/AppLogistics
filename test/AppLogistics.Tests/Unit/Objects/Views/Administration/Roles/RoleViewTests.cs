@@ -1,4 +1,4 @@
-﻿using AppLogistics.Components.Extensions;
+using AppLogistics.Components.Extensions;
 using Xunit;
 
 namespace AppLogistics.Objects.Tests;

@@ -1,4 +1,4 @@
-﻿using AppLogistics.Components.Notifications;
+using AppLogistics.Components.Notifications;
 using AppLogistics.Components.Security;
 using AppLogistics.Objects;
 using AppLogistics.Resources;
@@ -235,14 +235,28 @@ public class ProfileControllerTests : ControllerTests
     [Fact]
     public void DeleteConfirmed_RefreshesAuthorization()
     {
-        controller.HttpContext.RequestServices.GetService(typeof(IAuthorization)).Returns(Substitute.For<IAuthorization>());
-        service.IsActive(controller.CurrentAccountId).Returns(true);
+        IAuthorization authorization = Substitute.For<IAuthorization>();
+        System.IServiceProvider services = Substitute.For<System.IServiceProvider>();
+        services.GetService(typeof(IAuthorization)).Returns(authorization);
+        authorization.IsGrantedFor(Arg.Any<int?>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>()).Returns(true);
+
+        ProfileController profileController = new ProfileController(validator, service)
+        {
+            Url = Substitute.For<IUrlHelper>(),
+            ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext { RequestServices = services },
+                RouteData = new RouteData()
+            }
+        };
+
+        service.IsActive(0).Returns(true);
         validator.CanDelete(profileDelete).Returns(true);
-        controller.OnActionExecuting(null);
+        profileController.OnActionExecuting(null);
 
-        controller.DeleteConfirmed(profileDelete);
+        profileController.DeleteConfirmed(profileDelete);
 
-        controller.Authorization.Received().Refresh();
+        authorization.Received().Refresh();
     }
 
     [Fact]

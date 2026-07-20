@@ -19,9 +19,14 @@ public sealed class DatabaseConfiguration : IDisposable
 
     private readonly string roleTitleSysAdmin = "Sys_Admin";
 
-    public DatabaseConfiguration(DbContext context, IConfiguration configuration, IHasher hasher, IMapper mapper)
+    public DatabaseConfiguration(
+        DbContext context,
+        IConfiguration configuration,
+        IHasher hasher,
+        IMapper mapper,
+        IAuditLogger auditLogger = null)
     {
-        UnitOfWork = new UnitOfWork(context, mapper, new AuditLogger(context, 0));
+        UnitOfWork = new UnitOfWork(context, mapper, auditLogger ?? new AuditLogger(context, 0));
         _dbContext = context;
         _configuration = configuration;
         _hasher = hasher;

@@ -18,8 +18,8 @@ public class SectorServiceTests
 
     public SectorServiceTests()
     {
-        context = TestingContext.Create();
-        service = new SectorService(new UnitOfWork(TestingContext.Create(), TestingContext.Mapper));
+        context = TestFixture.Create().Drop();
+        service = new SectorService(new UnitOfWork(TestFixture.Create(), TestFixture.Mapper));
 
         context.Set<Sector>().Add(sector = ObjectsFactory.CreateSector());
         context.SaveChanges();
@@ -31,7 +31,7 @@ public class SectorServiceTests
     public void Get_ReturnsViewById()
     {
         SectorView actual = service.Get<SectorView>(sector.Id);
-        SectorView expected = TestingContext.Mapper.Map<SectorView>(sector);
+        SectorView expected = TestFixture.Mapper.Map<SectorView>(sector);
 
         Assert.Equal(expected.CreationDate, actual.CreationDate);
         Assert.Equal(expected.Name, actual.Name);
@@ -48,7 +48,7 @@ public class SectorServiceTests
         SectorView[] actual = service.GetViews().ToArray();
         SectorView[] expected = context
             .Set<Sector>()
-            .ProjectTo<SectorView>(TestingContext.Mapper.ConfigurationProvider)
+            .ProjectTo<SectorView>(TestFixture.Mapper.ConfigurationProvider)
             .OrderByDescending(view => view.CreationDate)
             .ToArray();
 

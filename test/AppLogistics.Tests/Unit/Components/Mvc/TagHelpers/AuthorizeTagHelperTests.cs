@@ -1,4 +1,4 @@
-﻿using AppLogistics.Components.Security;
+using AppLogistics.Components.Security;
 using AppLogistics.Tests;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 using NSubstitute;
@@ -61,7 +61,8 @@ public class AuthorizeTagHelperTests
         authorization.IsGrantedFor(Arg.Any<int?>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>()).Returns(true);
         authorization.IsGrantedFor(1, authArea, authController, authAction).Returns(false);
 
-        helper.ViewContext.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Returns(new Claim(ClaimTypes.NameIdentifier, "1"));
+        helper.ViewContext.HttpContext.User = new ClaimsPrincipal(
+            new ClaimsIdentity(new[] { new Claim(ClaimTypes.NameIdentifier, "1") }, authenticationType: "Test"));
         helper.ViewContext.RouteData.Values["controller"] = routeController;
         helper.ViewContext.RouteData.Values["action"] = routeAction;
         helper.ViewContext.RouteData.Values["area"] = routeArea;
@@ -99,7 +100,8 @@ public class AuthorizeTagHelperTests
         authorization.IsGrantedFor(1, Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>()).Returns(false);
         authorization.IsGrantedFor(1, authArea, authController, authAction).Returns(true);
 
-        helper.ViewContext.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Returns(new Claim(ClaimTypes.NameIdentifier, "1"));
+        helper.ViewContext.HttpContext.User = new ClaimsPrincipal(
+            new ClaimsIdentity(new[] { new Claim(ClaimTypes.NameIdentifier, "1") }, authenticationType: "Test"));
         helper.ViewContext.RouteData.Values["controller"] = routeController;
         helper.ViewContext.RouteData.Values["action"] = routeAction;
         helper.ViewContext.RouteData.Values["area"] = routeArea;

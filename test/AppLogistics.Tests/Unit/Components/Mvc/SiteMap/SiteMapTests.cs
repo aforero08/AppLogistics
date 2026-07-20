@@ -1,4 +1,4 @@
-﻿using AppLogistics.Components.Extensions;
+using AppLogistics.Components.Extensions;
 using AppLogistics.Components.Security;
 using AppLogistics.Tests;
 using Microsoft.AspNetCore.Mvc.Rendering;

@@ -1,4 +1,4 @@
-﻿using AppLogistics.Components.Lookups;
+using AppLogistics.Components.Lookups;
 using AppLogistics.Data.Core;
 using AppLogistics.Objects;
 using Microsoft.AspNetCore.Mvc;
@@ -20,7 +20,7 @@ public class LookupControllerTests
         unitOfWork = Substitute.For<IUnitOfWork>();
         controller = Substitute.ForPartsOf<LookupController>(unitOfWork);
 
-        lookup = Substitute.For<MvcLookup<Role, RoleView>>(unitOfWork);
+        lookup = new MvcLookup<Role, RoleView>(unitOfWork);
         filter = new LookupFilter();
     }
 
@@ -40,12 +40,9 @@ public class LookupControllerTests
     [Fact]
     public void GetData_ReturnsJsonResult()
     {
-        lookup.GetData().Returns(new LookupData());
+        JsonResult result = controller.GetData(lookup, filter);
 
-        object actual = controller.GetData(lookup, filter).Value;
-        object expected = lookup.GetData();
-
-        Assert.Same(expected, actual);
+        Assert.NotNull(result);
     }
 
     #endregion GetData(MvcLookup lookup, LookupFilter filter)

@@ -1,4 +1,4 @@
-﻿using AppLogistics.Resources;
+using AppLogistics.Resources;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Metadata;
 using Xunit;
 

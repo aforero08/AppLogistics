@@ -15,8 +15,8 @@ public class CarrierValidatorTests
 
     public CarrierValidatorTests()
     {
-        context = TestingContext.Create();
-        validator = new CarrierValidator(new UnitOfWork(TestingContext.Create(), TestingContext.Mapper));
+        context = TestFixture.Create().Drop();
+        validator = new CarrierValidator(new UnitOfWork(context, TestFixture.Mapper));
 
         context.Set<Carrier>().Add(carrier = ObjectsFactory.CreateCarrier());
         context.SaveChanges();

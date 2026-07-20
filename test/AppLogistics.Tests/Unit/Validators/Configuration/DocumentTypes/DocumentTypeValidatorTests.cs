@@ -15,8 +15,8 @@ public class DocumentTypeValidatorTests
 
     public DocumentTypeValidatorTests()
     {
-        context = TestingContext.Create();
-        validator = new DocumentTypeValidator(new UnitOfWork(TestingContext.Create(), TestingContext.Mapper));
+        context = TestFixture.Create().Drop();
+        validator = new DocumentTypeValidator(new UnitOfWork(context, TestFixture.Mapper));
 
         context.Set<DocumentType>().Add(documentType = ObjectsFactory.CreateDocumentType());
         context.SaveChanges();

@@ -18,8 +18,8 @@ public class MaritalStatusServiceTests
 
     public MaritalStatusServiceTests()
     {
-        context = TestingContext.Create();
-        service = new MaritalStatusService(new UnitOfWork(TestingContext.Create(), TestingContext.Mapper));
+        context = TestFixture.Create().Drop();
+        service = new MaritalStatusService(new UnitOfWork(TestFixture.Create(), TestFixture.Mapper));
 
         context.Set<MaritalStatus>().Add(maritalStatus = ObjectsFactory.CreateMaritalStatus());
         context.SaveChanges();
@@ -31,7 +31,7 @@ public class MaritalStatusServiceTests
     public void Get_ReturnsViewById()
     {
         MaritalStatusView actual = service.Get<MaritalStatusView>(maritalStatus.Id);
-        MaritalStatusView expected = TestingContext.Mapper.Map<MaritalStatusView>(maritalStatus);
+        MaritalStatusView expected = TestFixture.Mapper.Map<MaritalStatusView>(maritalStatus);
 
         Assert.Equal(expected.CreationDate, actual.CreationDate);
         Assert.Equal(expected.Name, actual.Name);
@@ -48,7 +48,7 @@ public class MaritalStatusServiceTests
         MaritalStatusView[] actual = service.GetViews().ToArray();
         MaritalStatusView[] expected = context
             .Set<MaritalStatus>()
-            .ProjectTo<MaritalStatusView>(TestingContext.Mapper.ConfigurationProvider)
+            .ProjectTo<MaritalStatusView>(TestFixture.Mapper.ConfigurationProvider)
             .OrderByDescending(view => view.CreationDate)
             .ToArray();
 

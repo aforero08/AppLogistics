@@ -1,4 +1,4 @@
-﻿namespace AppLogistics.Components.Extensions.Tests;
+namespace AppLogistics.Components.Extensions.Tests;
 
 public class MvcTreeView
 {

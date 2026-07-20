@@ -15,8 +15,8 @@ public class RateValidatorTests
 
     public RateValidatorTests()
     {
-        context = TestingContext.Create();
-        validator = new RateValidator(new UnitOfWork(TestingContext.Create(), TestingContext.Mapper));
+        context = TestFixture.Create().Drop();
+        validator = new RateValidator(new UnitOfWork(context, TestFixture.Mapper));
 
         context.Set<Rate>().Add(rate = ObjectsFactory.CreateRate());
         context.SaveChanges();

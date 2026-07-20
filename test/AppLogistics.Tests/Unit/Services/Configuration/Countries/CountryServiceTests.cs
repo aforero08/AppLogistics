@@ -18,8 +18,8 @@ public class CountryServiceTests
 
     public CountryServiceTests()
     {
-        context = TestingContext.Create();
-        service = new CountryService(new UnitOfWork(TestingContext.Create(), TestingContext.Mapper));
+        context = TestFixture.Create().Drop();
+        service = new CountryService(new UnitOfWork(TestFixture.Create(), TestFixture.Mapper));
 
         context.Set<Country>().Add(country = ObjectsFactory.CreateCountry());
         context.SaveChanges();
@@ -31,7 +31,7 @@ public class CountryServiceTests
     public void Get_ReturnsViewById()
     {
         CountryView actual = service.Get<CountryView>(country.Id);
-        CountryView expected = TestingContext.Mapper.Map<CountryView>(country);
+        CountryView expected = TestFixture.Mapper.Map<CountryView>(country);
 
         Assert.Equal(expected.CreationDate, actual.CreationDate);
         Assert.Equal(expected.Name, actual.Name);
@@ -48,7 +48,7 @@ public class CountryServiceTests
         CountryView[] actual = service.GetViews().ToArray();
         CountryView[] expected = context
             .Set<Country>()
-            .ProjectTo<CountryView>(TestingContext.Mapper.ConfigurationProvider)
+            .ProjectTo<CountryView>(TestFixture.Mapper.ConfigurationProvider)
             .OrderByDescending(view => view.CreationDate)
             .ToArray();
 

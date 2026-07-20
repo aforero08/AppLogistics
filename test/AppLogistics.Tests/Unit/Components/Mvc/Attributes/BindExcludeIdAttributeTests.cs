@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Metadata;
 using NSubstitute;
 using System;
@@ -10,27 +10,33 @@ namespace AppLogistics.Components.Mvc.Tests;
 
 public class BindExcludeIdAttributeTests
 {
+    private sealed class TestModel
+    {
+        public int Id { get; set; }
+        public string Prop { get; set; }
+    }
+
     private static PropertyInfo ResolveProperty(string name)
     {
-        var existing = typeof(object).GetProperties().FirstOrDefault(p => p.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
-        return existing ?? typeof(object).GetProperty("ToString");
+        return typeof(TestModel)
+            .GetProperties(BindingFlags.Instance | BindingFlags.Public)
+            .First(p => p.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
     }
 
     [Theory]
-    [InlineData("id", true)]
-    [InlineData("iD", true)]
-    [InlineData("ID", true)]
+    [InlineData("id", false)]
+    [InlineData("iD", false)]
+    [InlineData("ID", false)]
     [InlineData("Id", false)]
     [InlineData("Prop", true)]
     public void PropertyFilter_Id(string property, bool isIncluded)
     {
         PropertyInfo propInfo = ResolveProperty(property);
-        ModelMetadataIdentity identity = ModelMetadataIdentity.ForProperty(propInfo, propInfo.DeclaringType, propInfo.DeclaringType);
+        ModelMetadataIdentity identity = ModelMetadataIdentity.ForProperty(propInfo, propInfo.DeclaringType!, propInfo.DeclaringType!);
         ModelMetadata metadata = Substitute.ForPartsOf<ModelMetadata>(identity);
 
         bool actual = new BindExcludeIdAttribute().PropertyFilter(metadata);
-        bool expected = isIncluded;
 
-        Assert.Equal(expected, actual);
+        Assert.Equal(isIncluded, actual);
     }
 }

@@ -1,4 +1,4 @@
-﻿using AppLogistics.Components.Security;
+using AppLogistics.Components.Security;
 using AppLogistics.Data.Core;
 using AppLogistics.Objects;
 using AppLogistics.Tests;
@@ -27,10 +27,10 @@ public class AccountServiceTests
 
     public AccountServiceTests()
     {
-        context = TestingContext.Create();
+        context = TestFixture.Create().Drop();
         hasher = Substitute.For<IHasher>();
         httpContext = new DefaultHttpContext();
-        service = new AccountService(new UnitOfWork(TestingContext.Create(), TestingContext.Mapper), hasher);
+        service = new AccountService(new UnitOfWork(TestFixture.Create(), TestFixture.Mapper), hasher);
         hasher.HashPassword(Arg.Any<string>()).Returns(info => info.Arg<string>() + "Hashed");
 
         context.Add(account = ObjectsFactory.CreateAccount());
@@ -45,7 +45,7 @@ public class AccountServiceTests
     public void Get_ReturnsViewById()
     {
         AccountView actual = service.Get<AccountView>(account.Id);
-        AccountView expected = TestingContext.Mapper.Map<AccountView>(account);
+        AccountView expected = TestFixture.Mapper.Map<AccountView>(account);
 
         Assert.Equal(expected.CreationDate, actual.CreationDate);
         Assert.Equal(expected.RoleTitle, actual.RoleTitle);
@@ -66,7 +66,7 @@ public class AccountServiceTests
         AccountView[] expected = context
             .Set<Account>()
             .AsNoTracking()
-            .ProjectTo<AccountView>(TestingContext.Mapper.ConfigurationProvider)
+            .ProjectTo<AccountView>(TestFixture.Mapper.ConfigurationProvider)
             .OrderByDescending(view => view.Id)
             .ToArray();
 

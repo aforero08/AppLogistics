@@ -1,4 +1,4 @@
-﻿using AppLogistics.Data.Core;
+using AppLogistics.Data.Core;
 using NSubstitute;
 using System;
 using Xunit;

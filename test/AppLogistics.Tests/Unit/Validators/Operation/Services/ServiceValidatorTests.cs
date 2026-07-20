@@ -16,8 +16,8 @@ public class ServiceValidatorTests
 
     public ServiceValidatorTests()
     {
-        context = TestingContext.Create();
-        validator = new ServiceValidator(new UnitOfWork(TestingContext.Create(), TestingContext.Mapper));
+        context = TestFixture.Create().Drop();
+        validator = new ServiceValidator(new UnitOfWork(context, TestFixture.Mapper));
 
         context.Set<Service>().Add(service = ObjectsFactory.CreateService());
         context.Set<Rate>().Add(rate = ObjectsFactory.CreateRate(1));

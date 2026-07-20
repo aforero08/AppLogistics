@@ -1,4 +1,4 @@
-﻿using AppLogistics.Objects;
+using AppLogistics.Objects;
 using AppLogistics.Tests;
 using System;
 using System.Collections.Generic;

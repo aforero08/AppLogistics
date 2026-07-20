@@ -1,4 +1,4 @@
-﻿using AppLogistics.Data.Core;
+using AppLogistics.Data.Core;
 using AppLogistics.Objects;
 using System;
 using System.Linq.Expressions;

@@ -1,4 +1,4 @@
-﻿using AppLogistics.Data.Core;
+using AppLogistics.Data.Core;
 using AppLogistics.Objects;
 using AppLogistics.Resources;
 using AppLogistics.Tests;

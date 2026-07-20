@@ -1,4 +1,4 @@
-﻿using AppLogistics.Resources;
+using AppLogistics.Resources;
 using AppLogistics.Components.Mvc;
 using AppLogistics.Tests; // Added for AllTypesView
 using Microsoft.AspNetCore.Mvc;

@@ -1,4 +1,4 @@
-﻿using AppLogistics.Objects;
+using AppLogistics.Objects;
 using AppLogistics.Resources;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Metadata;

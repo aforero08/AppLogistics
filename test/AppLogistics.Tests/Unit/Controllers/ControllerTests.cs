@@ -1,4 +1,4 @@
-﻿using AppLogistics.Components.Mvc;
+using AppLogistics.Components.Mvc;
 using Microsoft.AspNetCore.Mvc;
 using NSubstitute;
 using System.Linq;

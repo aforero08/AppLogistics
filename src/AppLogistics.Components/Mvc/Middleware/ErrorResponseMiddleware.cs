@@ -31,14 +31,16 @@ public class ErrorResponseMiddleware
         }
         catch (Exception exception)
         {
-            try
+            Logger.LogError(exception, "An unhandled exception has occurred while executing the request.");
+
+            if (context.Response.HasStarted)
             {
-                Logger.LogError(exception, "An unhandled exception has occurred while executing the request.");
+                Logger.LogWarning("The response has already started, so the error page cannot be rendered.");
+                throw;
             }
-            finally
-            {
-                await View(context, "/home/error");
-            }
+
+            context.Response.Clear();
+            await View(context, "/home/error");
         }
     }
 

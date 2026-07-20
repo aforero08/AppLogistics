@@ -115,6 +115,7 @@ public class Startup
         {
             options.Filters.Add<LanguageFilter>();
             options.Filters.Add<AuthorizationFilter>();
+            ModelMessagesProvider.Set(options.ModelBindingMessageProvider);
             options.ModelBinderProviders.Insert(4, new TrimmingModelBinderProvider());
         })
         .AddRazorOptions(o => o.ViewLocationExpanders.Add(new ViewLocationExpander()))
@@ -156,7 +157,8 @@ public class Startup
         {
             options.UseSqlServer(dbConnectionString);
             options.UseLazyLoadingProxies();
-            options.EnableDetailedErrors();
+            if (Environment.IsDevelopment())
+                options.EnableDetailedErrors();
             //options.EnableSensitiveDataLogging();
             //options.LogTo(Console.WriteLine);
         });
@@ -166,22 +168,23 @@ public class Startup
         services.AddScoped<IUnitOfWork, UnitOfWork>();
 
         services.AddScoped<IAuditLogger>(provider =>
-            new AuditLogger(provider.GetRequiredService<Context>(),
-            provider.GetRequiredService<IHttpContextAccessor>().HttpContext?.User?.Id()));
+            new AuditLogger(
+                new Context(provider.GetRequiredService<DbContextOptions<Context>>()),
+                provider.GetRequiredService<IHttpContextAccessor>().HttpContext?.User?.Id()));
 
         services.AddSingleton<IHasher, Hasher>();
         services.AddSingleton<IMailClient, SmtpMailClient>();
         services.AddSingleton<IMessagebuilder, MessageBuilder>();
-        services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
+        services.AddHttpContextAccessor();
         services.AddSingleton<IValidationAttributeAdapterProvider, ValidationAdapterProvider>();
-        services.AddSingleton<IAuthorization>(provider => new Authorization(typeof(BaseController).Assembly, provider));
+        services.AddScoped<IAuthorization>(provider => new Authorization(typeof(BaseController).Assembly, provider));
         services.AddAutoMapper(mapper => mapper.AddMaps(typeof(BaseView).Assembly));
 
         Language[] supported = Config.GetSection("Languages:Supported").Get<Language[]>();
         services.AddSingleton<ILanguages>(new Languages(Config["Languages:Default"], supported));
 
         string map = File.ReadAllText(Path.Combine(Config["Application:Path"], Config["SiteMap:Path"]));
-        services.AddSingleton<ISiteMap>(provider => new SiteMap(map, provider.GetRequiredService<IAuthorization>()));
+        services.AddScoped<ISiteMap>(provider => new SiteMap(map, provider.GetRequiredService<IAuthorization>()));
 
         services.AddTransientImplementations<IService>();
         services.AddTransientImplementations<IValidator>();
@@ -232,24 +235,9 @@ public class Startup
         });
     }
 
-    // Safer migration pattern
     public void UpdateDatabase(IApplicationBuilder app)
     {
         using var scope = app.ApplicationServices.CreateScope();
-        var db = scope.ServiceProvider.GetRequiredService<Context>();
-
-        // Diagnostic logging before migrate
-        if (!db.Database.CanConnect())
-        {
-            // Replace with your logger
-            Console.WriteLine("Cannot connect with: " + db.Database.GetDbConnection().ConnectionString);
-            return;
-        }
-
-        db.Database.Migrate();
-
-        // Resolve seeding abstraction if needed
-        var config = scope.ServiceProvider.GetRequiredService<DatabaseConfiguration>();
-        config.SeedData();
+        scope.ServiceProvider.GetRequiredService<DatabaseConfiguration>().UpdateDatabase();
     }
 }

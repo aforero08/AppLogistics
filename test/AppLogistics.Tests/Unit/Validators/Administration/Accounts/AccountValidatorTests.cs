@@ -1,4 +1,4 @@
-﻿using AppLogistics.Components.Notifications;
+using AppLogistics.Components.Notifications;
 using AppLogistics.Components.Security;
 using AppLogistics.Data.Core;
 using AppLogistics.Objects;
@@ -21,10 +21,10 @@ public class AccountValidatorTests
 
     public AccountValidatorTests()
     {
-        context = TestingContext.Create();
+        context = TestFixture.Create().Drop();
         hasher = Substitute.For<IHasher>();
         hasher.VerifyPassword(Arg.Any<string>(), Arg.Any<string>()).Returns(true);
-        validator = new AccountValidator(new UnitOfWork(TestingContext.Create(), TestingContext.Mapper), hasher);
+        validator = new AccountValidator(new UnitOfWork(context, TestFixture.Mapper), hasher);
 
         context.Add(account = ObjectsFactory.CreateAccount());
         context.SaveChanges();
@@ -231,7 +231,7 @@ public class AccountValidatorTests
     [Fact]
     public void CanEdit_Account_UsedUsername_ReturnsFalse()
     {
-        Account usedAccount = ObjectsFactory.CreateAccount(1);
+        Account usedAccount = ObjectsFactory.CreateAccount(account.Id + 1);
         context.Add(usedAccount);
         context.SaveChanges();
 
@@ -257,7 +257,7 @@ public class AccountValidatorTests
     [Fact]
     public void CanEdit_Account_UsedEmail_ReturnsFalse()
     {
-        Account usedAccount = ObjectsFactory.CreateAccount(1);
+        Account usedAccount = ObjectsFactory.CreateAccount(account.Id + 1);
         context.Add(usedAccount);
         context.SaveChanges();
 
@@ -316,7 +316,7 @@ public class AccountValidatorTests
     [Fact]
     public void CanEdit_Profile_UsedUsername_ReturnsFalse()
     {
-        Account usedAccount = ObjectsFactory.CreateAccount(1);
+        Account usedAccount = ObjectsFactory.CreateAccount(account.Id + 1);
         context.Add(usedAccount);
         context.SaveChanges();
 
@@ -342,7 +342,7 @@ public class AccountValidatorTests
     [Fact]
     public void CanEdit_Profile_UsedEmail_ReturnsFalse()
     {
-        Account usedAccount = ObjectsFactory.CreateAccount(1);
+        Account usedAccount = ObjectsFactory.CreateAccount(account.Id + 1);
         context.Add(usedAccount);
         context.SaveChanges();
 

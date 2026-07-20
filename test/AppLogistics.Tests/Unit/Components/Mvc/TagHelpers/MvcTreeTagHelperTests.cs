@@ -1,4 +1,4 @@
-﻿using AppLogistics.Components.Extensions;
+using AppLogistics.Components.Extensions;
 using AppLogistics.Components.Extensions.Tests;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
@@ -115,7 +115,7 @@ public class MvcTreeTagHelperTests
                 "<input name=\"MvcTree.SelectedIds\" type=\"hidden\" value=\"123456\" />" +
             "</div>" +
             "<ul class=\"mvc-tree-view\">" +
-                "<li class=\"mvc-tree-collapsed mvc-tree-branch\">" +
+                "<li class=\"mvc-tree-branch mvc-tree-collapsed\">" +
                     "<i></i><a href=\"#\">Test</a>" +
                     "<ul>" +
                         "<li data-id=\"4567\">" +

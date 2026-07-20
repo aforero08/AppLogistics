@@ -18,8 +18,8 @@ public class RateServiceTests
 
     public RateServiceTests()
     {
-        context = TestingContext.Create();
-        service = new RateService(new UnitOfWork(TestingContext.Create(), TestingContext.Mapper));
+        context = TestFixture.Create().Drop();
+        service = new RateService(new UnitOfWork(TestFixture.Create(), TestFixture.Mapper));
 
         context.Set<Rate>().Add(rateView = ObjectsFactory.CreateRate());
         context.SaveChanges();
@@ -31,7 +31,7 @@ public class RateServiceTests
     public void Get_ReturnsViewById()
     {
         RateView actual = service.Get<RateView>(rateView.Id);
-        RateView expected = TestingContext.Mapper.Map<RateView>(rateView);
+        RateView expected = TestFixture.Mapper.Map<RateView>(rateView);
 
         Assert.Equal(expected.VehicleTypeName, actual.VehicleTypeName);
         Assert.Equal(expected.CreationDate, actual.CreationDate);
@@ -53,7 +53,7 @@ public class RateServiceTests
         RateView[] actual = service.GetViews().ToArray();
         RateView[] expected = context
             .Set<Rate>()
-            .ProjectTo<RateView>(TestingContext.Mapper.ConfigurationProvider)
+            .ProjectTo<RateView>(TestFixture.Mapper.ConfigurationProvider)
             .OrderByDescending(view => view.CreationDate)
             .ToArray();
 
@@ -79,6 +79,9 @@ public class RateServiceTests
     {
         RateCreateEditView view = ObjectsFactory.CreateRateCreateEditView(1);
         view.Id = 0;
+        view.ActivityId = rateView.ActivityId;
+        view.ClientId = rateView.ClientId;
+        view.VehicleTypeId = rateView.VehicleTypeId;
 
         service.Create(view);
 

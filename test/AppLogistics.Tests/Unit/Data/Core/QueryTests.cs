@@ -1,4 +1,4 @@
-﻿using AppLogistics.Tests;
+using AppLogistics.Tests;
 using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
 using NSubstitute;
@@ -17,8 +17,8 @@ public class QueryTests
 
     public QueryTests()
     {
-        context = TestingContext.Create();
-        select = new Query<TestModel>(context.Set<TestModel>(), TestingContext.Mapper.ConfigurationProvider);
+        context = TestFixture.Create();
+        select = new Query<TestModel>(context.Set<TestModel>(), TestFixture.Mapper.ConfigurationProvider);
 
         context.RemoveRange(context.Set<TestModel>());
         context.Add(ObjectsFactory.CreateTestModel());
@@ -44,11 +44,11 @@ public class QueryTests
     public void Expression_IsSetsExpression()
     {
         DbSet<TestModel> set = Substitute.For<DbSet<TestModel>, IQueryable>();
-        DbContext testingContext = Substitute.For<DbContext>();
+        DbContext mockContext = Substitute.For<DbContext>();
         ((IQueryable)set).Expression.Returns(Expression.Empty());
-        testingContext.Set<TestModel>().Returns(set);
+        mockContext.Set<TestModel>().Returns(set);
 
-        select = new Query<TestModel>(testingContext.Set<TestModel>(), TestingContext.Mapper.ConfigurationProvider);
+        select = new Query<TestModel>(mockContext.Set<TestModel>(), TestFixture.Mapper.ConfigurationProvider);
 
         object actual = ((IQueryable)select).Expression;
         object expected = ((IQueryable)set).Expression;
@@ -104,7 +104,7 @@ public class QueryTests
     [Fact]
     public void To_ProjectsSet()
     {
-        IEnumerable<int> expected = context.Set<TestModel>().ProjectTo<TestView>(TestingContext.Mapper.ConfigurationProvider).Select(view => view.Id).ToArray();
+        IEnumerable<int> expected = context.Set<TestModel>().ProjectTo<TestView>(TestFixture.Mapper.ConfigurationProvider).Select(view => view.Id).ToArray();
         IEnumerable<int> actual = select.To<TestView>().Select(view => view.Id).ToArray();
 
         Assert.Equal(expected, actual);

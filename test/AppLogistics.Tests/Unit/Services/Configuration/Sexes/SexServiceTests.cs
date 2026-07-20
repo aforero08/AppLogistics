@@ -18,8 +18,8 @@ public class SexServiceTests
 
     public SexServiceTests()
     {
-        context = TestingContext.Create();
-        service = new SexService(new UnitOfWork(TestingContext.Create(), TestingContext.Mapper));
+        context = TestFixture.Create().Drop();
+        service = new SexService(new UnitOfWork(TestFixture.Create(), TestFixture.Mapper));
 
         context.Set<Sex>().Add(sex = ObjectsFactory.CreateSex());
         context.SaveChanges();
@@ -31,7 +31,7 @@ public class SexServiceTests
     public void Get_ReturnsViewById()
     {
         SexView actual = service.Get<SexView>(sex.Id);
-        SexView expected = TestingContext.Mapper.Map<SexView>(sex);
+        SexView expected = TestFixture.Mapper.Map<SexView>(sex);
 
         Assert.Equal(expected.CreationDate, actual.CreationDate);
         Assert.Equal(expected.Name, actual.Name);
@@ -48,7 +48,7 @@ public class SexServiceTests
         SexView[] actual = service.GetViews().ToArray();
         SexView[] expected = context
             .Set<Sex>()
-            .ProjectTo<SexView>(TestingContext.Mapper.ConfigurationProvider)
+            .ProjectTo<SexView>(TestFixture.Mapper.ConfigurationProvider)
             .OrderByDescending(view => view.CreationDate)
             .ToArray();
 

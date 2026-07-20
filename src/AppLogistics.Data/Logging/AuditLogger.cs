@@ -48,24 +48,33 @@ public class AuditLogger : IAuditLogger
     {
         if (Entities.Count > 0)
         {
-            Context.ChangeTracker.AutoDetectChangesEnabled = false;
+            bool autoDetectChangesEnabled = Context.ChangeTracker.AutoDetectChangesEnabled;
 
-            foreach (LoggableEntity entity in Entities)
+            try
             {
-                AuditLog log = new AuditLog
+                Context.ChangeTracker.AutoDetectChangesEnabled = false;
+
+                foreach (LoggableEntity entity in Entities)
                 {
-                    Changes = entity.ToString(),
-                    EntityName = entity.Name,
-                    Action = entity.Action,
-                    EntityId = entity.Id(),
-                    AccountId = AccountId
-                };
+                    AuditLog log = new AuditLog
+                    {
+                        Changes = entity.ToString(),
+                        EntityName = entity.Name,
+                        Action = entity.Action,
+                        EntityId = entity.Id(),
+                        AccountId = AccountId
+                    };
 
-                Context.Add(log);
+                    Context.Add(log);
+                }
+
+                Context.SaveChanges();
+                Entities.Clear();
             }
-
-            Context.SaveChanges();
-            Entities.Clear();
+            finally
+            {
+                Context.ChangeTracker.AutoDetectChangesEnabled = autoDetectChangesEnabled;
+            }
         }
     }
 

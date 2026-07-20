@@ -74,15 +74,6 @@ public class RoleService : BaseService, IRoleService
     public void Create(RoleView view)
     {
         Role role = UnitOfWork.To<Role>(view);
-        foreach (int permissionId in view.Permissions.SelectedIds)
-        {
-            role.Permissions.Add(new RolePermission
-            {
-                RoleId = role.Id,
-                PermissionId = permissionId
-            });
-        }
-
         UnitOfWork.Insert(role);
         UnitOfWork.Commit();
     }

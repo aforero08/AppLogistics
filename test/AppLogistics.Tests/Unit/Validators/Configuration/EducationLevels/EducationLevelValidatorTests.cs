@@ -15,8 +15,8 @@ public class EducationLevelValidatorTests
 
     public EducationLevelValidatorTests()
     {
-        context = TestingContext.Create();
-        validator = new EducationLevelValidator(new UnitOfWork(TestingContext.Create(), TestingContext.Mapper));
+        context = TestFixture.Create().Drop();
+        validator = new EducationLevelValidator(new UnitOfWork(context, TestFixture.Mapper));
 
         context.Set<EducationLevel>().Add(educationLevel = ObjectsFactory.CreateEducationLevel());
         context.SaveChanges();

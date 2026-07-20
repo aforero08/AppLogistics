@@ -18,8 +18,8 @@ public class CarrierServiceTests
 
     public CarrierServiceTests()
     {
-        context = TestingContext.Create();
-        service = new CarrierService(new UnitOfWork(TestingContext.Create(), TestingContext.Mapper));
+        context = TestFixture.Create().Drop();
+        service = new CarrierService(new UnitOfWork(TestFixture.Create(), TestFixture.Mapper));
 
         context.Set<Carrier>().Add(carrier = ObjectsFactory.CreateCarrier());
         context.SaveChanges();
@@ -31,7 +31,7 @@ public class CarrierServiceTests
     public void Get_ReturnsViewById()
     {
         CarrierView actual = service.Get<CarrierView>(carrier.Id);
-        CarrierView expected = TestingContext.Mapper.Map<CarrierView>(carrier);
+        CarrierView expected = TestFixture.Mapper.Map<CarrierView>(carrier);
 
         Assert.Equal(expected.CreationDate, actual.CreationDate);
         Assert.Equal(expected.Name, actual.Name);
@@ -49,7 +49,7 @@ public class CarrierServiceTests
         CarrierView[] actual = service.GetViews().ToArray();
         CarrierView[] expected = context
             .Set<Carrier>()
-            .ProjectTo<CarrierView>(TestingContext.Mapper.ConfigurationProvider)
+            .ProjectTo<CarrierView>(TestFixture.Mapper.ConfigurationProvider)
             .OrderByDescending(view => view.CreationDate)
             .ToArray();
 

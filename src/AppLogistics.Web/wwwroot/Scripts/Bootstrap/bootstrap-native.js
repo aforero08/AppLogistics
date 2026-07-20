@@ -939,7 +939,7 @@
   
     // init
     if ( !(stringDropdown in element) ) { // prevent adding event handlers twice
-      !tabindex in menu && menu[setAttribute](tabindex, '0'); // Fix onblur on Chrome | Safari
+      !(tabindex in menu) && menu[setAttribute](tabindex, '0'); // Fix onblur on Chrome | Safari
       on(element, clickEvent, clickHandler);
     }
   

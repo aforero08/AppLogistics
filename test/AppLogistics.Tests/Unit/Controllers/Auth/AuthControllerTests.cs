@@ -1,4 +1,4 @@
-﻿using AppLogistics.Components.Mail;
+using AppLogistics.Components.Mail;
 using AppLogistics.Components.Notifications;
 using AppLogistics.Objects;
 using AppLogistics.Resources;

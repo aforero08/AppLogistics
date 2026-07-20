@@ -1,4 +1,4 @@
-﻿using AppLogistics.Data.Core;
+using AppLogistics.Data.Core;
 using AppLogistics.Objects;
 using AppLogistics.Tests;
 using Microsoft.EntityFrameworkCore;
@@ -16,9 +16,9 @@ public class AuthorizationTests
 
     public AuthorizationTests()
     {
-        context = TestingContext.Create();
+        context = TestFixture.Create();
         IServiceProvider services = Substitute.For<IServiceProvider>();
-        services.GetService(typeof(IUnitOfWork)).Returns(info => new UnitOfWork(TestingContext.Create(), TestingContext.Mapper));
+        services.GetService(typeof(IUnitOfWork)).Returns(info => new UnitOfWork(TestFixture.Create(), TestFixture.Mapper));
 
         authorization = new Authorization(Assembly.GetExecutingAssembly(), services);
     }
@@ -380,8 +380,14 @@ public class AuthorizationTests
 
     private int CreateAccountWithPermissionFor(string area, string controller, string action, bool isLocked = false)
     {
-        RolePermission rolePermission = ObjectsFactory.CreateRolePermission();
-        Account account = ObjectsFactory.CreateAccount();
+        int id = Math.Abs(Guid.NewGuid().GetHashCode());
+        if (id == 0)
+        {
+            id = 1;
+        }
+
+        RolePermission rolePermission = ObjectsFactory.CreateRolePermission(id);
+        Account account = ObjectsFactory.CreateAccount(id);
         account.Role.Permissions.Add(rolePermission);
         rolePermission.Role = account.Role;
         account.IsLocked = isLocked;

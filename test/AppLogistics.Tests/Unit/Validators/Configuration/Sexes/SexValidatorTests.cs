@@ -15,8 +15,8 @@ public class SexValidatorTests
 
     public SexValidatorTests()
     {
-        context = TestingContext.Create();
-        validator = new SexValidator(new UnitOfWork(TestingContext.Create(), TestingContext.Mapper));
+        context = TestFixture.Create().Drop();
+        validator = new SexValidator(new UnitOfWork(context, TestFixture.Mapper));
 
         context.Set<Sex>().Add(sex = ObjectsFactory.CreateSex());
         context.SaveChanges();

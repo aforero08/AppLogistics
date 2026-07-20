@@ -15,8 +15,8 @@ public class ActivityValidatorTests
 
     public ActivityValidatorTests()
     {
-        context = TestingContext.Create();
-        validator = new ActivityValidator(new UnitOfWork(TestingContext.Create(), TestingContext.Mapper));
+        context = TestFixture.Create().Drop();
+        validator = new ActivityValidator(new UnitOfWork(context, TestFixture.Mapper));
 
         context.Set<Activity>().Add(activity = ObjectsFactory.CreateActivity());
         context.SaveChanges();
