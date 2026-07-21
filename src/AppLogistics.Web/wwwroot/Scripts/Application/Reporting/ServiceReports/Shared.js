@@ -22,6 +22,6 @@
     });
         //.datepicker("setDate", "+0d");
 
-    document.getElementById("ServiceId").focus(); 
+    document.getElementById("ServiceId")?.focus();
 
 });

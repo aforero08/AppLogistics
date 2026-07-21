@@ -23,6 +23,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using NonFactors.Mvc.Grid;
 using System;
 using System.Collections.Generic;
@@ -142,6 +143,16 @@ public class Startup
 
     public void RegisterLogging(IServiceCollection services)
     {
+        if (!Environment.IsDevelopment())
+            return;
+
+        services.AddLogging(logging =>
+        {
+            logging.ClearProviders();
+            logging.AddConsole();
+            logging.SetMinimumLevel(LogLevel.Information);
+            logging.AddFilter("Microsoft.EntityFrameworkCore", LogLevel.Warning);
+        });
     }
 
     public void RegisterServices(IServiceCollection services)
