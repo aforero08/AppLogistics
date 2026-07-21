@@ -172,7 +172,9 @@ public class Startup
         services.AddSingleton<IMessagebuilder, MessageBuilder>();
         services.AddHttpContextAccessor();
         services.AddSingleton<IValidationAttributeAdapterProvider, ValidationAdapterProvider>();
-        services.AddScoped<IAuthorization>(provider => new Authorization(typeof(BaseController).Assembly, provider));
+        services.AddSingleton<IAuthorization>(provider => new Authorization(
+            typeof(BaseController).Assembly,
+            provider.GetRequiredService<IServiceScopeFactory>()));
         services.AddAutoMapper(mapper => mapper.AddMaps(typeof(BaseView).Assembly));
 
         Language[] supported = Config.GetSection("Languages:Supported").Get<Language[]>();

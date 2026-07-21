@@ -2,6 +2,7 @@ using AppLogistics.Data.Core;
 using AppLogistics.Objects;
 using AppLogistics.Tests;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
 using System;
 using System.Reflection;
@@ -19,8 +20,12 @@ public class AuthorizationTests
         context = TestFixture.Create();
         IServiceProvider services = Substitute.For<IServiceProvider>();
         services.GetService(typeof(IUnitOfWork)).Returns(info => new UnitOfWork(TestFixture.Create(), TestFixture.Mapper));
+        IServiceScope scope = Substitute.For<IServiceScope>();
+        scope.ServiceProvider.Returns(services);
+        IServiceScopeFactory scopeFactory = Substitute.For<IServiceScopeFactory>();
+        scopeFactory.CreateScope().Returns(scope);
 
-        authorization = new Authorization(Assembly.GetExecutingAssembly(), services);
+        authorization = new Authorization(Assembly.GetExecutingAssembly(), scopeFactory);
     }
 
     #region IsGrantedFor(Int32? accountId, String area, String controller, String action)

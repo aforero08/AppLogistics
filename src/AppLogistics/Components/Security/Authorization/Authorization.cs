@@ -12,18 +12,18 @@ namespace AppLogistics.Components.Security;
 
 public class Authorization : IAuthorization
 {
-    private IServiceProvider Services { get; }
+    private IServiceScopeFactory ScopeFactory { get; }
     private Dictionary<string, string> Required { get; }
     private Dictionary<string, MethodInfo> Actions { get; }
     private Dictionary<int, HashSet<string>> Permissions { get; set; }
 
-    public Authorization(Assembly controllers, IServiceProvider services)
+    public Authorization(Assembly controllers, IServiceScopeFactory scopeFactory)
     {
         BindingFlags flags = BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.Public;
         Actions = new Dictionary<string, MethodInfo>(StringComparer.OrdinalIgnoreCase);
         Required = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
         Permissions = new Dictionary<int, HashSet<string>>();
-        Services = services;
+        ScopeFactory = scopeFactory;
 
         foreach (Type controller in controllers.GetTypes().Where(IsController))
         {
@@ -57,7 +57,8 @@ public class Authorization : IAuthorization
 
     public void Refresh()
     {
-        IUnitOfWork unitOfWork = Services.GetRequiredService<IUnitOfWork>();
+        using IServiceScope scope = ScopeFactory.CreateScope();
+        IUnitOfWork unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
         Permissions = unitOfWork
             .Select<Account>()
             .Where(account =>
