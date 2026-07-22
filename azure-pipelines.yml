@@ -18,6 +18,7 @@ variables:
   dotnetSdkVersion: '8.x'
   projectPath: 'src/AppLogistics.Web/AppLogistics.Web.csproj'
   publishPath: '$(Build.ArtifactStagingDirectory)/publish'
+  packagePath: '$(Build.ArtifactStagingDirectory)/AppLogistics.zip'
 
 stages:
 - stage: Build
@@ -77,10 +78,21 @@ stages:
         zipAfterPublish: false
         modifyOutputPath: false
 
+    # Archive the contents of the publish directory so App Service sees
+    # web.config and the application DLLs at the root of the ZIP package.
+    - task: ArchiveFiles@2
+      displayName: 'Create deployment package'
+      inputs:
+        rootFolderOrFile: '$(publishPath)'
+        includeRootFolder: false
+        archiveType: 'zip'
+        archiveFile: '$(packagePath)'
+        replaceExistingArchive: true
+
     # Publish build artifacts
     - task: PublishBuildArtifacts@1
       displayName: 'Publish Artifacts'
       inputs:
-        pathToPublish: '$(publishPath)'
+        pathToPublish: '$(packagePath)'
         artifactName: 'drop'
         publishLocation: 'Container'
