@@ -5,7 +5,7 @@
 }
 
 .mvc-tree li {
-    background-image: url("../../img/mvc-tree/icons.png");
+    background-image: url("../../Images/MvcTree/icons.png");
     background-position: -292px -4px;
     background-repeat: repeat-y;
     white-space: nowrap;
@@ -31,7 +31,7 @@
 
     .mvc-tree i,
     .mvc-tree a::before {
-        background-image: url("../../img/mvc-tree/icons.png");
+        background-image: url("../../Images/MvcTree/icons.png");
         display: inline-block;
         vertical-align: top;
         content: " ";
