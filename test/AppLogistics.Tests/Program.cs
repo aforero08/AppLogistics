@@ -1,9 +1,8 @@
-﻿namespace AppLogistics.Tests
+namespace AppLogistics.Tests;
+
+public class Program
 {
-    public class Program
+    public static void Main()
     {
-        public static void Main()
-        {
-        }
     }
 }

@@ -4,6 +4,7 @@
         "Nit": "Nit"
     },
     "Validations": {
-        "AssociatedServices": "There are services associated to this Carrier. To delete this Carrier, you should delete those services first or associate them a different Carrier."
+        "AssociatedServices": "There are services associated to this Carrier. To delete this Carrier, you should delete those services first or associate them a different Carrier.",
+        "DuplicateName": "A Carrier with that Name already exists."
     }
 }

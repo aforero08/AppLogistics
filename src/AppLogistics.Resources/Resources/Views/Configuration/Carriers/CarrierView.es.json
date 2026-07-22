@@ -4,6 +4,7 @@
         "Nit": "Nit"
     },
     "Validations": {
-        "AssociatedServices": "Existen servicios asociados a esta Transportadora. Para eliminar esta Transportadora, debe eliminar primero esos servicios o asociarles una Transportadora diferente."
+        "AssociatedServices": "Existen servicios asociados a esta Transportadora. Para eliminar esta Transportadora, debe eliminar primero esos servicios o asociarles una Transportadora diferente.",
+        "DuplicateName": "Ya existe una Transportadora con ese Nombre."
     }
 }

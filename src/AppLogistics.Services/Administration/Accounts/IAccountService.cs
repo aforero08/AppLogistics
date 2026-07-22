@@ -5,32 +5,31 @@ using System.Security.Claims;
 using System.Security.Principal;
 using System.Threading.Tasks;
 
-namespace AppLogistics.Services
+namespace AppLogistics.Services;
+
+public interface IAccountService : IService
 {
-    public interface IAccountService : IService
-    {
-        TView Get<TView>(int id) where TView : BaseView;
+    TView Get<TView>(int id) where TView : BaseView;
 
-        IQueryable<AccountView> GetViews();
+    IQueryable<AccountView> GetViews();
 
-        bool IsLoggedIn(IPrincipal user);
+    bool IsLoggedIn(IPrincipal user);
 
-        bool IsActive(int id);
+    bool IsActive(int id);
 
-        string Recover(AccountRecoveryView view);
+    string Recover(AccountRecoveryView view);
 
-        void Reset(AccountResetView view);
+    void Reset(AccountResetView view);
 
-        void Create(AccountCreateView view);
+    void Create(AccountCreateView view);
 
-        void Edit(AccountEditView view);
+    void Edit(AccountEditView view);
 
-        void Edit(ClaimsPrincipal user, ProfileEditView view);
+    void Edit(ClaimsPrincipal user, ProfileEditView view);
 
-        void Delete(int id);
+    void Delete(int id);
 
-        Task Login(HttpContext context, string username);
+    Task Login(HttpContext context, string username);
 
-        Task Logout(HttpContext context);
-    }
+    Task Logout(HttpContext context);
 }

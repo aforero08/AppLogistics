@@ -1,8 +1,10 @@
 // Widgets init
 (function () {
+    NumberConverter.init();
     Datepicker.init();
     Navigation.init();
     Validator.init();
+    Tooltip.init();
     Alerts.init();
     Header.init();
     Lookup.init();

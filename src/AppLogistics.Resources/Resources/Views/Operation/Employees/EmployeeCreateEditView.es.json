@@ -50,7 +50,8 @@
         "Section_Trainings": "CAPACITACIONES"
     },
     "Validations": {
+        "DeleteNotAllowed": "No es posible eliminar un empleado. Puede editarlo y marcarlo como inactivo",
         "NotUniqueDocumentNumber": "Ya existe un empleado con ese Número de documento",
         "NotUniqueInternalCode": "Ya existe un empleado con ese Código interno"
-    }
+  }
 }

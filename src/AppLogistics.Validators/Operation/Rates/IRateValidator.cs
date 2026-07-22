@@ -1,11 +1,10 @@
 using AppLogistics.Objects;
 
-namespace AppLogistics.Validators
+namespace AppLogistics.Validators;
+
+public interface IRateValidator : IValidator
 {
-    public interface IRateValidator : IValidator
-    {
-        bool CanCreate(RateCreateEditView view);
-        bool CanEdit(RateCreateEditView view);
-        bool CanDelete(int id);
-    }
+    bool CanCreate(RateCreateEditView view);
+    bool CanEdit(RateCreateEditView view);
+    bool CanDelete(int id);
 }

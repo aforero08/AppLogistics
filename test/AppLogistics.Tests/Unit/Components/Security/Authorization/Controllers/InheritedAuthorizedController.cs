@@ -1,15 +1,14 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics.CodeAnalysis;
 
-namespace AppLogistics.Components.Security.Tests
+namespace AppLogistics.Components.Security.Tests;
+
+[ExcludeFromCodeCoverage]
+public class InheritedAuthorizedController : AuthorizedController
 {
-    [ExcludeFromCodeCoverage]
-    public class InheritedAuthorizedController : AuthorizedController
+    [HttpGet]
+    public ViewResult InheritanceAction()
     {
-        [HttpGet]
-        public ViewResult InheritanceAction()
-        {
-            return null;
-        }
+        return null;
     }
 }

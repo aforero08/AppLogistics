@@ -6,61 +6,60 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace AppLogistics.Controllers
+namespace AppLogistics.Controllers;
+
+[AllowUnauthorized]
+public class HomeController : ServicedController<IAccountService>
 {
-    [AllowUnauthorized]
-    public class HomeController : ServicedController<IAccountService>
+    public HomeController(IAccountService service)
+        : base(service)
     {
-        public HomeController(IAccountService service)
-            : base(service)
+    }
+
+    [HttpGet]
+    public ActionResult Index()
+    {
+        if (!Service.IsActive(CurrentAccountId))
         {
+            return RedirectToAction("Logout", "Auth");
         }
 
-        [HttpGet]
-        public ActionResult Index()
+        return View();
+    }
+
+    [HttpGet]
+    [AllowAnonymous]
+    public ActionResult Error()
+    {
+        Response.StatusCode = StatusCodes.Status500InternalServerError;
+
+        if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
         {
-            if (!Service.IsActive(CurrentAccountId))
+            Alerts.Add(new Alert
             {
-                return RedirectToAction("Logout", "Auth");
-            }
+                Id = "SystemError",
+                Type = AlertType.Danger,
+                Message = Resource.ForString("SystemError")
+            });
 
-            return View();
+            return Json(new { alerts = Alerts });
         }
 
-        [HttpGet]
-        [AllowAnonymous]
-        public ActionResult Error()
+        return View();
+    }
+
+    [HttpGet]
+    [AllowAnonymous]
+    [Route("[controller]/not-found")]
+    public new ActionResult NotFound()
+    {
+        if (Service.IsLoggedIn(User) && !Service.IsActive(CurrentAccountId))
         {
-            Response.StatusCode = StatusCodes.Status500InternalServerError;
-
-            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
-            {
-                Alerts.Add(new Alert
-                {
-                    Id = "SystemError",
-                    Type = AlertType.Danger,
-                    Message = Resource.ForString("SystemError")
-                });
-
-                return Json(new { alerts = Alerts });
-            }
-
-            return View();
+            return RedirectToAction("Logout", "Auth");
         }
 
-        [HttpGet]
-        [AllowAnonymous]
-        [Route("[controller]/not-found")]
-        public new ActionResult NotFound()
-        {
-            if (Service.IsLoggedIn(User) && !Service.IsActive(CurrentAccountId))
-            {
-                return RedirectToAction("Logout", "Auth");
-            }
+        Response.StatusCode = StatusCodes.Status404NotFound;
 
-            Response.StatusCode = StatusCodes.Status404NotFound;
-
-            return View();
-        }
+        return View();
     }
 }

@@ -3,6 +3,7 @@
         "Name": "Nombre"
     },
     "Validations": {
-        "AssociatedRates": "Existen tarifas asociadas a este Producto. Para eliminar este Producto, debe eliminar primero esas tarifas o asociarles un Producto diferente."
+        "AssociatedRates": "Existen tarifas asociadas a este Producto. Para eliminar este Producto, debe eliminar primero esas tarifas o asociarles un Producto diferente.",
+        "DuplicateName": "Ya existe un Producto con ese Nombre."
     }
 }

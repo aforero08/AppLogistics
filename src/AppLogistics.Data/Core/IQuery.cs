@@ -2,14 +2,11 @@
 using System.Linq;
 using System.Linq.Expressions;
 
-namespace AppLogistics.Data.Core
+namespace AppLogistics.Data.Core;
+
+public interface IQuery<TModel> : IQueryable<TModel>
 {
-    public interface IQuery<TModel> : IQueryable<TModel>
-    {
-        IQuery<TResult> Select<TResult>(Expression<Func<TModel, TResult>> selector);
+    IQuery<TModel> Where(Expression<Func<TModel, bool>> predicate);
 
-        IQuery<TModel> Where(Expression<Func<TModel, bool>> predicate);
-
-        IQueryable<TView> To<TView>();
-    }
+    IQueryable<TView> To<TView>();
 }

@@ -1,32 +1,31 @@
-﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Metadata;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 using NSubstitute;
 using Xunit;
 
-namespace AppLogistics.Components.Mvc.Tests
+namespace AppLogistics.Components.Mvc.Tests;
+
+public class PlaceholderTagHelperTests
 {
-    public class PlaceholderTagHelperTests
+    #region Process(TagHelperContext context, TagHelperOutput output)
+
+    [Fact]
+    public void Process_Placeholder()
     {
-        #region Process(TagHelperContext context, TagHelperOutput output)
+        ModelMetadata metadata = Substitute.For<ModelMetadata>(ModelMetadataIdentity.ForType(typeof(string)));
+        TagHelperOutput output = new TagHelperOutput("input", new TagHelperAttributeList(), (useCache, encoder) => null);
+        PlaceholderTagHelper helper = new PlaceholderTagHelper { For = new ModelExpression("Total", new ModelExplorer(new EmptyModelMetadataProvider(), metadata, null)) };
 
-        [Fact]
-        public void Process_Placeholder()
-        {
-            ModelMetadata metadata = Substitute.For<ModelMetadata>(ModelMetadataIdentity.ForType(typeof(string)));
-            TagHelperOutput output = new TagHelperOutput("input", new TagHelperAttributeList(), (useCache, encoder) => null);
-            PlaceholderTagHelper helper = new PlaceholderTagHelper { For = new ModelExpression("Total", new ModelExplorer(new EmptyModelMetadataProvider(), metadata, null)) };
+        metadata.DisplayName.Returns("Test");
 
-            metadata.DisplayName.Returns("Test");
+        helper.Process(null, output);
 
-            helper.Process(null, output);
-
-            Assert.Single(output.Attributes);
-            Assert.Empty(output.Content.GetContent());
-            Assert.Equal("Test", output.Attributes["placeholder"].Value);
-        }
-
-        #endregion Process(TagHelperContext context, TagHelperOutput output)
+        Assert.Single(output.Attributes);
+        Assert.Empty(output.Content.GetContent());
+        Assert.Equal("Test", output.Attributes["placeholder"].Value);
     }
+
+    #endregion Process(TagHelperContext context, TagHelperOutput output)
 }

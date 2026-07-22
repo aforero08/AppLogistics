@@ -7,128 +7,127 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
-namespace AppLogistics.Controllers
+namespace AppLogistics.Controllers;
+
+[AllowAnonymous]
+public class AuthController : ValidatedController<IAccountValidator, IAccountService>
 {
-    [AllowAnonymous]
-    public class AuthController : ValidatedController<IAccountValidator, IAccountService>
+    private readonly IMailClient _mailClient;
+
+    public AuthController(IAccountValidator validator, IAccountService service, IMailClient mailClient)
+        : base(validator, service)
     {
-        private readonly IMailClient _mailClient;
+        _mailClient = mailClient;
+    }
 
-        public AuthController(IAccountValidator validator, IAccountService service, IMailClient mailClient)
-            : base(validator, service)
+    [HttpGet]
+    public ActionResult Recover()
+    {
+        if (Service.IsLoggedIn(User))
         {
-            _mailClient = mailClient;
+            return RedirectToDefault();
         }
 
-        [HttpGet]
-        public ActionResult Recover()
-        {
-            if (Service.IsLoggedIn(User))
-            {
-                return RedirectToDefault();
-            }
+        return View();
+    }
 
-            return View();
+    [HttpPost]
+    public async Task<ActionResult> Recover(AccountRecoveryView account)
+    {
+        if (Service.IsLoggedIn(User))
+        {
+            return RedirectToDefault();
         }
 
-        [HttpPost]
-        public async Task<ActionResult> Recover(AccountRecoveryView account)
+        if (!Validator.CanRecover(account))
         {
-            if (Service.IsLoggedIn(User))
-            {
-                return RedirectToDefault();
-            }
-
-            if (!Validator.CanRecover(account))
-            {
-                return View(account);
-            }
-
-            if (Service.Recover(account) is string token)
-            {
-                string url = Url.Action("Reset", "Auth", new { token }, Request.Scheme);
-
-                await _mailClient.SendFromAdmin(account.Email, "",
-                    Message.For<AccountView>("RecoveryEmailSubject"),
-                    Message.For<AccountView>("RecoveryEmailBody", url));
-            }
-
-            Alerts.AddInfo(Message.For<AccountView>("RecoveryInformation"));
-
-            return RedirectToAction("Login");
+            return View(account);
         }
 
-        [HttpGet]
-        public ActionResult Reset(string token)
+        if (Service.Recover(account) is string token)
         {
-            if (Service.IsLoggedIn(User))
-            {
-                return RedirectToDefault();
-            }
+            string url = Url.Action("Reset", "Auth", new { token }, Request.Scheme);
 
-            if (!Validator.CanReset(new AccountResetView { Token = token }))
-            {
-                return RedirectToAction("Recover");
-            }
-
-            return View();
+            await _mailClient.SendFromAdmin(account.Email, "",
+                Message.For<AccountView>("RecoveryEmailSubject"),
+                Message.For<AccountView>("RecoveryEmailBody", url));
         }
 
-        [HttpPost]
-        public ActionResult Reset(AccountResetView account)
+        Alerts.AddInfo(Message.For<AccountView>("RecoveryInformation"));
+
+        return RedirectToAction("Login");
+    }
+
+    [HttpGet]
+    public ActionResult Reset(string token)
+    {
+        if (Service.IsLoggedIn(User))
         {
-            if (Service.IsLoggedIn(User))
-            {
-                return RedirectToDefault();
-            }
-
-            if (!Validator.CanReset(account))
-            {
-                return RedirectToAction("Recover");
-            }
-
-            Service.Reset(account);
-
-            Alerts.AddSuccess(Message.For<AccountView>("SuccessfulReset"), 4000);
-
-            return RedirectToAction("Login");
+            return RedirectToDefault();
         }
 
-        [HttpGet]
-        public ActionResult Login(string returnUrl)
+        if (!Validator.CanReset(new AccountResetView { Token = token }))
         {
-            if (Service.IsLoggedIn(User))
-            {
-                return RedirectToLocal(returnUrl);
-            }
-
-            return View();
+            return RedirectToAction("Recover");
         }
 
-        [HttpPost]
-        public async Task<ActionResult> Login(AccountLoginView account, string returnUrl)
+        return View();
+    }
+
+    [HttpPost]
+    public ActionResult Reset(AccountResetView account)
+    {
+        if (Service.IsLoggedIn(User))
         {
-            if (Service.IsLoggedIn(User))
-            {
-                return RedirectToLocal(returnUrl);
-            }
+            return RedirectToDefault();
+        }
 
-            if (!Validator.CanLogin(account))
-            {
-                return View(account);
-            }
+        if (!Validator.CanReset(account))
+        {
+            return RedirectToAction("Recover");
+        }
 
-            await Service.Login(HttpContext, account.Username);
+        Service.Reset(account);
 
+        Alerts.AddSuccess(Message.For<AccountView>("SuccessfulReset"), 4000);
+
+        return RedirectToAction("Login");
+    }
+
+    [HttpGet]
+    public ActionResult Login(string returnUrl)
+    {
+        if (Service.IsLoggedIn(User))
+        {
             return RedirectToLocal(returnUrl);
         }
 
-        [HttpGet]
-        public async Task<RedirectToActionResult> Logout()
-        {
-            await Service.Logout(HttpContext);
+        return View();
+    }
 
-            return RedirectToAction("Login");
+    [HttpPost]
+    public async Task<ActionResult> Login(AccountLoginView account, string returnUrl)
+    {
+        if (Service.IsLoggedIn(User))
+        {
+            return RedirectToLocal(returnUrl);
         }
+
+        if (!Validator.CanLogin(account))
+        {
+            return View(account);
+        }
+
+        await Service.Login(HttpContext, account.Username);
+
+        return RedirectToLocal(returnUrl);
+    }
+
+    [HttpGet]
+    public async Task<RedirectToActionResult> Logout()
+    {
+        await Service.Logout(HttpContext);
+
+        return RedirectToAction("Login");
     }
 }

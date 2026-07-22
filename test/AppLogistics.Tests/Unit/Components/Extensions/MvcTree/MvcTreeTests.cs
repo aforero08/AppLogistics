@@ -1,20 +1,19 @@
-﻿using Xunit;
+using Xunit;
 
-namespace AppLogistics.Components.Extensions.Tests
+namespace AppLogistics.Components.Extensions.Tests;
+
+public class MvcTreeTests
 {
-    public class MvcTreeTests
+    #region MvcTree()
+
+    [Fact]
+    public void MvcTree_CreatesEmpty()
     {
-        #region MvcTree()
+        MvcTree actual = new MvcTree();
 
-        [Fact]
-        public void MvcTree_CreatesEmpty()
-        {
-            MvcTree actual = new MvcTree();
-
-            Assert.Empty(actual.Nodes);
-            Assert.Empty(actual.SelectedIds);
-        }
-
-        #endregion MvcTree()
+        Assert.Empty(actual.Nodes);
+        Assert.Empty(actual.SelectedIds);
     }
+
+    #endregion MvcTree()
 }

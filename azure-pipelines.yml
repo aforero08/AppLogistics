@@ -1,0 +1,86 @@
+trigger:
+  branches:
+    include:
+    - develop
+    - upgrade-to-NET6
+  paths:
+    include:
+    - src/**
+    - test/**
+    - AppLogistics.sln
+    - azure-pipelines.yml
+
+pool:
+  vmImage: 'windows-latest'
+
+variables:
+  buildConfiguration: 'Release'
+  dotnetSdkVersion: '8.x'
+  projectPath: 'src/AppLogistics.Web/AppLogistics.Web.csproj'
+  publishPath: '$(Build.ArtifactStagingDirectory)/publish'
+
+stages:
+- stage: Build
+  displayName: 'Build and Publish'
+  jobs:
+  - job: Build
+    displayName: 'Build Application'
+    steps:
+
+    # Install .NET SDK
+    - task: UseDotNet@2
+      displayName: 'Install .NET SDK $(dotnetSdkVersion)'
+      inputs:
+        packageType: 'sdk'
+        version: $(dotnetSdkVersion)
+        installationPath: $(Agent.ToolsDirectory)/dotnet
+
+    # Install Node.js (required for npm)
+    - task: NodeTool@0
+      displayName: 'Install Node.js'
+      inputs:
+        versionSpec: '18.x'
+
+    # Restore NuGet packages
+    - task: DotNetCoreCLI@2
+      displayName: 'Restore NuGet Packages'
+      inputs:
+        command: 'restore'
+        projects: 'AppLogistics.sln'
+        arguments: '--property:Configuration=$(buildConfiguration)'
+
+
+    # Build the project
+    - task: DotNetCoreCLI@2
+      displayName: 'Build Application'
+      inputs:
+        command: 'build'
+        projects: '$(projectPath)'
+        arguments: '--configuration $(buildConfiguration) --no-restore'
+
+    # Run tests (if any)
+    - task: DotNetCoreCLI@2
+      displayName: 'Run Tests'
+      inputs:
+        command: 'test'
+        projects: 'test/**/*.csproj'
+        arguments: '--configuration $(buildConfiguration) --collect:"XPlat Code Coverage"'
+
+    # Publish the application
+    - task: DotNetCoreCLI@2
+      displayName: 'Publish Application'
+      inputs:
+        command: 'publish'
+        publishWebProjects: false
+        projects: '$(projectPath)'
+        arguments: '--configuration $(buildConfiguration) --output $(publishPath) --no-build'
+        zipAfterPublish: false
+        modifyOutputPath: false
+
+    # Publish build artifacts
+    - task: PublishBuildArtifacts@1
+      displayName: 'Publish Artifacts'
+      inputs:
+        pathToPublish: '$(publishPath)'
+        artifactName: 'drop'
+        publishLocation: 'Container'

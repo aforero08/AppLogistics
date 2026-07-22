@@ -1,11 +1,10 @@
 using AppLogistics.Objects;
 
-namespace AppLogistics.Validators
+namespace AppLogistics.Validators;
+
+public interface IEthnicGroupValidator : IValidator
 {
-    public interface IEthnicGroupValidator : IValidator
-    {
-        bool CanCreate(EthnicGroupView view);
-        bool CanEdit(EthnicGroupView view);
-        bool CanDelete(int id);
-    }
+    bool CanCreate(EthnicGroupView view);
+    bool CanEdit(EthnicGroupView view);
+    bool CanDelete(int id);
 }

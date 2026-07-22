@@ -1,30 +1,29 @@
 ﻿using AppLogistics.Services;
 using Microsoft.AspNetCore.Mvc.Filters;
 
-namespace AppLogistics.Controllers
+namespace AppLogistics.Controllers;
+
+public abstract class ServicedController<TService> : BaseController
+    where TService : IService
 {
-    public abstract class ServicedController<TService> : BaseController
-        where TService : IService
+    public TService Service { get; }
+
+    protected ServicedController(TService service)
     {
-        public TService Service { get; }
+        Service = service;
+    }
 
-        protected ServicedController(TService service)
-        {
-            Service = service;
-        }
+    public override void OnActionExecuting(ActionExecutingContext context)
+    {
+        base.OnActionExecuting(context);
 
-        public override void OnActionExecuting(ActionExecutingContext context)
-        {
-            base.OnActionExecuting(context);
+        Service.CurrentAccountId = CurrentAccountId;
+    }
 
-            Service.CurrentAccountId = CurrentAccountId;
-        }
+    protected override void Dispose(bool disposing)
+    {
+        Service.Dispose();
 
-        protected override void Dispose(bool disposing)
-        {
-            Service.Dispose();
-
-            base.Dispose(disposing);
-        }
+        base.Dispose(disposing);
     }
 }

@@ -1,29 +1,28 @@
-﻿using NSubstitute;
+using NSubstitute;
 using System;
 using Xunit;
 
-namespace AppLogistics.Objects.Tests
+namespace AppLogistics.Objects.Tests;
+
+public class BaseViewTests
 {
-    public class BaseViewTests
+    private BaseView view;
+
+    public BaseViewTests()
     {
-        private BaseView view;
-
-        public BaseViewTests()
-        {
-            view = Substitute.For<BaseView>();
-        }
-
-        #region CreationDate
-
-        [Fact]
-        public void CreationDate_ReturnsSameValue()
-        {
-            DateTime expected = view.CreationDate;
-            DateTime actual = view.CreationDate;
-
-            Assert.Equal(expected, actual);
-        }
-
-        #endregion CreationDate
+        view = Substitute.For<BaseView>();
     }
+
+    #region CreationDate
+
+    [Fact]
+    public void CreationDate_ReturnsSameValue()
+    {
+        DateTime expected = view.CreationDate;
+        DateTime actual = view.CreationDate;
+
+        Assert.Equal(expected, actual);
+    }
+
+    #endregion CreationDate
 }

@@ -1,12 +1,11 @@
-﻿namespace AppLogistics.Components.Extensions.Tests
-{
-    public class MvcTreeView
-    {
-        public MvcTree MvcTree { get; set; }
+namespace AppLogistics.Components.Extensions.Tests;
 
-        public MvcTreeView()
-        {
-            MvcTree = new MvcTree();
-        }
+public class MvcTreeView
+{
+    public MvcTree MvcTree { get; set; }
+
+    public MvcTreeView()
+    {
+        MvcTree = new MvcTree();
     }
 }

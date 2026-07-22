@@ -3,6 +3,7 @@
         "Name": "Nombre"
     },
     "Validations": {
-        "AssociatedEmployees": "Existen empleados asociados a este Sexo. Para eliminar este Sexo, debe eliminar primero esos empleados o asociarles un Sexo diferente."
+        "AssociatedEmployees": "Existen empleados asociados a este Sexo. Para eliminar este Sexo, debe eliminar primero esos empleados o asociarles un Sexo diferente.",
+        "DuplicateName": "Ya existe un Sexo con ese Nombre."
     }
 }

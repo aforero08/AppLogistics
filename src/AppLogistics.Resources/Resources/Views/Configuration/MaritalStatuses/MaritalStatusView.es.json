@@ -3,6 +3,7 @@
         "Name": "Nombre"
     },
     "Validations": {
-        "AssociatedEmployees": "Existen empleados asociados a este Estado civil. Para eliminar este Estado civil, debe eliminar primero esos empleados o asociarles un Estado civil diferente."
+        "AssociatedEmployees": "Existen empleados asociados a este Estado civil. Para eliminar este Estado civil, debe eliminar primero esos empleados o asociarles un Estado civil diferente.",
+        "DuplicateName": "Ya existe un Estado civil con ese Nombre."
     }
 }

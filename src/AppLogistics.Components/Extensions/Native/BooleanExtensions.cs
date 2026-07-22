@@ -1,17 +1,16 @@
 ﻿using AppLogistics.Resources;
 
-namespace AppLogistics.Components.Extensions.Native
-{
-    public static class BooleanExtensions
-    {
-        public static string MapToStringUsingResources(this bool value)
-        {
-            if (value)
-            {
-                return Resource.ForString("Yes");
-            }
+namespace AppLogistics.Components.Extensions.Native;
 
-            return Resource.ForString("No");
+public static class BooleanExtensions
+{
+    public static string MapToStringUsingResources(this bool value)
+    {
+        if (value)
+        {
+            return Resource.ForString("Yes");
         }
+
+        return Resource.ForString("No");
     }
 }

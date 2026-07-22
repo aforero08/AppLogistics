@@ -1,22 +1,31 @@
-﻿using AppLogistics.Resources;
-using Microsoft.AspNetCore.Mvc.DataAnnotations.Internal;
-using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Mvc.DataAnnotations;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using AppLogistics.Resources;
 
-namespace AppLogistics.Components.Mvc
+namespace AppLogistics.Components.Mvc;
+
+public class StringLengthAdapter : AttributeAdapterBase<StringLengthAttribute>
 {
-    public class StringLengthAdapter : StringLengthAttributeAdapter
+    public StringLengthAdapter(StringLengthAttribute attribute) : base(attribute, null) { }
+
+    public override void AddValidation(ClientModelValidationContext context)
     {
-        public StringLengthAdapter(StringLengthAttribute attribute)
-            : base(attribute, null)
+        if (context == null) return;
+        context.Attributes["data-val"] = "true";
+        context.Attributes["data-val-length"] = GetErrorMessage(context);
+        context.Attributes["data-val-length-max"] = Attribute.MaximumLength.ToString();
+        if (Attribute.MinimumLength > 0)
         {
+            context.Attributes["data-val-length-min"] = Attribute.MinimumLength.ToString();
         }
+    }
 
-        public override string GetErrorMessage(ModelValidationContextBase validationContext)
-        {
-            Attribute.ErrorMessage = Validation.For(Attribute.MinimumLength == 0 ? "StringLength" : "StringLengthRange");
-
-            return GetErrorMessage(validationContext.ModelMetadata);
-        }
+    public override string GetErrorMessage(ModelValidationContextBase validationContext)
+    {
+        string key = Attribute.MinimumLength == 0 ? "StringLength" : "StringLengthRange";
+        return Attribute.MinimumLength == 0
+            ? Validation.For(key, validationContext.ModelMetadata.GetDisplayName(), Attribute.MaximumLength)
+            : Validation.For(key, validationContext.ModelMetadata.GetDisplayName(), Attribute.MaximumLength, Attribute.MinimumLength);
     }
 }

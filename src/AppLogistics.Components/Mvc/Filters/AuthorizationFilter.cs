@@ -4,41 +4,40 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
-namespace AppLogistics.Components.Mvc
+namespace AppLogistics.Components.Mvc;
+
+public class AuthorizationFilter : IResourceFilter
 {
-    public class AuthorizationFilter : IResourceFilter
+    private readonly IAuthorization _authorization;
+
+    public AuthorizationFilter(IAuthorization authorization)
     {
-        private readonly IAuthorization _authorization;
+        _authorization = authorization;
+    }
 
-        public AuthorizationFilter(IAuthorization authorization)
+    public void OnResourceExecuting(ResourceExecutingContext context)
+    {
+        if (!context.HttpContext.User.Identity.IsAuthenticated)
         {
-            _authorization = authorization;
+            return;
         }
 
-        public void OnResourceExecuting(ResourceExecutingContext context)
+        int? accountId = context.HttpContext.User.Id();
+        string area = context.RouteData.Values["area"] as string;
+        string action = context.RouteData.Values["action"] as string;
+        string controller = context.RouteData.Values["controller"] as string;
+
+        if (_authorization?.IsGrantedFor(accountId, area, controller, action) == false)
         {
-            if (!context.HttpContext.User.Identity.IsAuthenticated)
+            context.Result = new ViewResult
             {
-                return;
-            }
-
-            int? accountId = context.HttpContext.User.Id();
-            string area = context.RouteData.Values["area"] as string;
-            string action = context.RouteData.Values["action"] as string;
-            string controller = context.RouteData.Values["controller"] as string;
-
-            if (_authorization?.IsGrantedFor(accountId, area, controller, action) == false)
-            {
-                context.Result = new ViewResult
-                {
-                    StatusCode = StatusCodes.Status404NotFound,
-                    ViewName = "~/Views/Home/NotFound.cshtml"
-                };
-            }
+                StatusCode = StatusCodes.Status404NotFound,
+                ViewName = "~/Views/Home/NotFound.cshtml"
+            };
         }
+    }
 
-        public void OnResourceExecuted(ResourceExecutedContext context)
-        {
-        }
+    public void OnResourceExecuted(ResourceExecutedContext context)
+    {
     }
 }

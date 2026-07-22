@@ -2,48 +2,47 @@ using AppLogistics.Data.Core;
 using AppLogistics.Objects;
 using System.Linq;
 
-namespace AppLogistics.Services
+namespace AppLogistics.Services;
+
+public class CountryService : BaseService, ICountryService
 {
-    public class CountryService : BaseService, ICountryService
+    public CountryService(IUnitOfWork unitOfWork)
+        : base(unitOfWork)
     {
-        public CountryService(IUnitOfWork unitOfWork)
-            : base(unitOfWork)
-        {
-        }
+    }
 
-        public TView Get<TView>(int id) where TView : BaseView
-        {
-            return UnitOfWork.GetAs<Country, TView>(id);
-        }
+    public TView Get<TView>(int id) where TView : BaseView
+    {
+        return UnitOfWork.GetAs<Country, TView>(id);
+    }
 
-        public IQueryable<CountryView> GetViews()
-        {
-            return UnitOfWork
-                .Select<Country>()
-                .To<CountryView>()
-                .OrderByDescending(country => country.Id);
-        }
+    public IQueryable<CountryView> GetViews()
+    {
+        return UnitOfWork
+            .Select<Country>()
+            .To<CountryView>()
+            .OrderByDescending(country => country.Id);
+    }
 
-        public void Create(CountryView view)
-        {
-            Country country = UnitOfWork.To<Country>(view);
+    public void Create(CountryView view)
+    {
+        Country country = UnitOfWork.To<Country>(view);
 
-            UnitOfWork.Insert(country);
-            UnitOfWork.Commit();
-        }
+        UnitOfWork.Insert(country);
+        UnitOfWork.Commit();
+    }
 
-        public void Edit(CountryView view)
-        {
-            Country country = UnitOfWork.To<Country>(view);
+    public void Edit(CountryView view)
+    {
+        Country country = UnitOfWork.To<Country>(view);
 
-            UnitOfWork.Update(country);
-            UnitOfWork.Commit();
-        }
+        UnitOfWork.Update(country);
+        UnitOfWork.Commit();
+    }
 
-        public void Delete(int id)
-        {
-            UnitOfWork.Delete<Country>(id);
-            UnitOfWork.Commit();
-        }
+    public void Delete(int id)
+    {
+        UnitOfWork.Delete<Country>(id);
+        UnitOfWork.Commit();
     }
 }

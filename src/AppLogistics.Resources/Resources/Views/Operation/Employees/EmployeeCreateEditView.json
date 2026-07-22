@@ -50,7 +50,8 @@
         "Section_Trainings": "TRAININGS"
     },
     "Validations": {
-        "NotUniqueDocumentNumber": "There is already an employee with that Document number",
-        "NotUniqueInternalCode": "There is already an employee with that Internal code"
+      "DeleteNotAllowed": "It is not possible to delete an employee. You can edit it and mark it as inactive",
+      "NotUniqueDocumentNumber": "There is already an employee with that Document number",
+      "NotUniqueInternalCode": "There is already an employee with that Internal code"
     }
 }
