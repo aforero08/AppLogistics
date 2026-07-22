@@ -75,6 +75,9 @@ namespace AppLogistics.Objects
         [ExcelReportDisplayName("ExcelServiceReport", nameof(Location))]
         public string Location { get; set; }
 
+        [ExcelReportDisplayName("ExcelServiceReport", nameof(Novelties))]
+        public string Novelties { get; set; }
+
         [ExcelReportDisplayName("ExcelServiceReport", nameof(Comments))]
         public string Comments { get; set; }
 

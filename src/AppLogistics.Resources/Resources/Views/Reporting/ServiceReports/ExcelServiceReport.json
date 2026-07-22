@@ -18,6 +18,7 @@
         "ExternalDocument": "EXTERNAL DOCUMENT",
         "InternalDocument": "INTERNAL DOCUMENT",
         "Location": "LOCATION",
+        "Novelties":  "NOVELTIES",
         "ProductName": "PRODUCT",
         "Quantity": "QUANTITY",
         "RatePrice": "FARE PRICE",
