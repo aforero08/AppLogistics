@@ -47,10 +47,10 @@ stages:
         installationPath: $(Agent.ToolsDirectory)/dotnet
 
     # Install Node.js (required for npm)
-    - task: NodeTool@0
+    - task: UseNode@1
       displayName: 'Install Node.js'
       inputs:
-        versionSpec: '18.x'
+        version: '18.x'
 
     # Restore NuGet packages
     - task: DotNetCoreCLI@2
