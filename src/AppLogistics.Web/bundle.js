@@ -9,14 +9,33 @@ glob.sync("./wwwroot/Content/**/*.min.css").forEach(fs.unlinkSync);
 
 const vendorPrivateJs = bundle([
     "./wwwroot/Scripts/jquery/jquery.js",
-    "./wwwroot/Scripts/jquery/**/*.js",
+    "./wwwroot/Scripts/jquery/jquery.validate.js",
+    "./wwwroot/Scripts/jquery/jquery.validate.unobtrusive.js",
+    "./wwwroot/Scripts/jquery/jquery.globalize.js",
+    "./wwwroot/Scripts/jquery/Cultures/globalize.en.js",
+    "./wwwroot/Scripts/jquery/Cultures/globalize.es.js",
     "./wwwroot/Scripts/jqueryui/jquery-ui.js",
-    "./wwwroot/Scripts/jqueryui/**/*.js",
-    "./wwwroot/Scripts/mvclookup/**/*.js",
-    "./wwwroot/Scripts/mvcgrid/**/*.js",
+    "./wwwroot/Scripts/jqueryui/Cultures/jquery-ui.en.js",
+    "./wwwroot/Scripts/jqueryui/Cultures/jquery-ui.es.js",
+    "./wwwroot/Scripts/jqueryui/jquery-ui.timepicker-addon.js",
+    "./wwwroot/Scripts/bootstrap/bootstrap-native.js",
+    "./wwwroot/Scripts/mvclookup/mvc-lookup.js",
+    "./wwwroot/Scripts/mvclookup/Cultures/mvc-lookup.en.js",
+    "./wwwroot/Scripts/mvclookup/Cultures/mvc-lookup.es.js",
+    "./wwwroot/Scripts/mvcgrid/mvc-grid.js",
+    "./wwwroot/Scripts/mvcgrid/Cultures/mvc-grid.en.js",
+    "./wwwroot/Scripts/mvcgrid/Cultures/mvc-grid.es.js",
     "./wwwroot/Scripts/mvctree/*.js",
-    "./wwwroot/Scripts/bootstrap/*.js",
-    "./wwwroot/Scripts/shared/widgets/*.js"
+    "./wwwroot/Scripts/shared/widgets/alerts.js",
+    "./wwwroot/Scripts/shared/widgets/datepicker.js",
+    "./wwwroot/Scripts/shared/widgets/grid.js",
+    "./wwwroot/Scripts/shared/widgets/header.js",
+    "./wwwroot/Scripts/shared/widgets/tree.js",
+    "./wwwroot/Scripts/shared/widgets/lookup.js",
+    "./wwwroot/Scripts/shared/widgets/navigation.js",
+    "./wwwroot/Scripts/shared/widgets/validator.js",
+    "./wwwroot/Scripts/shared/widgets/number.js",
+    "./wwwroot/Scripts/shared/widgets/tooltip.js"
 ], "./wwwroot/Scripts/Private/vendor.min.js");
 
 const sitePrivateJs = bundle([
@@ -25,10 +44,14 @@ const sitePrivateJs = bundle([
 
 const vendorPublicJs = bundle([
     "./wwwroot/Scripts/jquery/jquery.js",
-    "./wwwroot/Scripts/jquery/**/*.js",
-    "./wwwroot/Scripts/bootstrap/*.js",
-    "./wwwroot/Scripts/shared/widgets/validator.js",
-    "./wwwroot/Scripts/shared/widgets/alerts.js"
+    "./wwwroot/Scripts/jquery/jquery.validate.js",
+    "./wwwroot/Scripts/jquery/jquery.validate.unobtrusive.js",
+    "./wwwroot/Scripts/jquery/jquery.globalize.js",
+    "./wwwroot/Scripts/jquery/Cultures/globalize.en.js",
+    "./wwwroot/Scripts/jquery/Cultures/globalize.es.js",
+    "./wwwroot/Scripts/bootstrap/bootstrap-native.js",
+    "./wwwroot/Scripts/shared/widgets/alerts.js",
+    "./wwwroot/Scripts/shared/widgets/validator.js"
 ], "./wwwroot/Scripts/Public/vendor.min.js");
 
 const sitePublicJs = bundle([
