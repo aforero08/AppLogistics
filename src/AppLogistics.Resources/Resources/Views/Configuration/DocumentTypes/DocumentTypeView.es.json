@@ -4,6 +4,7 @@
         "ShortName": "Nombre corto"
     },
     "Validations": {
-        "AssociatedEmployees": "Existen empleados asociados a este tipo de documento. Para eliminar este tipo de documento, debe eliminar primero esos empleados o asociarles un tipo de documento diferente."
+        "AssociatedEmployees": "Existen empleados asociados a este tipo de documento. Para eliminar este tipo de documento, debe eliminar primero esos empleados o asociarles un tipo de documento diferente.",
+        "DuplicateName": "Ya existe un Tipo de documento con ese Nombre."
     }
 }

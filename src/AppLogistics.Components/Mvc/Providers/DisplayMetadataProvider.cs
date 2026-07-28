@@ -1,16 +1,15 @@
 ﻿using AppLogistics.Resources;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Metadata;
 
-namespace AppLogistics.Components.Mvc
+namespace AppLogistics.Components.Mvc;
+
+public class DisplayMetadataProvider : IDisplayMetadataProvider
 {
-    public class DisplayMetadataProvider : IDisplayMetadataProvider
+    public void CreateDisplayMetadata(DisplayMetadataProviderContext context)
     {
-        public void CreateDisplayMetadata(DisplayMetadataProviderContext context)
+        if (context.Key.ContainerType != null && context.Key.MetadataKind == ModelMetadataKind.Property)
         {
-            if (context.Key.ContainerType != null && context.Key.MetadataKind == ModelMetadataKind.Property)
-            {
-                context.DisplayMetadata.DisplayName = () => Resource.ForProperty(context.Key.ContainerType, context.Key.Name);
-            }
+            context.DisplayMetadata.DisplayName = () => Resource.ForProperty(context.Key.ContainerType, context.Key.Name);
         }
     }
 }

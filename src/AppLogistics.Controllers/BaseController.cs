@@ -10,100 +10,99 @@ using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 
-namespace AppLogistics.Controllers
+namespace AppLogistics.Controllers;
+
+[Authorize]
+[AutoValidateAntiforgeryToken]
+public abstract class BaseController : Controller
 {
-    [Authorize]
-    [AutoValidateAntiforgeryToken]
-    public abstract class BaseController : Controller
+    public virtual int CurrentAccountId { get; protected set; }
+    public IAuthorization Authorization { get; protected set; }
+    public Alerts Alerts { get; protected set; }
+
+    protected BaseController()
     {
-        public virtual int CurrentAccountId { get; protected set; }
-        public IAuthorization Authorization { get; protected set; }
-        public Alerts Alerts { get; protected set; }
+        Alerts = new Alerts();
+    }
 
-        protected BaseController()
+    public virtual ViewResult NotFoundView()
+    {
+        Response.StatusCode = StatusCodes.Status404NotFound;
+
+        return View("~/Views/Home/NotFound.cshtml");
+    }
+
+    public virtual ViewResult NotEmptyView(object model)
+    {
+        if (model == null)
         {
-            Alerts = new Alerts();
+            return NotFoundView();
         }
 
-        public virtual ViewResult NotFoundView()
-        {
-            Response.StatusCode = StatusCodes.Status404NotFound;
+        return View(model);
+    }
 
-            return View("~/Views/Home/NotFound.cshtml");
+    public virtual ActionResult RedirectToLocal(string url)
+    {
+        if (!Url.IsLocalUrl(url))
+        {
+            return RedirectToDefault();
         }
 
-        public virtual ViewResult NotEmptyView(object model)
-        {
-            if (model == null)
-            {
-                return NotFoundView();
-            }
+        return Redirect(url);
+    }
 
-            return View(model);
+    public virtual RedirectToActionResult RedirectToDefault()
+    {
+        return base.RedirectToAction("Index", "Home", new { area = "" });
+    }
+
+    public override RedirectToActionResult RedirectToAction(string actionName, string controllerName, object routeValues)
+    {
+        IDictionary<string, object> values = HtmlHelper.AnonymousObjectToHtmlAttributes(routeValues);
+        controllerName = controllerName ?? (values.ContainsKey("controller") ? values["controller"] as string : null);
+        string area = values.ContainsKey("area") ? values["area"] as string : null;
+        controllerName = controllerName ?? RouteData.Values["controller"] as string;
+        area = area ?? RouteData.Values["area"] as string;
+
+        if (!IsAuthorizedFor(actionName, controllerName, area))
+        {
+            return RedirectToDefault();
         }
 
-        public virtual ActionResult RedirectToLocal(string url)
-        {
-            if (!Url.IsLocalUrl(url))
-            {
-                return RedirectToDefault();
-            }
+        return base.RedirectToAction(actionName, controllerName, routeValues);
+    }
 
-            return Redirect(url);
+    public virtual bool IsAuthorizedFor(string action, string controller, string area)
+    {
+        return Authorization?.IsGrantedFor(CurrentAccountId, area, controller, action) != false;
+    }
+
+    public override void OnActionExecuting(ActionExecutingContext context)
+    {
+        Authorization = HttpContext.RequestServices.GetService<IAuthorization>();
+
+        CurrentAccountId = User.Id() ?? 0;
+    }
+
+    public override void OnActionExecuted(ActionExecutedContext context)
+    {
+        if (context.Result is JsonResult)
+        {
+            return;
         }
 
-        public virtual RedirectToActionResult RedirectToDefault()
+        Alerts alerts = Alerts;
+
+        if (TempData["Alerts"] is string alertsJson)
         {
-            return base.RedirectToAction("Index", "Home", new { area = "" });
+            alerts = JsonConvert.DeserializeObject<Alerts>(alertsJson);
+            alerts.Merge(Alerts);
         }
 
-        public override RedirectToActionResult RedirectToAction(string actionName, string controllerName, object routeValues)
+        if (alerts.Count > 0)
         {
-            IDictionary<string, object> values = HtmlHelper.AnonymousObjectToHtmlAttributes(routeValues);
-            controllerName = controllerName ?? (values.ContainsKey("controller") ? values["controller"] as string : null);
-            string area = values.ContainsKey("area") ? values["area"] as string : null;
-            controllerName = controllerName ?? RouteData.Values["controller"] as string;
-            area = area ?? RouteData.Values["area"] as string;
-
-            if (!IsAuthorizedFor(actionName, controllerName, area))
-            {
-                return RedirectToDefault();
-            }
-
-            return base.RedirectToAction(actionName, controllerName, routeValues);
-        }
-
-        public virtual bool IsAuthorizedFor(string action, string controller, string area)
-        {
-            return Authorization?.IsGrantedFor(CurrentAccountId, area, controller, action) != false;
-        }
-
-        public override void OnActionExecuting(ActionExecutingContext context)
-        {
-            Authorization = HttpContext.RequestServices.GetService<IAuthorization>();
-
-            CurrentAccountId = User.Id() ?? 0;
-        }
-
-        public override void OnActionExecuted(ActionExecutedContext context)
-        {
-            if (context.Result is JsonResult)
-            {
-                return;
-            }
-
-            Alerts alerts = Alerts;
-
-            if (TempData["Alerts"] is string alertsJson)
-            {
-                alerts = JsonConvert.DeserializeObject<Alerts>(alertsJson);
-                alerts.Merge(Alerts);
-            }
-
-            if (alerts.Count > 0)
-            {
-                TempData["Alerts"] = JsonConvert.SerializeObject(alerts);
-            }
+            TempData["Alerts"] = JsonConvert.SerializeObject(alerts);
         }
     }
 }

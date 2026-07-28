@@ -1,43 +1,39 @@
-﻿using AppLogistics.Objects;
+using AppLogistics.Objects;
 using AppLogistics.Tests;
 using AutoMapper;
 using Xunit;
 
-namespace AppLogistics.Data.Mapping.Tests
+namespace AppLogistics.Data.Mapping.Tests;
+
+public class ObjectMapperTests
 {
-    public class ObjectMapperTests
+    // Legacy ObjectMapper.MapObjects() no longer needed; mappings provided by LegacyMapper.
+
+    #region MapRoles()
+
+    [Fact]
+    public void MapRoles_Role_RoleView()
     {
-        static ObjectMapperTests()
-        {
-            ObjectMapper.MapObjects();
-        }
+        Role expected = ObjectsFactory.CreateRole();
+        RoleView actual = TestFixture.Mapper.Map<RoleView>(expected); // Mapper alias -> LegacyMapper
 
-        #region MapRoles()
-
-        [Fact]
-        public void MapRoles_Role_RoleView()
-        {
-            Role expected = ObjectsFactory.CreateRole();
-            RoleView actual = Mapper.Map<RoleView>(expected);
-
-            Assert.Equal(expected.CreationDate, actual.CreationDate);
-            Assert.Equal(expected.Title, actual.Title);
-            Assert.Equal(expected.Id, actual.Id);
-            Assert.NotNull(actual.Permissions);
-        }
-
-        [Fact]
-        public void MapRoles_RoleView_Role()
-        {
-            RoleView expected = ObjectsFactory.CreateRoleView();
-            Role actual = Mapper.Map<Role>(expected);
-
-            Assert.Equal(expected.CreationDate, actual.CreationDate);
-            Assert.Equal(expected.Title, actual.Title);
-            Assert.Equal(expected.Id, actual.Id);
-            Assert.Empty(actual.Permissions);
-        }
-
-        #endregion MapRoles()
+        Assert.Equal(expected.CreationDate, actual.CreationDate);
+        Assert.Equal(expected.Title, actual.Title);
+        Assert.Equal(expected.Id, actual.Id);
+        Assert.NotNull(actual.Permissions);
     }
+
+    [Fact]
+    public void MapRoles_RoleView_Role()
+    {
+        RoleView expected = ObjectsFactory.CreateRoleView();
+        Role actual = TestFixture.Mapper.Map<Role>(expected);
+
+        Assert.Equal(expected.CreationDate, actual.CreationDate);
+        Assert.Equal(expected.Title, actual.Title);
+        Assert.Equal(expected.Id, actual.Id);
+        Assert.Empty(actual.Permissions);
+    }
+
+    #endregion MapRoles()
 }

@@ -1,10 +1,9 @@
-﻿using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.CodeAnalysis;
 
-namespace AppLogistics.Components.Security.Tests
+namespace AppLogistics.Components.Security.Tests;
+
+[AllowUnauthorized]
+[ExcludeFromCodeCoverage]
+public class AllowUnauthorizedController : AuthorizedController
 {
-    [AllowUnauthorized]
-    [ExcludeFromCodeCoverage]
-    public class AllowUnauthorizedController : AuthorizedController
-    {
-    }
 }

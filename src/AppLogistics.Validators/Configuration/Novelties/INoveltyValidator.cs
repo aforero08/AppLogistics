@@ -1,13 +1,12 @@
 using AppLogistics.Objects;
 
-namespace AppLogistics.Validators
+namespace AppLogistics.Validators;
+
+public interface INoveltyValidator : IValidator
 {
-    public interface INoveltyValidator : IValidator
-    {
-        bool CanCreate(NoveltyView view);
-        
-        bool CanEdit(NoveltyView view);
-        
-        bool CanDelete(int id);
-    }
+    bool CanCreate(NoveltyView view);
+    
+    bool CanEdit(NoveltyView view);
+    
+    bool CanDelete(int id);
 }

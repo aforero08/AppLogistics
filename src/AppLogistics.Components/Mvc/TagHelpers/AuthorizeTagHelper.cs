@@ -4,39 +4,38 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 
-namespace AppLogistics.Components.Mvc
+namespace AppLogistics.Components.Mvc;
+
+[HtmlTargetElement("authorize", Attributes = "action")]
+public class AuthorizeTagHelper : TagHelper
 {
-    [HtmlTargetElement("authorize", Attributes = "action")]
-    public class AuthorizeTagHelper : TagHelper
+    public string Area { get; set; }
+    public string Action { get; set; }
+    public string Controller { get; set; }
+
+    [ViewContext]
+    [HtmlAttributeNotBound]
+    public ViewContext ViewContext { get; set; }
+
+    private readonly IAuthorization _authorization;
+
+    public AuthorizeTagHelper(IAuthorization authorization)
     {
-        public string Area { get; set; }
-        public string Action { get; set; }
-        public string Controller { get; set; }
+        _authorization = authorization;
+    }
 
-        [ViewContext]
-        [HtmlAttributeNotBound]
-        public ViewContext ViewContext { get; set; }
+    public override void Process(TagHelperContext context, TagHelperOutput output)
+    {
+        output.TagName = null;
 
-        private readonly IAuthorization _authorization;
+        int? accountId = ViewContext.HttpContext.User.Id();
+        string area = Area ?? ViewContext.RouteData.Values["area"] as string;
+        string action = Action ?? ViewContext.RouteData.Values["action"] as string;
+        string controller = Controller ?? ViewContext.RouteData.Values["controller"] as string;
 
-        public AuthorizeTagHelper(IAuthorization authorization)
+        if (_authorization?.IsGrantedFor(accountId, area, controller, action) == false)
         {
-            _authorization = authorization;
-        }
-
-        public override void Process(TagHelperContext context, TagHelperOutput output)
-        {
-            output.TagName = null;
-
-            int? accountId = ViewContext.HttpContext.User.Id();
-            string area = Area ?? ViewContext.RouteData.Values["area"] as string;
-            string action = Action ?? ViewContext.RouteData.Values["action"] as string;
-            string controller = Controller ?? ViewContext.RouteData.Values["controller"] as string;
-
-            if (_authorization?.IsGrantedFor(accountId, area, controller, action) == false)
-            {
-                output.SuppressOutput();
-            }
+            output.SuppressOutput();
         }
     }
 }

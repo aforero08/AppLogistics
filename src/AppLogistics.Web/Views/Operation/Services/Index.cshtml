@@ -20,7 +20,7 @@
                 {
                     columns.AddAction("Details", "fa fa-info");
                     columns.AddAction("Edit", "fa fa-pencil-alt");
-                    columns.AddAction("Finalize", "far fa-check-circle");
+                    columns.AddAction("Finalize", "far fa-check-circle", model => !model.EndDate.HasValue);
                     columns.AddAction("Delete", "fa fa-times");
 
                     columns.AddProperty(model => model.Id);

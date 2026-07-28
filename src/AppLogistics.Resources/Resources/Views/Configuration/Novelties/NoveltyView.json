@@ -4,6 +4,7 @@
         "Name": "Name"
     },
     "Validations": {
-        "AssociatedServices": "There are services associated to this Novelty. To delete this Novelty, you should delete those services first or associate them a different Novelty."
+        "AssociatedServices": "There are services associated to this Novelty. To delete this Novelty, you should delete those services first or associate them a different Novelty.",
+        "DuplicateName": "A Novelty with that Name already exists."
     }
 }

@@ -1,10 +1,9 @@
-﻿namespace AppLogistics.Components.Notifications
+﻿namespace AppLogistics.Components.Notifications;
+
+public enum AlertType
 {
-    public enum AlertType
-    {
-        Danger,
-        Warning,
-        Info,
-        Success
-    }
+    Danger,
+    Warning,
+    Info,
+    Success
 }

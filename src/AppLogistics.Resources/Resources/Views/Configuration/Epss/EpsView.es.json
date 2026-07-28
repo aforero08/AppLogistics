@@ -4,6 +4,7 @@
         "Nit": "Nit"
     },
     "Validations": {
-        "AssociatedEmployees": "Existen empleados asociados a esta Eps. Para eliminar esta Eps, debe eliminar primero esos empleados o asociarles una Eps diferente."
+        "AssociatedEmployees": "Existen empleados asociados a esta Eps. Para eliminar esta Eps, debe eliminar primero esos empleados o asociarles una Eps diferente.",
+        "DuplicateName": "Ya existe una Eps con ese Nombre."
     }
 }

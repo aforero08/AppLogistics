@@ -1,12 +1,11 @@
 ﻿using System;
 
-namespace AppLogistics.Components.Extensions.Native
+namespace AppLogistics.Components.Extensions.Native;
+
+public static class DateTimeExtensions
 {
-    public static class DateTimeExtensions
+    public static DateTime UtcToDefaultTimeZone(this DateTime utcDateTime)
     {
-        public static DateTime UtcToDefaultTimeZone(this DateTime utcDateTime)
-        {
-            return utcDateTime.AddHours(-5);
-        }
+        return utcDateTime.AddHours(-5);
     }
 }

@@ -1,14 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace AppLogistics.Objects
-{
-    public class Sex : BaseModel
-    {
-        [Required]
-        [StringLength(32)]
-        public string Name { get; set; }
+namespace AppLogistics.Objects;
 
-        public virtual ICollection<Employee> Employees { get; set; }
-    }
+public class Sex : BaseModel
+{
+    [Required]
+    [StringLength(32)]
+    public string Name { get; set; }
+
+    public virtual ICollection<Employee> Employees { get; set; }
 }

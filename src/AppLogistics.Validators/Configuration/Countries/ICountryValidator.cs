@@ -1,11 +1,10 @@
 using AppLogistics.Objects;
 
-namespace AppLogistics.Validators
+namespace AppLogistics.Validators;
+
+public interface ICountryValidator : IValidator
 {
-    public interface ICountryValidator : IValidator
-    {
-        bool CanCreate(CountryView view);
-        bool CanEdit(CountryView view);
-        bool CanDelete(int id);
-    }
+    bool CanCreate(CountryView view);
+    bool CanEdit(CountryView view);
+    bool CanDelete(int id);
 }

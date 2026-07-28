@@ -1,29 +1,28 @@
-﻿using NSubstitute;
+using NSubstitute;
 using System;
 using Xunit;
 
-namespace AppLogistics.Objects.Tests
+namespace AppLogistics.Objects.Tests;
+
+public class BaseModelTests
 {
-    public class BaseModelTests
+    private BaseModel model;
+
+    public BaseModelTests()
     {
-        private BaseModel model;
-
-        public BaseModelTests()
-        {
-            model = Substitute.For<BaseModel>();
-        }
-
-        #region CreationDate
-
-        [Fact]
-        public void CreationDate_ReturnsSameValue()
-        {
-            DateTime expected = model.CreationDate;
-            DateTime actual = model.CreationDate;
-
-            Assert.Equal(expected, actual);
-        }
-
-        #endregion CreationDate
+        model = Substitute.For<BaseModel>();
     }
+
+    #region CreationDate
+
+    [Fact]
+    public void CreationDate_ReturnsSameValue()
+    {
+        DateTime expected = model.CreationDate;
+        DateTime actual = model.CreationDate;
+
+        Assert.Equal(expected, actual);
+    }
+
+    #endregion CreationDate
 }

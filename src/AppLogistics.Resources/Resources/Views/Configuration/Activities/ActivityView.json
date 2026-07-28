@@ -3,6 +3,7 @@
         "Name": "Name"
     },
     "Validations": {
-        "AssociatedRates": "There are rates associated to this Activity. To delete this Activity, you should delete those rates first or associate them a different Activity."
+        "AssociatedRates": "There are rates associated to this Activity. To delete this Activity, you should delete those rates first or associate them a different Activity.",
+        "DuplicateName": "An Activity with that Name already exists."
     }
 }

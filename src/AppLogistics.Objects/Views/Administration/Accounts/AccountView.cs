@@ -1,20 +1,19 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace AppLogistics.Objects
+namespace AppLogistics.Objects;
+
+public class AccountView : BaseView<Account>
 {
-    public class AccountView : BaseView
-    {
-        [Required]
-        [StringLength(32)]
-        public string Username { get; set; }
+    [Required]
+    [StringLength(32)]
+    public string Username { get; set; }
 
-        [Required]
-        [EmailAddress]
-        [StringLength(256)]
-        public string Email { get; set; }
+    [Required]
+    [EmailAddress]
+    [StringLength(256)]
+    public string Email { get; set; }
 
-        public bool IsLocked { get; set; }
+    public bool IsLocked { get; set; }
 
-        public string RoleTitle { get; set; }
-    }
+    public string RoleTitle { get; set; }
 }

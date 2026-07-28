@@ -1,13 +1,12 @@
 ﻿using AppLogistics.Components.Mvc;
 using System.ComponentModel.DataAnnotations;
 
-namespace AppLogistics.Objects
+namespace AppLogistics.Objects;
+
+public class ProfileDeleteView : BaseView
 {
-    public class ProfileDeleteView : BaseView
-    {
-        [Required]
-        [NotTrimmed]
-        [StringLength(32)]
-        public string Password { get; set; }
-    }
+    [Required]
+    [NotTrimmed]
+    [StringLength(32)]
+    public string Password { get; set; }
 }

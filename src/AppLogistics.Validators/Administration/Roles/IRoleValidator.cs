@@ -1,11 +1,10 @@
 ﻿using AppLogistics.Objects;
 
-namespace AppLogistics.Validators
-{
-    public interface IRoleValidator : IValidator
-    {
-        bool CanCreate(RoleView view);
+namespace AppLogistics.Validators;
 
-        bool CanEdit(RoleView view);
-    }
+public interface IRoleValidator : IValidator
+{
+    bool CanCreate(RoleView view);
+
+    bool CanEdit(RoleView view);
 }

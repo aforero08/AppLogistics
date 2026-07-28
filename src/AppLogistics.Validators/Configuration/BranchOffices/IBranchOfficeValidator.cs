@@ -1,11 +1,10 @@
 using AppLogistics.Objects;
 
-namespace AppLogistics.Validators
+namespace AppLogistics.Validators;
+
+public interface IBranchOfficeValidator : IValidator
 {
-    public interface IBranchOfficeValidator : IValidator
-    {
-        bool CanCreate(BranchOfficeView view);
-        bool CanEdit(BranchOfficeView view);
-        bool CanDelete(int id);
-    }
+    bool CanCreate(BranchOfficeView view);
+    bool CanEdit(BranchOfficeView view);
+    bool CanDelete(int id);
 }

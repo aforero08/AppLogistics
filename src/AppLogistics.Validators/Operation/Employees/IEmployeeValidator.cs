@@ -1,10 +1,10 @@
 using AppLogistics.Objects;
 
-namespace AppLogistics.Validators
+namespace AppLogistics.Validators;
+
+public interface IEmployeeValidator : IValidator
 {
-    public interface IEmployeeValidator : IValidator
-    {
-        bool CanCreate(EmployeeCreateEditView view);
-        bool CanEdit(EmployeeCreateEditView view);
-    }
+    bool CanCreate(EmployeeCreateEditView view);
+    bool CanEdit(EmployeeCreateEditView view);
+    bool CanDelete(EmployeeCreateEditView view) ;
 }

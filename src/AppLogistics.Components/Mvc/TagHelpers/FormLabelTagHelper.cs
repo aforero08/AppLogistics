@@ -2,32 +2,31 @@
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 
-namespace AppLogistics.Components.Mvc
+namespace AppLogistics.Components.Mvc;
+
+[HtmlTargetElement("label", Attributes = "asp-for")]
+public class FormLabelTagHelper : TagHelper
 {
-    [HtmlTargetElement("label", Attributes = "asp-for")]
-    public class FormLabelTagHelper : TagHelper
+    public bool? Required { get; set; }
+
+    [HtmlAttributeName("asp-for")]
+    public ModelExpression For { get; set; }
+
+    public override void Process(TagHelperContext context, TagHelperOutput output)
     {
-        public bool? Required { get; set; }
+        TagBuilder require = new TagBuilder("span");
+        require.Attributes["class"] = "require";
 
-        [HtmlAttributeName("asp-for")]
-        public ModelExpression For { get; set; }
-
-        public override void Process(TagHelperContext context, TagHelperOutput output)
+        if (Required == true)
         {
-            TagBuilder require = new TagBuilder("span");
-            require.Attributes["class"] = "require";
-
-            if (Required == true)
-            {
-                require.InnerHtml.Append("*");
-            }
-
-            if (Required == null && For.Metadata.IsRequired && For.Metadata.ModelType != typeof(bool))
-            {
-                require.InnerHtml.Append("*");
-            }
-
-            output.Content.AppendHtml(require);
+            require.InnerHtml.Append("*");
         }
+
+        if (Required == null && For.Metadata.IsRequired && For.Metadata.ModelType != typeof(bool))
+        {
+            require.InnerHtml.Append("*");
+        }
+
+        output.Content.AppendHtml(require);
     }
 }

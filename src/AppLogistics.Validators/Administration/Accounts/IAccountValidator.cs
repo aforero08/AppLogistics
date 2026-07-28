@@ -1,21 +1,20 @@
 ﻿using AppLogistics.Objects;
 
-namespace AppLogistics.Validators
+namespace AppLogistics.Validators;
+
+public interface IAccountValidator : IValidator
 {
-    public interface IAccountValidator : IValidator
-    {
-        bool CanRecover(AccountRecoveryView view);
+    bool CanRecover(AccountRecoveryView view);
 
-        bool CanReset(AccountResetView view);
+    bool CanReset(AccountResetView view);
 
-        bool CanLogin(AccountLoginView view);
+    bool CanLogin(AccountLoginView view);
 
-        bool CanCreate(AccountCreateView view);
+    bool CanCreate(AccountCreateView view);
 
-        bool CanEdit(AccountEditView view);
+    bool CanEdit(AccountEditView view);
 
-        bool CanEdit(ProfileEditView view);
+    bool CanEdit(ProfileEditView view);
 
-        bool CanDelete(ProfileDeleteView view);
-    }
+    bool CanDelete(ProfileDeleteView view);
 }

@@ -1,20 +1,19 @@
 ﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using System;
 
-namespace AppLogistics.Components.Mvc
+namespace AppLogistics.Components.Mvc;
+
+public class DateValidatorProvider : IClientModelValidatorProvider
 {
-    public class DateValidatorProvider : IClientModelValidatorProvider
+    public void CreateValidators(ClientValidatorProviderContext context)
     {
-        public void CreateValidators(ClientValidatorProviderContext context)
+        if (typeof(DateTime?).IsAssignableFrom(context.ModelMetadata.UnderlyingOrModelType))
         {
-            if (typeof(DateTime?).IsAssignableFrom(context.ModelMetadata.UnderlyingOrModelType))
+            context.Results.Add(new ClientValidatorItem
             {
-                context.Results.Add(new ClientValidatorItem
-                {
-                    Validator = new DateValidator(),
-                    IsReusable = true
-                });
-            }
+                Validator = new DateValidator(),
+                IsReusable = true
+            });
         }
     }
 }

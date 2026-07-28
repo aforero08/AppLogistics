@@ -1,20 +1,19 @@
 ﻿using AppLogistics.Objects;
 using System.Linq;
 
-namespace AppLogistics.Services
+namespace AppLogistics.Services;
+
+public interface IRoleService : IService
 {
-    public interface IRoleService : IService
-    {
-        void SeedPermissions(RoleView view);
+    void SeedPermissions(RoleView view);
 
-        IQueryable<RoleView> GetViews();
+    IQueryable<RoleView> GetViews();
 
-        RoleView GetView(int id);
+    RoleView GetView(int id);
 
-        void Create(RoleView view);
+    void Create(RoleView view);
 
-        void Edit(RoleView view);
+    void Edit(RoleView view);
 
-        void Delete(int id);
-    }
+    void Delete(int id);
 }

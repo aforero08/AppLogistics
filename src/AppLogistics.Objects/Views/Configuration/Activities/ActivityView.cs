@@ -1,13 +1,12 @@
 using NonFactors.Mvc.Lookup;
 using System.ComponentModel.DataAnnotations;
 
-namespace AppLogistics.Objects
+namespace AppLogistics.Objects;
+
+public class ActivityView : BaseView<Activity>
 {
-    public class ActivityView : BaseView
-    {
-        [Required]
-        [LookupColumn]
-        [StringLength(32)]
-        public string Name { get; set; }
-    }
+    [Required]
+    [LookupColumn]
+    [StringLength(32)]
+    public string Name { get; set; }
 }

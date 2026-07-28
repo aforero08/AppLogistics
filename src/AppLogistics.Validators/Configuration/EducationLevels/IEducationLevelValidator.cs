@@ -1,11 +1,10 @@
 using AppLogistics.Objects;
 
-namespace AppLogistics.Validators
+namespace AppLogistics.Validators;
+
+public interface IEducationLevelValidator : IValidator
 {
-    public interface IEducationLevelValidator : IValidator
-    {
-        bool CanCreate(EducationLevelView view);
-        bool CanEdit(EducationLevelView view);
-        bool CanDelete(int id);
-    }
+    bool CanCreate(EducationLevelView view);
+    bool CanEdit(EducationLevelView view);
+    bool CanDelete(int id);
 }

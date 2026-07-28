@@ -3,6 +3,7 @@ table .action-cell {
   min-width: 36px;
   padding: 7px;
   width: 36px;
+  border-left: none;
 }
 table .action-cell + .action-cell {
   border-left: none;
