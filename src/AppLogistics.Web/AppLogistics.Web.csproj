@@ -30,7 +30,8 @@
     <Content Update="package-lock.json" CopyToOutputDirectory="Never" CopyToPublishDirectory="Never" />
     <Content Update="wwwroot\Content\**" CopyToPublishDirectory="Never" />
     <Content Update="wwwroot\Scripts\**" CopyToPublishDirectory="Never" />
-    <Content Update="wwwroot\Content\**\*.woff2" CopyToPublishDirectory="Always" />
+	<Content Update="wwwroot\Content\**\*.woff" CopyToPublishDirectory="Always" />
+	<Content Update="wwwroot\Content\**\*.woff2" CopyToPublishDirectory="Always" />
     <Content Update="wwwroot\Scripts\Public\**" CopyToPublishDirectory="Always" />
     <Content Update="wwwroot\Content\Public\**" CopyToPublishDirectory="Always" />
     <Content Update="wwwroot\Scripts\Private\**" CopyToPublishDirectory="Always" />
