@@ -29,6 +29,7 @@ variables:
   projectPath: 'src/AppLogistics.Web/AppLogistics.Web.csproj'
   publishPath: '$(Build.ArtifactStagingDirectory)/publish'
   packagePath: '$(Build.ArtifactStagingDirectory)/AppLogistics.zip'
+  minimumLineCoveragePercent: '12'
 
 stages:
 - stage: Build
@@ -69,13 +70,52 @@ stages:
         projects: '$(projectPath)'
         arguments: '--configuration $(buildConfiguration) --no-restore'
 
-    # Run tests (if any)
+    # Run tests and collect Cobertura coverage.
     - task: DotNetCoreCLI@2
       displayName: 'Run Tests'
       inputs:
         command: 'test'
         projects: 'test/**/*.csproj'
-        arguments: '--configuration $(buildConfiguration) --collect:"XPlat Code Coverage"'
+        arguments: '--configuration $(buildConfiguration) --collect:"XPlat Code Coverage" --results-directory $(Agent.TempDirectory)/TestResults'
+
+    - task: PublishCodeCoverageResults@2
+      displayName: 'Publish code coverage'
+      condition: succeededOrFailed()
+      inputs:
+        codeCoverageTool: 'Cobertura'
+        summaryFileLocation: '$(Agent.TempDirectory)/TestResults/**/coverage.cobertura.xml'
+        failIfCoverageEmpty: true
+
+    - task: PowerShell@2
+      displayName: 'Enforce minimum line coverage'
+      condition: succeededOrFailed()
+      inputs:
+        targetType: 'inline'
+        script: |
+          $coverageFiles = @(Get-ChildItem -Path "$(Agent.TempDirectory)/TestResults" -Filter 'coverage.cobertura.xml' -Recurse)
+          if ($coverageFiles.Count -eq 0) {
+            throw 'No Cobertura coverage report was generated.'
+          }
+
+          [int64]$linesCovered = 0
+          [int64]$linesValid = 0
+          foreach ($coverageFile in $coverageFiles) {
+            [xml]$coverage = Get-Content -LiteralPath $coverageFile.FullName -Raw
+            $linesCovered += [int64]$coverage.coverage.'lines-covered'
+            $linesValid += [int64]$coverage.coverage.'lines-valid'
+          }
+
+          if ($linesValid -eq 0) {
+            throw 'The Cobertura coverage report contains no instrumented lines.'
+          }
+
+          $lineCoverage = [math]::Round((100.0 * $linesCovered / $linesValid), 2)
+          $minimumLineCoveragePercent = [decimal]'$(minimumLineCoveragePercent)'
+          Write-Host "Line coverage: $lineCoverage% (minimum: $minimumLineCoveragePercent%)"
+
+          if ($lineCoverage -lt $minimumLineCoveragePercent) {
+            throw "Line coverage $lineCoverage% is below the required $minimumLineCoveragePercent%."
+          }
 
     # Publish the application
     - task: DotNetCoreCLI@2

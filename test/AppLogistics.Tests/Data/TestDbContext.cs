@@ -1,6 +1,5 @@
 using AppLogistics.Data.Core;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
 
 namespace AppLogistics.Tests;
 

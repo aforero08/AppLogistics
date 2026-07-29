@@ -3,7 +3,6 @@ using AppLogistics.Objects;
 using AppLogistics.Resources;
 using AppLogistics.Tests;
 using Microsoft.EntityFrameworkCore;
-using System;
 using System.Linq;
 using Xunit;
 

@@ -11,22 +11,11 @@ using AppLogistics.Objects;
 using AppLogistics.Resources;
 using AppLogistics.Services;
 using AppLogistics.Validators;
-using AutoMapper;
 using Microsoft.AspNetCore.Antiforgery;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.DataAnnotations;
-using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using NonFactors.Mvc.Grid;
-using System;
-using System.Collections.Generic;
-using System.IO;
 
 namespace AppLogistics.Web;
 

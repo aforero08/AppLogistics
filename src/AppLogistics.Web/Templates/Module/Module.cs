@@ -1,7 +1,4 @@
 ﻿using Genny;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace AppLogistics.Web.Templates;
 
