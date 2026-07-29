@@ -64,7 +64,7 @@ public class UnitOfWorkTests
         context.Add(model);
         context.SaveChanges();
 
-        TestModel expected = context.Set<TestModel>().AsNoTracking().Single();
+        TestModel expected = context.Set<TestModel>().AsNoTracking().Single(candidate => candidate.Id == model.Id);
         TestModel actual = unitOfWork.Get<TestModel>(model.Id);
 
         Assert.Equal(expected.CreationDate, actual.CreationDate);
