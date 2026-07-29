@@ -76,14 +76,14 @@ stages:
       inputs:
         command: 'test'
         projects: 'test/**/*.csproj'
-        arguments: '--configuration $(buildConfiguration) --collect:"XPlat Code Coverage" --results-directory $(Agent.TempDirectory)/TestResults'
+        arguments: '--configuration $(buildConfiguration) --collect:"XPlat Code Coverage"'
 
     - task: PublishCodeCoverageResults@2
       displayName: 'Publish code coverage'
       condition: succeededOrFailed()
       inputs:
         codeCoverageTool: 'Cobertura'
-        summaryFileLocation: '$(Agent.TempDirectory)/TestResults/**/coverage.cobertura.xml'
+        summaryFileLocation: '$(Agent.TempDirectory)/**/coverage.cobertura.xml'
         failIfCoverageEmpty: true
 
     - task: PowerShell@2
@@ -92,7 +92,7 @@ stages:
       inputs:
         targetType: 'inline'
         script: |
-          $coverageFiles = @(Get-ChildItem -Path "$(Agent.TempDirectory)/TestResults" -Filter 'coverage.cobertura.xml' -Recurse)
+          $coverageFiles = @(Get-ChildItem -Path "$(Agent.TempDirectory)" -Filter 'coverage.cobertura.xml' -Recurse)
           if ($coverageFiles.Count -eq 0) {
             throw 'No Cobertura coverage report was generated.'
           }
