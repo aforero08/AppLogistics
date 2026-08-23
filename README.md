@@ -5,7 +5,7 @@ AppLogistics is an ASP.NET Core MVC application for managing logistics reference
 ## Prerequisites
 
 - .NET 8 SDK
-- Node.js 18 or later and npm
+- Node.js 22 or later and npm
 - SQL Server or SQL Server LocalDB when running the web application
 
 The test suite uses an in-memory SQLite database by default, so SQL Server is not required to build or test the solution.
@@ -31,6 +31,7 @@ Restore .NET and front-end dependencies, then build the generated browser assets
 
 ```powershell
 dotnet restore AppLogistics.sln --property:Configuration=Debug
+dotnet tool restore
 Push-Location src/AppLogistics.Web
 npm ci
 npm run build
@@ -41,7 +42,8 @@ dotnet build AppLogistics.sln --configuration Debug --no-restore
 Run the web application with:
 
 ```powershell
-dotnet run --project src/AppLogistics.Web --configuration Debug
+$env:ASPNETCORE_ENVIRONMENT = "Development"
+dotnet run --project src/AppLogistics.Web --configuration Debug --no-launch-profile
 ```
 
 Run the automated tests with:

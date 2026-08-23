@@ -41,9 +41,10 @@ Document the following before implementation:
 
 ### Migration
 
-Create an EF Core migration after the model is complete:
+Restore the repository's version-matched local EF Core CLI, then create a migration after the model is complete:
 
 ```powershell
+dotnet tool restore
 dotnet ef migrations add <MigrationName> --project src/AppLogistics.Data --startup-project src/AppLogistics.Web
 ```
 
@@ -75,7 +76,13 @@ Review both the migration and model snapshot. Check column types and lengths, nu
 - Validate delete and custom workflow actions before changing state.
 - Add custom actions only when they represent real domain behavior; update tests and navigation/authorization metadata with them.
 
-The application discovers controller actions for permission seeding. Add the feature and its navigable actions to `src/AppLogistics.Web/mvc.sitemap` so authorized users can reach them.
+Authorization inspects controller actions at runtime, but database permissions are seeded explicitly. For every action that should be grantable:
+
+- Add a `Permission` with a stable, unique ID to `DatabaseConfiguration.GetSeedPermissions()` in `src/AppLogistics.Data/Migrations/DatabaseConfiguration.cs`.
+- Add the controller and action labels to both `src/AppLogistics.Resources/Resources/Shared/Permission.json` and `Permission.es.json`.
+- Add the permission case to `test/AppLogistics.Tests/Unit/Data/Migrations/InitialDataTests.cs` and update its exact permission count.
+
+Add the feature and its navigable actions to `src/AppLogistics.Web/mvc.sitemap` so authorized users can reach them.
 
 ### Views and lookups
 
