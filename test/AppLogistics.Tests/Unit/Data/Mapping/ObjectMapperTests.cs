@@ -1,6 +1,5 @@
 using AppLogistics.Objects;
 using AppLogistics.Tests;
-using AutoMapper;
 using Xunit;
 
 namespace AppLogistics.Data.Mapping.Tests;

@@ -1,7 +1,6 @@
 using AppLogistics.Data.Core;
 using AppLogistics.Objects;
 using AppLogistics.Tests;
-using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
 using System;

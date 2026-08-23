@@ -2,7 +2,6 @@ using AppLogistics.Components.Security;
 using AppLogistics.Data.Core;
 using AppLogistics.Objects;
 using AppLogistics.Tests;
-using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;

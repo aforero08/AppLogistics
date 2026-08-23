@@ -2,7 +2,6 @@ using AppLogistics.Data.Core;
 using AppLogistics.Objects;
 using AppLogistics.Tests;
 using Microsoft.EntityFrameworkCore;
-using System;
 using Xunit;
 
 namespace AppLogistics.Validators.Tests;
