@@ -1,7 +1,4 @@
-﻿using Microsoft.AspNetCore.Hosting;
-using System.IO;
-
-namespace AppLogistics.Web;
+﻿namespace AppLogistics.Web;
 
 public class Program
 {

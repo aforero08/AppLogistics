@@ -1,7 +1,6 @@
 using AppLogistics.Data.Core;
 using AppLogistics.Objects;
 using AppLogistics.Resources;
-using System;
 using System.Linq;
 
 namespace AppLogistics.Validators;

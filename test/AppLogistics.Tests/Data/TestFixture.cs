@@ -7,7 +7,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging.Abstractions;
 using MvcTemplate.Objects.Mapping;
 using System;
-using System.IO;
 using System.Linq;
 
 namespace AppLogistics.Tests;
