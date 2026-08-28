@@ -1,10 +1,12 @@
 ﻿/src/AppLogistics.Web/wwwroot/Scripts/Application/**/*.min.js
 /src/AppLogistics.Web/wwwroot/Scripts/Private/
 /src/AppLogistics.Web/wwwroot/Scripts/Public/
+/src/AppLogistics.Web/wwwroot/Scripts/Dependencies/
 
 /src/AppLogistics.Web/wwwroot/Content/Application/**/*.min.css
 /src/AppLogistics.Web/wwwroot/Content/Private/
 /src/AppLogistics.Web/wwwroot/Content/Public/
+/src/AppLogistics.Web/wwwroot/Content/Dependencies/
 /src/AppLogistics.Web/Logs/
 node_modules/
 .vscode/

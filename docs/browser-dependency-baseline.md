@@ -4,11 +4,19 @@ This document records the browser dependency state before moving checked-in thir
 
 Phase 0 intentionally makes no runtime dependency, source-asset, or bundle-order changes. Later phases should first reproduce the current behavior from managed packages and only then upgrade library versions.
 
+## Phase 1 acquisition result
+
+Phase 1 moved the exact jQuery 3.3.1, jQuery Validation 1.17.0, jQuery Validation Unobtrusive 3.2.11, and jQuery Timepicker Addon 1.6.3 distributions into `package.json` without upgrading them. Production bundles now read those sources directly from `node_modules`; `npm run build` also creates ignored, unminified `wwwroot/*/Dependencies` copies for Development pages.
+
+The application-owned Globalize and date/time culture adapters remain tracked. The custom jQuery UI build, Bootstrap assets, Font Awesome assets, MVC components, and all Phase 0 discrepancies remain unchanged for later phases.
+
+After these packages were declared, `npm audit --package-lock-only` reported three affected package entries: the existing high-severity `brace-expansion` build-tool finding, a moderate-severity jQuery finding, and a high-severity jQuery Validation finding. This added visibility is an intended result of Phase 1. Resolving the browser-library findings requires version upgrades and regression testing, so those behavior-changing updates remain deferred to a later phase.
+
 ## Current build and delivery model
 
-- `src/AppLogistics.Web/package.json` declares only the build tools `esbuild` 0.28.1 and `glob` 13.0.6.
-- `src/AppLogistics.Web/bundle.js` reads third-party browser sources directly from `wwwroot`.
-- Development pages load the individual source files from the public and private layouts.
+- `src/AppLogistics.Web/package.json` declares the build tools plus the exact-version Phase 1 browser packages.
+- `src/AppLogistics.Web/bundle.js` reads Phase 1 sources directly from `node_modules`; deferred browser libraries continue to come from `wwwroot`.
+- Development pages load generated Phase 1 dependency copies and the remaining tracked individual source files from the public and private layouts.
 - Staging and production pages load generated public/private vendor and site bundles.
 - Generated bundles are ignored by Git and rebuilt by `npm run build`; publish runs both `npm ci` and `npm run build`.
 - The third-party browser footprint identified below contains 43 tracked JavaScript, CSS, font, and image files. Application CSS, scripts, and images are outside this count.

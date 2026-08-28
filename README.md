@@ -39,6 +39,8 @@ Pop-Location
 dotnet build AppLogistics.sln --configuration Debug --no-restore
 ```
 
+The browser build reads managed third-party sources from `node_modules`, generates ignored Development copies under `wwwroot/*/Dependencies`, and produces the minified Staging/Production bundles. Do not edit generated dependency copies or bundles directly.
+
 Run the web application with:
 
 ```powershell
