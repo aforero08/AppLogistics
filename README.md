@@ -39,6 +39,8 @@ Pop-Location
 dotnet build AppLogistics.sln --configuration Debug --no-restore
 ```
 
+The browser build reads managed third-party sources from `node_modules`, generates ignored Development copies under `wwwroot/*/Dependencies`, and produces the minified Staging/Production bundles. Do not edit generated dependency copies or bundles directly.
+
 Run the web application with:
 
 ```powershell
@@ -69,5 +71,7 @@ dotnet test test/AppLogistics.Tests/AppLogistics.Tests.csproj --configuration De
 ## Contributing
 
 Read [Adding a CRUD module](docs/adding-crud-module.md) before implementing a new entity-backed feature. It explains how to select a current reference module and carry a change through the model, database, service, validation, controller, UI, localization, authorization, and tests.
+
+Read the [browser dependency baseline](docs/browser-dependency-baseline.md) before changing browser-library acquisition or versions. It records the current vendored libraries, local modifications, generated-asset hashes, and required smoke tests.
 
 Repository-specific coding-agent instructions are in [AGENTS.md](AGENTS.md).

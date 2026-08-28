@@ -7,17 +7,25 @@ const started = process.hrtime();
 glob.sync("./wwwroot/Scripts/**/*.min.js").forEach(fs.unlinkSync);
 glob.sync("./wwwroot/Content/**/*.min.css").forEach(fs.unlinkSync);
 
+copy([
+    ["./node_modules/jquery/dist/jquery.js", "./wwwroot/Scripts/Dependencies/jquery.js"],
+    ["./node_modules/jquery-validation/dist/jquery.validate.js", "./wwwroot/Scripts/Dependencies/jquery.validate.js"],
+    ["./node_modules/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.js", "./wwwroot/Scripts/Dependencies/jquery.validate.unobtrusive.js"],
+    ["./node_modules/jquery-ui-timepicker-addon/dist/jquery-ui-timepicker-addon.js", "./wwwroot/Scripts/Dependencies/jquery-ui.timepicker-addon.js"],
+    ["./node_modules/jquery-ui-timepicker-addon/dist/jquery-ui-timepicker-addon.css", "./wwwroot/Content/Dependencies/jquery-ui.timepicker-addon.css"]
+]);
+
 const vendorPrivateJs = bundle([
-    "./wwwroot/Scripts/jquery/jquery.js",
-    "./wwwroot/Scripts/jquery/jquery.validate.js",
-    "./wwwroot/Scripts/jquery/jquery.validate.unobtrusive.js",
+    "./node_modules/jquery/dist/jquery.js",
+    "./node_modules/jquery-validation/dist/jquery.validate.js",
+    "./node_modules/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.js",
     "./wwwroot/Scripts/jquery/jquery.globalize.js",
     "./wwwroot/Scripts/jquery/Cultures/globalize.en.js",
     "./wwwroot/Scripts/jquery/Cultures/globalize.es.js",
     "./wwwroot/Scripts/jqueryui/jquery-ui.js",
     "./wwwroot/Scripts/jqueryui/Cultures/jquery-ui.en.js",
     "./wwwroot/Scripts/jqueryui/Cultures/jquery-ui.es.js",
-    "./wwwroot/Scripts/jqueryui/jquery-ui.timepicker-addon.js",
+    "./node_modules/jquery-ui-timepicker-addon/dist/jquery-ui-timepicker-addon.js",
     "./wwwroot/Scripts/bootstrap/bootstrap-native.js",
     "./wwwroot/Scripts/mvclookup/mvc-lookup.js",
     "./wwwroot/Scripts/mvclookup/Cultures/mvc-lookup.en.js",
@@ -43,9 +51,9 @@ const sitePrivateJs = bundle([
 ], "./wwwroot/Scripts/Private/site.min.js");
 
 const vendorPublicJs = bundle([
-    "./wwwroot/Scripts/jquery/jquery.js",
-    "./wwwroot/Scripts/jquery/jquery.validate.js",
-    "./wwwroot/Scripts/jquery/jquery.validate.unobtrusive.js",
+    "./node_modules/jquery/dist/jquery.js",
+    "./node_modules/jquery-validation/dist/jquery.validate.js",
+    "./node_modules/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.js",
     "./wwwroot/Scripts/jquery/jquery.globalize.js",
     "./wwwroot/Scripts/jquery/Cultures/globalize.en.js",
     "./wwwroot/Scripts/jquery/Cultures/globalize.es.js",
@@ -61,7 +69,8 @@ const sitePublicJs = bundle([
 const appJs = minify(["./wwwroot/Scripts/application/**/*.js"]);
 
 const vendorPrivateCss = bundle([
-    "./wwwroot/Content/jqueryui/*.css",
+    "./node_modules/jquery-ui-timepicker-addon/dist/jquery-ui-timepicker-addon.css",
+    "./wwwroot/Content/jqueryui/jquery-ui.css",
     "./wwwroot/Content/bootstrap/*.css",
     "./wwwroot/Content/fontawesome/*.css",
     "./wwwroot/Content/mvcgrid/*.css",
@@ -141,4 +150,11 @@ function minify(files) {
         outdir: path.dirname(file),
         minify: true
     }));
+}
+
+function copy(files) {
+    files.forEach(([source, destination]) => {
+        fs.mkdirSync(path.dirname(destination), { recursive: true });
+        fs.copyFileSync(source, destination);
+    });
 }
