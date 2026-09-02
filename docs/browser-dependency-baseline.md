@@ -20,6 +20,12 @@ The previously tracked CSS differed from the published package only by the absen
 
 After Bootstrap was declared, `npm audit --package-lock-only` reported seven affected package entries: the existing `brace-expansion` build-tool path, the existing jQuery finding, and additional meta-vulnerability paths through packages that declare jQuery as a peer dependency. npm also installs Bootstrap's `popper.js` peer dependency, but neither Bootstrap JavaScript nor Popper is included in the application's browser bundles. These findings remain visible for the later dependency-upgrade phase rather than being changed during acquisition.
 
+## Phase 2B acquisition result
+
+Phase 2B moved Font Awesome Free 5.15.4 into `package.json` without changing the icon set or runtime version. `npm run build` recreates the ignored `wwwroot/Content/FontAwesome` compatibility directory from the package so existing Development and Production URLs remain stable.
+
+The build copies the package's shared CSS and the exact regular and solid WOFF2 binaries. It deterministically reduces the published regular and solid styles to their WOFF2 sources, preserving the repository's existing browser footprint without copying the package's unused EOT, SVG, TTF, WOFF, or brands assets. The generated CSS retains Font Awesome's license headers. Font Awesome adds no transitive packages or new npm audit findings.
+
 ## Current build and delivery model
 
 - `src/AppLogistics.Web/package.json` declares the build tools plus the exact-version managed browser packages.
@@ -27,7 +33,7 @@ After Bootstrap was declared, `npm audit --package-lock-only` reported seven aff
 - Development pages load generated dependency copies and the remaining tracked individual source files from the public and private layouts.
 - Staging and production pages load generated public/private vendor and site bundles.
 - Generated bundles are ignored by Git and rebuilt by `npm run build`; publish runs both `npm ci` and `npm run build`.
-- The Phase 0 third-party browser footprint contained 43 tracked JavaScript, CSS, font, and image files. Phases 1 and 2A replaced six of those files with managed sources, leaving 37 tracked third-party files. Application CSS, scripts, and images are outside this count.
+- The Phase 0 third-party browser footprint contained 43 tracked JavaScript, CSS, font, and image files. Phases 1, 2A, and 2B replaced eleven of those files with managed sources, leaving 32 tracked third-party files. Application CSS, scripts, and images are outside this count.
 
 ## Managed npm baseline
 
@@ -62,7 +68,7 @@ The audit does not inspect any of the checked-in browser libraries listed below.
 | Date/time culture adapters | Application-specific `en` and `es` objects | `wwwroot/Scripts/JQueryUI/Cultures` | Custom combined datepicker/timepicker settings | No separate header | Keep as application-owned adapters |
 | Bootstrap CSS | 4.3.1 | Generated under `wwwroot/Content/Dependencies` | Managed by `bootstrap@4.3.1`; the removed tracked copy differed only by its omitted source-map comment | MIT | Managed by npm in Phase 2A |
 | Bootstrap Native | 2.0.25 Bootstrap 4 build | `wwwroot/Scripts/Bootstrap/bootstrap-native.js` | Based on `bootstrap.native@2.0.25/dist/bootstrap-native-v4.js`, with a local parenthesized `tabindex` fix near line 939 | MIT | Preserve the local fix explicitly or upgrade separately |
-| Font Awesome Free | 5.15.4 | `wwwroot/Content/FontAwesome` | Font binaries exactly match npm; CSS is reformatted and the font declarations were reduced to WOFF2 with repository-specific URLs | CC BY 4.0, OFL 1.1, and MIT | npm candidate only after font URL/output verification |
+| Font Awesome Free | 5.15.4 | Generated under `wwwroot/Content/FontAwesome` | Managed by `@fortawesome/fontawesome-free@5.15.4`; the build preserves the regular/solid WOFF2-only selection and existing URLs | CC BY 4.0, OFL 1.1, and MIT | Managed by npm in Phase 2B |
 | MVC Grid | 7.0.0 | `wwwroot/Scripts/MvcGrid`, `wwwroot/Content/MvcGrid`, and related cultures | Paired with `NonFactors.Grid.Mvc6` 7.0.0; JS differences are formatting, CSS changes include the local font URL, and the font binary matches | MIT | Treat as NuGet-coupled assets, not an independent npm upgrade |
 | MVC Lookup | Browser assets 6.0.0; NuGet 6.3.0 | `wwwroot/Scripts/MvcLookup`, `wwwroot/Content/MvcLookup`, and related cultures | JS exactly matches the 6.0.0 package, not the referenced 6.3.0 NuGet package; CSS is also based on 6.0.0 | MIT | Resolve the 6.0/6.3 mismatch before changing acquisition |
 | MVC Tree | Application-owned | `wwwroot/Scripts/MvcTree`, `wwwroot/Content/MvcTree`, and `wwwroot/Images/MvcTree` | Implemented alongside application tag helpers and models; no external package was identified | No separate third-party license | Keep as application source |
