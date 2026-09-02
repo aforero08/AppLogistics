@@ -30,7 +30,7 @@ public class ProductValidator : BaseValidator, IProductValidator
     public bool CanEdit(ProductView view)
     {
         var alreadyExists = UnitOfWork.Select<Product>()
-            .Where(c => c.Name.ToUpper().Equals(view.Name.ToUpper()))
+            .Where(c => c.Id != view.Id && c.Name.ToUpper().Equals(view.Name.ToUpper()))
             .Any();
         
         if (alreadyExists)

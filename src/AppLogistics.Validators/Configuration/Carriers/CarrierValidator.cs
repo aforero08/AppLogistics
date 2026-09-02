@@ -30,7 +30,7 @@ public class CarrierValidator : BaseValidator, ICarrierValidator
     public bool CanEdit(CarrierView view)
     {
         var alreadyExists = UnitOfWork.Select<Carrier>()
-            .Where(a => a.Name.ToUpper().Equals(view.Name.ToUpper()))
+            .Where(a => a.Id != view.Id && a.Name.ToUpper().Equals(view.Name.ToUpper()))
             .Any();
 
         if (alreadyExists)

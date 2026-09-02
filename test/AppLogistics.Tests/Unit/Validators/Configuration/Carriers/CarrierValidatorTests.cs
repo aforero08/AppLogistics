@@ -54,9 +54,27 @@ public class CarrierValidatorTests
     [Fact]
     public void CanEdit_ValidCarrier()
     {
-        Assert.True(validator.CanEdit(ObjectsFactory.CreateCarrierView(carrier.Id)));
+        CarrierView view = ObjectsFactory.CreateCarrierView(carrier.Id);
+        view.Name = carrier.Name;
+
+        Assert.True(validator.CanEdit(view));
         Assert.Empty(validator.ModelState);
         Assert.Empty(validator.Alerts);
+    }
+
+    [Fact]
+    public void CanEdit_DuplicateName_ReturnsFalse()
+    {
+        Carrier otherCarrier = ObjectsFactory.CreateCarrier();
+        otherCarrier.Name = "OtherName";
+        context.Set<Carrier>().Add(otherCarrier);
+        context.SaveChanges();
+
+        CarrierView view = ObjectsFactory.CreateCarrierView(carrier.Id);
+        view.Name = otherCarrier.Name.ToLowerInvariant();
+
+        Assert.False(validator.CanEdit(view));
+        Assert.NotEmpty(validator.Alerts);
     }
 
     #endregion CanEdit(CarrierView view)

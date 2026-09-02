@@ -30,7 +30,7 @@ public class ClientValidator : BaseValidator, IClientValidator
     public bool CanEdit(ClientCreateEditView view)
     {
         var alreadyExists = UnitOfWork.Select<Client>()
-            .Where(c => c.Name.ToUpper().Equals(view.Name.ToUpper()))
+            .Where(c => c.Id != view.Id && c.Name.ToUpper().Equals(view.Name.ToUpper()))
             .Any();
 
         if (alreadyExists)

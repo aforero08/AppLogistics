@@ -54,9 +54,27 @@ public class ActivityValidatorTests
     [Fact]
     public void CanEdit_ValidActivity()
     {
-        Assert.True(validator.CanEdit(ObjectsFactory.CreateActivityView(activity.Id)));
+        ActivityView view = ObjectsFactory.CreateActivityView(activity.Id);
+        view.Name = activity.Name;
+
+        Assert.True(validator.CanEdit(view));
         Assert.Empty(validator.ModelState);
         Assert.Empty(validator.Alerts);
+    }
+
+    [Fact]
+    public void CanEdit_DuplicateName_ReturnsFalse()
+    {
+        Activity otherActivity = ObjectsFactory.CreateActivity();
+        otherActivity.Name = "OtherName";
+        context.Set<Activity>().Add(otherActivity);
+        context.SaveChanges();
+
+        ActivityView view = ObjectsFactory.CreateActivityView(activity.Id);
+        view.Name = otherActivity.Name.ToLowerInvariant();
+
+        Assert.False(validator.CanEdit(view));
+        Assert.NotEmpty(validator.Alerts);
     }
 
     #endregion CanEdit(ActivityView view)

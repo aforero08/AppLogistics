@@ -30,7 +30,7 @@ public class CountryValidator : BaseValidator, ICountryValidator
     public bool CanEdit(CountryView view)
     {
         var alreadyExists = UnitOfWork.Select<Country>()
-            .Where(c => c.Name.ToUpper().Equals(view.Name.ToUpper()))
+            .Where(c => c.Id != view.Id && c.Name.ToUpper().Equals(view.Name.ToUpper()))
             .Any();
         
         if (alreadyExists)

@@ -54,9 +54,27 @@ public class NoveltyValidatorTests
     [Fact]
     public void CanEdit_ValidNovelty()
     {
-        Assert.True(validator.CanEdit(ObjectsFactory.CreateNoveltyView(novelty.Id)));
+        NoveltyView view = ObjectsFactory.CreateNoveltyView(novelty.Id);
+        view.Name = novelty.Name;
+
+        Assert.True(validator.CanEdit(view));
         Assert.Empty(validator.ModelState);
         Assert.Empty(validator.Alerts);
+    }
+
+    [Fact]
+    public void CanEdit_DuplicateName_ReturnsFalse()
+    {
+        Novelty otherNovelty = ObjectsFactory.CreateNovelty();
+        otherNovelty.Name = "OtherName";
+        context.Set<Novelty>().Add(otherNovelty);
+        context.SaveChanges();
+
+        NoveltyView view = ObjectsFactory.CreateNoveltyView(novelty.Id);
+        view.Name = otherNovelty.Name.ToLowerInvariant();
+
+        Assert.False(validator.CanEdit(view));
+        Assert.NotEmpty(validator.Alerts);
     }
 
     #endregion

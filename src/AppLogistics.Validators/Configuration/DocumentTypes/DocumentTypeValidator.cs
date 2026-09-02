@@ -30,7 +30,7 @@ public class DocumentTypeValidator : BaseValidator, IDocumentTypeValidator
     public bool CanEdit(DocumentTypeView view)
     {
         var alreadyExists = UnitOfWork.Select<DocumentType>()
-            .Where(c => c.Name.ToUpper().Equals(view.Name.ToUpper()))
+            .Where(c => c.Id != view.Id && c.Name.ToUpper().Equals(view.Name.ToUpper()))
             .Any();
         
         if (alreadyExists)

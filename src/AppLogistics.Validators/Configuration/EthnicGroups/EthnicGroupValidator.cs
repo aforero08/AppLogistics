@@ -30,7 +30,7 @@ public class EthnicGroupValidator : BaseValidator, IEthnicGroupValidator
     public bool CanEdit(EthnicGroupView view)
     {
         var alreadyExists = UnitOfWork.Select<EthnicGroup>()
-            .Where(c => c.Name.ToUpper().Equals(view.Name.ToUpper()))
+            .Where(c => c.Id != view.Id && c.Name.ToUpper().Equals(view.Name.ToUpper()))
             .Any();
         
         if (alreadyExists)

@@ -52,6 +52,26 @@ public class RateValidatorTests
     }
 
     [Fact]
+    public void CanEdit_ToSameName()
+    {
+        RateCreateEditView view = ObjectsFactory.CreateRateCreateEditView(rate.Id);
+        view.Name = rate.Name;
+
+        Assert.True(validator.CanEdit(view));
+        Assert.Empty(validator.Alerts);
+    }
+
+    [Fact]
+    public void CanEdit_UsedName_ReturnsFalse()
+    {
+        RateCreateEditView view = ObjectsFactory.CreateRateCreateEditView(rate.Id + 1);
+        view.Name = rate.Name;
+
+        Assert.False(validator.CanEdit(view));
+        Assert.NotEmpty(validator.Alerts);
+    }
+
+    [Fact]
     public void CanEdit_ValidRate()
     {
         Assert.True(validator.CanEdit(ObjectsFactory.CreateRateCreateEditView(rate.Id)));

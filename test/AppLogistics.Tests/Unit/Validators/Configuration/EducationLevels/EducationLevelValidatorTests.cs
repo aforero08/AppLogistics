@@ -54,9 +54,27 @@ public class EducationLevelValidatorTests
     [Fact]
     public void CanEdit_ValidEducationLevel()
     {
-        Assert.True(validator.CanEdit(ObjectsFactory.CreateEducationLevelView(educationLevel.Id)));
+        EducationLevelView view = ObjectsFactory.CreateEducationLevelView(educationLevel.Id);
+        view.Name = educationLevel.Name;
+
+        Assert.True(validator.CanEdit(view));
         Assert.Empty(validator.ModelState);
         Assert.Empty(validator.Alerts);
+    }
+
+    [Fact]
+    public void CanEdit_DuplicateName_ReturnsFalse()
+    {
+        EducationLevel otherEducationLevel = ObjectsFactory.CreateEducationLevel();
+        otherEducationLevel.Name = "OtherName";
+        context.Set<EducationLevel>().Add(otherEducationLevel);
+        context.SaveChanges();
+
+        EducationLevelView view = ObjectsFactory.CreateEducationLevelView(educationLevel.Id);
+        view.Name = otherEducationLevel.Name.ToLowerInvariant();
+
+        Assert.False(validator.CanEdit(view));
+        Assert.NotEmpty(validator.Alerts);
     }
 
     #endregion
