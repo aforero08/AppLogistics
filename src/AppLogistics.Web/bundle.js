@@ -12,7 +12,9 @@ copy([
     ["./node_modules/jquery-validation/dist/jquery.validate.js", "./wwwroot/Scripts/Dependencies/jquery.validate.js"],
     ["./node_modules/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.js", "./wwwroot/Scripts/Dependencies/jquery.validate.unobtrusive.js"],
     ["./node_modules/jquery-ui-timepicker-addon/dist/jquery-ui-timepicker-addon.js", "./wwwroot/Scripts/Dependencies/jquery-ui.timepicker-addon.js"],
-    ["./node_modules/jquery-ui-timepicker-addon/dist/jquery-ui-timepicker-addon.css", "./wwwroot/Content/Dependencies/jquery-ui.timepicker-addon.css"]
+    ["./node_modules/jquery-ui-timepicker-addon/dist/jquery-ui-timepicker-addon.css", "./wwwroot/Content/Dependencies/jquery-ui.timepicker-addon.css"],
+    ["./node_modules/bootstrap/dist/css/bootstrap.css", "./wwwroot/Content/Dependencies/bootstrap.css"],
+    ["./node_modules/bootstrap/dist/css/bootstrap.css.map", "./wwwroot/Content/Dependencies/bootstrap.css.map"]
 ]);
 
 const vendorPrivateJs = bundle([
@@ -71,7 +73,7 @@ const appJs = minify(["./wwwroot/Scripts/application/**/*.js"]);
 const vendorPrivateCss = bundle([
     "./node_modules/jquery-ui-timepicker-addon/dist/jquery-ui-timepicker-addon.css",
     "./wwwroot/Content/jqueryui/jquery-ui.css",
-    "./wwwroot/Content/bootstrap/*.css",
+    "./node_modules/bootstrap/dist/css/bootstrap.css",
     "./wwwroot/Content/fontawesome/*.css",
     "./wwwroot/Content/mvcgrid/*.css",
     "./wwwroot/Content/mvctree/*.css",
@@ -90,7 +92,7 @@ const sitePrivateCss = bundle([
 ], "./wwwroot/Content/Private/site.min.css");
 
 const vendorPublicCss = bundle([
-    "./wwwroot/Content/bootstrap/*.css",
+    "./node_modules/bootstrap/dist/css/bootstrap.css",
     "./wwwroot/Content/fontawesome/*.css"
 ], "./wwwroot/Content/Public/vendor.min.css");
 
