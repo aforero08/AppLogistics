@@ -12,14 +12,22 @@ The application-owned Globalize and date/time culture adapters remain tracked. T
 
 After these packages were declared, `npm audit --package-lock-only` reported three affected package entries: the existing high-severity `brace-expansion` build-tool finding, a moderate-severity jQuery finding, and a high-severity jQuery Validation finding. This added visibility is an intended result of Phase 1. Resolving the browser-library findings requires version upgrades and regression testing, so those behavior-changing updates remain deferred to a later phase.
 
+## Phase 2A acquisition result
+
+Phase 2A moved the exact Bootstrap 4.3.1 CSS distribution into `package.json` without adopting Bootstrap's JavaScript or changing the runtime version. Production bundles read `dist/css/bootstrap.css` directly from `node_modules`; `npm run build` creates ignored Development copies of the CSS and its source map under `wwwroot/Content/Dependencies`.
+
+The previously tracked CSS differed from the published package only by the absence of the final source-map comment. All CSS rules are unchanged. Bootstrap Native remains the application's JavaScript implementation and is deferred to its own acquisition change because the checked-in file contains a local correction.
+
+After Bootstrap was declared, `npm audit --package-lock-only` reported seven affected package entries: the existing `brace-expansion` build-tool path, the existing jQuery finding, and additional meta-vulnerability paths through packages that declare jQuery as a peer dependency. npm also installs Bootstrap's `popper.js` peer dependency, but neither Bootstrap JavaScript nor Popper is included in the application's browser bundles. These findings remain visible for the later dependency-upgrade phase rather than being changed during acquisition.
+
 ## Current build and delivery model
 
-- `src/AppLogistics.Web/package.json` declares the build tools plus the exact-version Phase 1 browser packages.
-- `src/AppLogistics.Web/bundle.js` reads Phase 1 sources directly from `node_modules`; deferred browser libraries continue to come from `wwwroot`.
-- Development pages load generated Phase 1 dependency copies and the remaining tracked individual source files from the public and private layouts.
+- `src/AppLogistics.Web/package.json` declares the build tools plus the exact-version managed browser packages.
+- `src/AppLogistics.Web/bundle.js` reads managed sources directly from `node_modules`; deferred browser libraries continue to come from `wwwroot`.
+- Development pages load generated dependency copies and the remaining tracked individual source files from the public and private layouts.
 - Staging and production pages load generated public/private vendor and site bundles.
 - Generated bundles are ignored by Git and rebuilt by `npm run build`; publish runs both `npm ci` and `npm run build`.
-- The third-party browser footprint identified below contains 43 tracked JavaScript, CSS, font, and image files. Application CSS, scripts, and images are outside this count.
+- The Phase 0 third-party browser footprint contained 43 tracked JavaScript, CSS, font, and image files. Phases 1 and 2A replaced six of those files with managed sources, leaving 37 tracked third-party files. Application CSS, scripts, and images are outside this count.
 
 ## Managed npm baseline
 
@@ -52,7 +60,7 @@ The audit does not inspect any of the checked-in browser libraries listed below.
 | jQuery UI theme | 1.12.1 customized theme | `wwwroot/Content/JQueryUI` and `wwwroot/Images/JQueryUI` | Partial/customized CSS with repository-specific image URLs | MIT | Move only with CSS/image output verification |
 | jQuery Timepicker Addon | 1.6.3 | `wwwroot/Scripts/JQueryUI/jquery-ui.timepicker-addon.js` and matching CSS | Exact matches for `jquery-ui-timepicker-addon@1.6.3` | MIT | Safe exact-version npm candidate; keep culture adapters local |
 | Date/time culture adapters | Application-specific `en` and `es` objects | `wwwroot/Scripts/JQueryUI/Cultures` | Custom combined datepicker/timepicker settings | No separate header | Keep as application-owned adapters |
-| Bootstrap CSS | 4.3.1 | `wwwroot/Content/Bootstrap/bootstrap.css` | Matches `bootstrap@4.3.1` except the checked-in copy omits the source-map comment | MIT | Low-risk npm candidate with output verification |
+| Bootstrap CSS | 4.3.1 | Generated under `wwwroot/Content/Dependencies` | Managed by `bootstrap@4.3.1`; the removed tracked copy differed only by its omitted source-map comment | MIT | Managed by npm in Phase 2A |
 | Bootstrap Native | 2.0.25 Bootstrap 4 build | `wwwroot/Scripts/Bootstrap/bootstrap-native.js` | Based on `bootstrap.native@2.0.25/dist/bootstrap-native-v4.js`, with a local parenthesized `tabindex` fix near line 939 | MIT | Preserve the local fix explicitly or upgrade separately |
 | Font Awesome Free | 5.15.4 | `wwwroot/Content/FontAwesome` | Font binaries exactly match npm; CSS is reformatted and the font declarations were reduced to WOFF2 with repository-specific URLs | CC BY 4.0, OFL 1.1, and MIT | npm candidate only after font URL/output verification |
 | MVC Grid | 7.0.0 | `wwwroot/Scripts/MvcGrid`, `wwwroot/Content/MvcGrid`, and related cultures | Paired with `NonFactors.Grid.Mvc6` 7.0.0; JS differences are formatting, CSS changes include the local font URL, and the font binary matches | MIT | Treat as NuGet-coupled assets, not an independent npm upgrade |
@@ -77,8 +85,6 @@ This is a triage baseline, not proof that a vulnerability is exploitable in AppL
 2. Bootstrap Native contains a one-line local correction relative to the published Bootstrap 4 distribution. A direct package path substitution would lose it.
 3. jQuery UI is a selected-component build, not the full distribution. Switching to the full npm distribution would change bundle size and potentially behavior.
 4. Font Awesome CSS intentionally ships only WOFF2 assets and uses repository-specific paths.
-5. `Views/Shared/_PublicLayout.cshtml` references `Scripts/JQuery/Cultures/globalize.lt.js` in Development, but that file is not present. This pre-existing development-only 404 should be resolved separately rather than hidden inside the acquisition migration.
-
 ## Generated asset hash baseline
 
 The SHA-256 manifest in [`browser-assets-baseline.sha256`](browser-assets-baseline.sha256) was generated after a clean `npm ci` and successful `npm run build`. It covers ignored public/private bundles, emitted fonts and images, and minified application assets.
