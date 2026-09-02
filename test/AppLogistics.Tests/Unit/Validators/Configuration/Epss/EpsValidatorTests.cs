@@ -54,9 +54,27 @@ public class EpsValidatorTests
     [Fact]
     public void CanEdit_ValidEps()
     {
-        Assert.True(validator.CanEdit(ObjectsFactory.CreateEpsView(eps.Id)));
+        EpsView view = ObjectsFactory.CreateEpsView(eps.Id);
+        view.Name = eps.Name;
+
+        Assert.True(validator.CanEdit(view));
         Assert.Empty(validator.ModelState);
         Assert.Empty(validator.Alerts);
+    }
+
+    [Fact]
+    public void CanEdit_DuplicateName_ReturnsFalse()
+    {
+        Eps otherEps = ObjectsFactory.CreateEps();
+        otherEps.Name = "OtherName";
+        context.Set<Eps>().Add(otherEps);
+        context.SaveChanges();
+
+        EpsView view = ObjectsFactory.CreateEpsView(eps.Id);
+        view.Name = otherEps.Name.ToLowerInvariant();
+
+        Assert.False(validator.CanEdit(view));
+        Assert.NotEmpty(validator.Alerts);
     }
 
     #endregion CanEdit(EpsView view)

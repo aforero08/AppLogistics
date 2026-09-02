@@ -30,7 +30,7 @@ public class SexValidator : BaseValidator, ISexValidator
     public bool CanEdit(SexView view)
     {
         var alreadyExists = UnitOfWork.Select<Sex>()
-            .Where(c => c.Name.ToUpper().Equals(view.Name.ToUpper()))
+            .Where(c => c.Id != view.Id && c.Name.ToUpper().Equals(view.Name.ToUpper()))
             .Any();
         
         if (alreadyExists)

@@ -21,9 +21,9 @@ public class LanguagesTests
             },
             new Language
             {
-                Name = "Lietuviu",
-                Abbreviation = "lt",
-                Culture = new CultureInfo("lt-LT")
+                Name = "Español",
+                Abbreviation = "es",
+                Culture = new CultureInfo("es-CO")
             }
         });
     }
@@ -33,7 +33,7 @@ public class LanguagesTests
     [Fact]
     public void Default_Language()
     {
-        Thread.CurrentThread.CurrentUICulture = languages["lt"].Culture;
+        Thread.CurrentThread.CurrentUICulture = languages["es"].Culture;
 
         Language actual = languages.Default;
         Language expected = languages["en"];
@@ -78,11 +78,11 @@ public class LanguagesTests
     {
         Language[] actual = languages.Supported;
 
-        Assert.Equal(new CultureInfo("lt-LT"), actual[1].Culture);
+        Assert.Equal(new CultureInfo("es-CO"), actual[1].Culture);
         Assert.Equal(new CultureInfo("en-GB"), actual[0].Culture);
-        Assert.Equal("lt", actual[1].Abbreviation);
+        Assert.Equal("es", actual[1].Abbreviation);
         Assert.Equal("en", actual[0].Abbreviation);
-        Assert.Equal("Lietuviu", actual[1].Name);
+        Assert.Equal("Español", actual[1].Name);
         Assert.Equal("English", actual[0].Name);
     }
 

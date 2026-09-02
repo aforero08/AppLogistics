@@ -54,9 +54,27 @@ public class SectorValidatorTests
     [Fact]
     public void CanEdit_ValidSector()
     {
-        Assert.True(validator.CanEdit(ObjectsFactory.CreateSectorView(sector.Id)));
+        SectorView view = ObjectsFactory.CreateSectorView(sector.Id);
+        view.Name = sector.Name;
+
+        Assert.True(validator.CanEdit(view));
         Assert.Empty(validator.ModelState);
         Assert.Empty(validator.Alerts);
+    }
+
+    [Fact]
+    public void CanEdit_DuplicateName_ReturnsFalse()
+    {
+        Sector otherSector = ObjectsFactory.CreateSector();
+        otherSector.Name = "OtherName";
+        context.Set<Sector>().Add(otherSector);
+        context.SaveChanges();
+
+        SectorView view = ObjectsFactory.CreateSectorView(sector.Id);
+        view.Name = otherSector.Name.ToLowerInvariant();
+
+        Assert.False(validator.CanEdit(view));
+        Assert.NotEmpty(validator.Alerts);
     }
 
     #endregion

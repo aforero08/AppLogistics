@@ -54,9 +54,27 @@ public class SexValidatorTests
     [Fact]
     public void CanEdit_ValidSex()
     {
-        Assert.True(validator.CanEdit(ObjectsFactory.CreateSexView(sex.Id)));
+        SexView view = ObjectsFactory.CreateSexView(sex.Id);
+        view.Name = sex.Name;
+
+        Assert.True(validator.CanEdit(view));
         Assert.Empty(validator.ModelState);
         Assert.Empty(validator.Alerts);
+    }
+
+    [Fact]
+    public void CanEdit_DuplicateName_ReturnsFalse()
+    {
+        Sex otherSex = ObjectsFactory.CreateSex();
+        otherSex.Name = "OtherName";
+        context.Set<Sex>().Add(otherSex);
+        context.SaveChanges();
+
+        SexView view = ObjectsFactory.CreateSexView(sex.Id);
+        view.Name = otherSex.Name.ToLowerInvariant();
+
+        Assert.False(validator.CanEdit(view));
+        Assert.NotEmpty(validator.Alerts);
     }
 
     #endregion

@@ -30,7 +30,7 @@ public class ActivityValidator : BaseValidator, IActivityValidator
     public bool CanEdit(ActivityView view)
     {
         var alreadyExists = UnitOfWork.Select<Activity>()
-            .Where(c => c.Name.ToUpper().Equals(view.Name.ToUpper()))
+            .Where(c => c.Id != view.Id && c.Name.ToUpper().Equals(view.Name.ToUpper()))
             .Any();
         
         if (alreadyExists)

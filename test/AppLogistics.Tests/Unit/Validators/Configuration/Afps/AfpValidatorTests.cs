@@ -54,9 +54,27 @@ public class AfpValidatorTests
     [Fact]
     public void CanEdit_ValidAfp()
     {
-        Assert.True(validator.CanEdit(ObjectsFactory.CreateAfpView(afp.Id)));
+        AfpView view = ObjectsFactory.CreateAfpView(afp.Id);
+        view.Name = afp.Name;
+
+        Assert.True(validator.CanEdit(view));
         Assert.Empty(validator.ModelState);
         Assert.Empty(validator.Alerts);
+    }
+
+    [Fact]
+    public void CanEdit_DuplicateName_ReturnsFalse()
+    {
+        Afp otherAfp = ObjectsFactory.CreateAfp();
+        otherAfp.Name = "OtherName";
+        context.Set<Afp>().Add(otherAfp);
+        context.SaveChanges();
+
+        AfpView view = ObjectsFactory.CreateAfpView(afp.Id);
+        view.Name = otherAfp.Name.ToLowerInvariant();
+
+        Assert.False(validator.CanEdit(view));
+        Assert.NotEmpty(validator.Alerts);
     }
 
     #endregion CanEdit(AfpView view)

@@ -30,7 +30,7 @@ public class EducationLevelValidator : BaseValidator, IEducationLevelValidator
     public bool CanEdit(EducationLevelView view)
     {
         var alreadyExists = UnitOfWork.Select<EducationLevel>()
-            .Where(c => c.Name.ToUpper().Equals(view.Name.ToUpper()))
+            .Where(c => c.Id != view.Id && c.Name.ToUpper().Equals(view.Name.ToUpper()))
             .Any();
         
         if (alreadyExists)

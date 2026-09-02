@@ -30,7 +30,7 @@ public class EpsValidator : BaseValidator, IEpsValidator
     public bool CanEdit(EpsView view)
     {
         var alreadyExists = UnitOfWork.Select<Eps>()
-            .Where(c => c.Name.ToUpper().Equals(view.Name.ToUpper()))
+            .Where(c => c.Id != view.Id && c.Name.ToUpper().Equals(view.Name.ToUpper()))
             .Any();
         
         if (alreadyExists)

@@ -80,6 +80,16 @@ public class RoleValidatorTests
     }
 
     [Fact]
+    public void CanEdit_ToSameTitle()
+    {
+        RoleView view = ObjectsFactory.CreateRoleView(role.Id);
+        view.Title = role.Title;
+
+        Assert.True(validator.CanEdit(view));
+        Assert.Empty(validator.ModelState);
+    }
+
+    [Fact]
     public void CanEdit_ValidRole()
     {
         Assert.True(validator.CanEdit(ObjectsFactory.CreateRoleView(role.Id)));

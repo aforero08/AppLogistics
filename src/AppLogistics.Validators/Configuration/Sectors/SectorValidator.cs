@@ -30,7 +30,7 @@ public class SectorValidator : BaseValidator, ISectorValidator
     public bool CanEdit(SectorView view)
     {
         var alreadyExists = UnitOfWork.Select<Sector>()
-            .Where(c => c.Name.ToUpper().Equals(view.Name.ToUpper()))
+            .Where(c => c.Id != view.Id && c.Name.ToUpper().Equals(view.Name.ToUpper()))
             .Any();
         
         if (alreadyExists)
