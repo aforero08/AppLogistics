@@ -6,6 +6,7 @@ const started = process.hrtime();
 
 glob.sync("./wwwroot/Scripts/**/*.min.js").forEach(fs.unlinkSync);
 glob.sync("./wwwroot/Content/**/*.min.css").forEach(fs.unlinkSync);
+fs.rmSync("./wwwroot/Content/FontAwesome", { force: true, recursive: true });
 
 copy([
     ["./node_modules/jquery/dist/jquery.js", "./wwwroot/Scripts/Dependencies/jquery.js"],
@@ -14,8 +15,14 @@ copy([
     ["./node_modules/jquery-ui-timepicker-addon/dist/jquery-ui-timepicker-addon.js", "./wwwroot/Scripts/Dependencies/jquery-ui.timepicker-addon.js"],
     ["./node_modules/jquery-ui-timepicker-addon/dist/jquery-ui-timepicker-addon.css", "./wwwroot/Content/Dependencies/jquery-ui.timepicker-addon.css"],
     ["./node_modules/bootstrap/dist/css/bootstrap.css", "./wwwroot/Content/Dependencies/bootstrap.css"],
-    ["./node_modules/bootstrap/dist/css/bootstrap.css.map", "./wwwroot/Content/Dependencies/bootstrap.css.map"]
+    ["./node_modules/bootstrap/dist/css/bootstrap.css.map", "./wwwroot/Content/Dependencies/bootstrap.css.map"],
+    ["./node_modules/@fortawesome/fontawesome-free/css/fontawesome.css", "./wwwroot/Content/FontAwesome/fontawesome.css"],
+    ["./node_modules/@fortawesome/fontawesome-free/webfonts/fa-regular-400.woff2", "./wwwroot/Content/FontAwesome/Fonts/fa-regular-400.woff2"],
+    ["./node_modules/@fortawesome/fontawesome-free/webfonts/fa-solid-900.woff2", "./wwwroot/Content/FontAwesome/Fonts/fa-solid-900.woff2"]
 ]);
+
+copyFontAwesomeStyle("regular", "fa-regular-400");
+copyFontAwesomeStyle("solid", "fa-solid-900");
 
 const vendorPrivateJs = bundle([
     "./node_modules/jquery/dist/jquery.js",
@@ -159,4 +166,20 @@ function copy(files) {
         fs.mkdirSync(path.dirname(destination), { recursive: true });
         fs.copyFileSync(source, destination);
     });
+}
+
+function copyFontAwesomeStyle(style, font) {
+    const source = `./node_modules/@fortawesome/fontawesome-free/css/${style}.css`;
+    const destination = `./wwwroot/Content/FontAwesome/${style}.css`;
+    const fontSources = new RegExp(`  src: url\\("\\.\\./webfonts/${font}\\.eot"\\);\\r?\\n  src: [^\\r\\n]+; }`);
+    const replacement = `  src: url("../fontawesome/fonts/${font}.woff2") format("woff2"); }`;
+    const original = fs.readFileSync(source, "utf8");
+    const transformed = original.replace(fontSources, replacement);
+
+    if (transformed === original) {
+        throw new Error(`Unable to create the WOFF2-only ${style} Font Awesome style.`);
+    }
+
+    fs.mkdirSync(path.dirname(destination), { recursive: true });
+    fs.writeFileSync(destination, transformed);
 }
