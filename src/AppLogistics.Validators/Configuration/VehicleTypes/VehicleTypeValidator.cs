@@ -30,7 +30,7 @@ public class VehicleTypeValidator : BaseValidator, IVehicleTypeValidator
     public bool CanEdit(VehicleTypeView view)
     {
         var alreadyExists = UnitOfWork.Select<VehicleType>()
-            .Where(c => c.Name.ToUpper().Equals(view.Name.ToUpper()))
+            .Where(c => c.Id != view.Id && c.Name.ToUpper().Equals(view.Name.ToUpper()))
             .Any();
         
         if (alreadyExists)

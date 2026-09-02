@@ -54,9 +54,27 @@ public class DocumentTypeValidatorTests
     [Fact]
     public void CanEdit_ValidDocumentType()
     {
-        Assert.True(validator.CanEdit(ObjectsFactory.CreateDocumentTypeView(documentType.Id)));
+        DocumentTypeView view = ObjectsFactory.CreateDocumentTypeView(documentType.Id);
+        view.Name = documentType.Name;
+
+        Assert.True(validator.CanEdit(view));
         Assert.Empty(validator.ModelState);
         Assert.Empty(validator.Alerts);
+    }
+
+    [Fact]
+    public void CanEdit_DuplicateName_ReturnsFalse()
+    {
+        DocumentType otherDocumentType = ObjectsFactory.CreateDocumentType();
+        otherDocumentType.Name = "OtherName";
+        context.Set<DocumentType>().Add(otherDocumentType);
+        context.SaveChanges();
+
+        DocumentTypeView view = ObjectsFactory.CreateDocumentTypeView(documentType.Id);
+        view.Name = otherDocumentType.Name.ToLowerInvariant();
+
+        Assert.False(validator.CanEdit(view));
+        Assert.NotEmpty(validator.Alerts);
     }
 
     #endregion CanEdit(DocumentTypeView view)

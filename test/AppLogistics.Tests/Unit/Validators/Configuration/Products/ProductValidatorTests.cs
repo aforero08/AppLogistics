@@ -54,9 +54,27 @@ public class ProductValidatorTests
     [Fact]
     public void CanEdit_ValidProduct()
     {
-        Assert.True(validator.CanEdit(ObjectsFactory.CreateProductView(product.Id)));
+        ProductView view = ObjectsFactory.CreateProductView(product.Id);
+        view.Name = product.Name;
+
+        Assert.True(validator.CanEdit(view));
         Assert.Empty(validator.ModelState);
         Assert.Empty(validator.Alerts);
+    }
+
+    [Fact]
+    public void CanEdit_DuplicateName_ReturnsFalse()
+    {
+        Product otherProduct = ObjectsFactory.CreateProduct();
+        otherProduct.Name = "OtherName";
+        context.Set<Product>().Add(otherProduct);
+        context.SaveChanges();
+
+        ProductView view = ObjectsFactory.CreateProductView(product.Id);
+        view.Name = otherProduct.Name.ToLowerInvariant();
+
+        Assert.False(validator.CanEdit(view));
+        Assert.NotEmpty(validator.Alerts);
     }
 
     #endregion CanEdit(ProductView view)

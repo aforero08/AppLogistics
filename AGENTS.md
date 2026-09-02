@@ -81,3 +81,12 @@ Pop-Location
 ```
 
 The projects treat warnings as errors. Do not suppress a warning without documenting why the underlying issue cannot be fixed.
+
+## Local browser smoke tests
+
+- Follow the Visual Studio, command-line, and disposable-database workflows in `README.md` when a change needs browser validation.
+- SQL Server LocalDB must be started in the same Windows user session with `sqllocaldb start MSSQLLocalDB`.
+- LocalDB is not accessible from the restricted command sandbox used by coding agents. Start LocalDB and run the web process outside that sandbox with approval; SQL LocalDB error 50 from a sandboxed process is an environment limitation, not evidence of an application defect.
+- Use process-scoped `APPLOGISTICS_` environment-variable overrides and a disposable LocalDB database for automated browser smoke tests. Do not read, print, or overwrite the developer's user secrets.
+- Use an explicit `ASPNETCORE_URLS` value so the browser target is deterministic, and stop the web process after testing.
+- The application applies migrations and seeds the configured administrator at startup. Administrator settings only affect initial database creation, so use a new disposable database name when changing smoke-test credentials.

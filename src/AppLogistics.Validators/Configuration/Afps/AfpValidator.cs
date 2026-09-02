@@ -30,7 +30,7 @@ public class AfpValidator : BaseValidator, IAfpValidator
     public bool CanEdit(AfpView view)
     {
         var alreadyExists = UnitOfWork.Select<Afp>()
-            .Where(a => a.Name.ToUpper().Equals(view.Name.ToUpper()))
+            .Where(a => a.Id != view.Id && a.Name.ToUpper().Equals(view.Name.ToUpper()))
             .Any();
 
         if (alreadyExists)

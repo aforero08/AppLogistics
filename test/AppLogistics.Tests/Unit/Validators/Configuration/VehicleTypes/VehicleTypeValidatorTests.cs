@@ -54,9 +54,27 @@ public class VehicleTypeValidatorTests
     [Fact]
     public void CanEdit_ValidVehicleType()
     {
-        Assert.True(validator.CanEdit(ObjectsFactory.CreateVehicleTypeView(vehicleType.Id)));
+        VehicleTypeView view = ObjectsFactory.CreateVehicleTypeView(vehicleType.Id);
+        view.Name = vehicleType.Name;
+
+        Assert.True(validator.CanEdit(view));
         Assert.Empty(validator.ModelState);
         Assert.Empty(validator.Alerts);
+    }
+
+    [Fact]
+    public void CanEdit_DuplicateName_ReturnsFalse()
+    {
+        VehicleType otherVehicleType = ObjectsFactory.CreateVehicleType();
+        otherVehicleType.Name = "OtherName";
+        context.Set<VehicleType>().Add(otherVehicleType);
+        context.SaveChanges();
+
+        VehicleTypeView view = ObjectsFactory.CreateVehicleTypeView(vehicleType.Id);
+        view.Name = otherVehicleType.Name.ToLowerInvariant();
+
+        Assert.False(validator.CanEdit(view));
+        Assert.NotEmpty(validator.Alerts);
     }
 
     #endregion CanEdit(VehicleTypeView view)

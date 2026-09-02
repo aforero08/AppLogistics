@@ -30,7 +30,7 @@ public class MaritalStatusValidator : BaseValidator, IMaritalStatusValidator
     public bool CanEdit(MaritalStatusView view)
     {
         var alreadyExists = UnitOfWork.Select<MaritalStatus>()
-            .Where(c => c.Name.ToUpper().Equals(view.Name.ToUpper()))
+            .Where(c => c.Id != view.Id && c.Name.ToUpper().Equals(view.Name.ToUpper()))
             .Any();
         
         if (alreadyExists)

@@ -52,6 +52,39 @@ public class EmployeeValidatorTests
     }
 
     [Fact]
+    public void CanEdit_ToSameDocumentNumberAndInternalCode()
+    {
+        EmployeeCreateEditView view = ObjectsFactory.CreateEmployeeCreateEditView(employee.Id);
+        view.DocumentNumber = employee.DocumentNumber;
+        view.InternalCode = employee.InternalCode;
+
+        Assert.True(validator.CanEdit(view));
+        Assert.Empty(validator.Alerts);
+    }
+
+    [Fact]
+    public void CanEdit_UsedDocumentNumber_ReturnsFalse()
+    {
+        EmployeeCreateEditView view = ObjectsFactory.CreateEmployeeCreateEditView(employee.Id + 1);
+        view.DocumentNumber = employee.DocumentNumber;
+        view.InternalCode = "UnusedInternalCode";
+
+        Assert.False(validator.CanEdit(view));
+        Assert.NotEmpty(validator.Alerts);
+    }
+
+    [Fact]
+    public void CanEdit_UsedInternalCode_ReturnsFalse()
+    {
+        EmployeeCreateEditView view = ObjectsFactory.CreateEmployeeCreateEditView(employee.Id + 1);
+        view.DocumentNumber = "UnusedDocumentNumber";
+        view.InternalCode = employee.InternalCode;
+
+        Assert.False(validator.CanEdit(view));
+        Assert.NotEmpty(validator.Alerts);
+    }
+
+    [Fact]
     public void CanEdit_ValidEmployee()
     {
         Assert.True(validator.CanEdit(ObjectsFactory.CreateEmployeeCreateEditView(employee.Id)));

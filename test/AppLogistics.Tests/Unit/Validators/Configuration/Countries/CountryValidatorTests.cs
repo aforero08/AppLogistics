@@ -54,9 +54,27 @@ public class CountryValidatorTests
     [Fact]
     public void CanEdit_ValidCountry()
     {
-        Assert.True(validator.CanEdit(ObjectsFactory.CreateCountryView(country.Id)));
+        CountryView view = ObjectsFactory.CreateCountryView(country.Id);
+        view.Name = country.Name;
+
+        Assert.True(validator.CanEdit(view));
         Assert.Empty(validator.ModelState);
         Assert.Empty(validator.Alerts);
+    }
+
+    [Fact]
+    public void CanEdit_DuplicateName_ReturnsFalse()
+    {
+        Country otherCountry = ObjectsFactory.CreateCountry();
+        otherCountry.Name = "OtherName";
+        context.Set<Country>().Add(otherCountry);
+        context.SaveChanges();
+
+        CountryView view = ObjectsFactory.CreateCountryView(country.Id);
+        view.Name = otherCountry.Name.ToLowerInvariant();
+
+        Assert.False(validator.CanEdit(view));
+        Assert.NotEmpty(validator.Alerts);
     }
 
     #endregion

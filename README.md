@@ -41,12 +41,48 @@ dotnet build AppLogistics.sln --configuration Debug --no-restore
 
 The browser build reads managed third-party sources from `node_modules`, generates ignored Development copies under `wwwroot/*/Dependencies`, and produces the minified Staging/Production bundles. Do not edit generated dependency copies or bundles directly.
 
-Run the web application with:
+### Visual Studio 2026
+
+Open `AppLogistics.sln`, set `AppLogistics.Web` as the startup project, select the `IIS Express (Development)` launch profile, and press F5 or Ctrl+F5. The profile runs the application at `http://localhost:5101/domain/` and loads the Development user secrets configured above.
+
+The application applies pending Entity Framework migrations and seeds the initial administrator when the database starts for the first time. Make sure `MSSQLLocalDB` is available and the `Data:Connection` user secret includes `TrustServerCertificate=True`.
+
+### Command line
+
+Start LocalDB if it is not already running, then run the web project with an explicit local URL:
 
 ```powershell
+sqllocaldb start MSSQLLocalDB
 $env:ASPNETCORE_ENVIRONMENT = "Development"
+$env:ASPNETCORE_URLS = "http://127.0.0.1:5099"
 dotnet run --project src/AppLogistics.Web --configuration Debug --no-launch-profile
 ```
+
+Open `http://127.0.0.1:5099` and sign in with the administrator account stored in user secrets. Stop the application with Ctrl+C.
+
+### Browser smoke testing with a disposable database
+
+For repeatable browser testing without modifying the normal development database, override configuration only for the current PowerShell process. Supply a temporary strong password rather than committing one:
+
+```powershell
+sqllocaldb start MSSQLLocalDB
+$env:ASPNETCORE_ENVIRONMENT = "Development"
+$env:ASPNETCORE_URLS = "http://127.0.0.1:5099"
+$env:APPLOGISTICS_Data__Connection = "Server=(localdb)\MSSQLLocalDB;Database=AppLogisticsSmokeTests;Trusted_Connection=True;TrustServerCertificate=True;"
+$env:APPLOGISTICS_UserAdmin__UserName = "smokeadmin"
+$env:APPLOGISTICS_UserAdmin__Password = "<temporary-strong-password>"
+$env:APPLOGISTICS_UserAdmin__Email = "smokeadmin@example.test"
+dotnet run --project src/AppLogistics.Web --configuration Debug --no-launch-profile
+```
+
+The administrator values are used only when the disposable database is first seeded. If different credentials are needed later, choose a new disposable database name or recreate the existing smoke-test database.
+
+For uniqueness-validation smoke tests, sign in and verify both paths:
+
+1. Edit an existing record without changing its unique value and confirm that saving succeeds.
+2. Edit it to use another record's unique value and confirm that the duplicate validation message is shown.
+
+Run the automated test suite after the browser checks. Browser testing is supplemental and should not replace the validator tests.
 
 Run the automated tests with:
 

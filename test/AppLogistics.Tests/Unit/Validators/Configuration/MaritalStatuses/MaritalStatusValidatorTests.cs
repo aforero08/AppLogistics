@@ -54,9 +54,27 @@ public class MaritalStatusValidatorTests
     [Fact]
     public void CanEdit_ValidMaritalStatus()
     {
-        Assert.True(validator.CanEdit(ObjectsFactory.CreateMaritalStatusView(maritalStatus.Id)));
+        MaritalStatusView view = ObjectsFactory.CreateMaritalStatusView(maritalStatus.Id);
+        view.Name = maritalStatus.Name;
+
+        Assert.True(validator.CanEdit(view));
         Assert.Empty(validator.ModelState);
         Assert.Empty(validator.Alerts);
+    }
+
+    [Fact]
+    public void CanEdit_DuplicateName_ReturnsFalse()
+    {
+        MaritalStatus otherMaritalStatus = ObjectsFactory.CreateMaritalStatus();
+        otherMaritalStatus.Name = "OtherName";
+        context.Set<MaritalStatus>().Add(otherMaritalStatus);
+        context.SaveChanges();
+
+        MaritalStatusView view = ObjectsFactory.CreateMaritalStatusView(maritalStatus.Id);
+        view.Name = otherMaritalStatus.Name.ToLowerInvariant();
+
+        Assert.False(validator.CanEdit(view));
+        Assert.NotEmpty(validator.Alerts);
     }
 
     #endregion CanEdit(MaritalStatusView view)

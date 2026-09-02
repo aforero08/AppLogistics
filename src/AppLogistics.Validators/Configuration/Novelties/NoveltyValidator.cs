@@ -30,7 +30,7 @@ public class NoveltyValidator : BaseValidator, INoveltyValidator
     public bool CanEdit(NoveltyView view)
     {
         var alreadyExists = UnitOfWork.Select<Novelty>()
-            .Where(c => c.Name.ToUpper().Equals(view.Name.ToUpper()))
+            .Where(c => c.Id != view.Id && c.Name.ToUpper().Equals(view.Name.ToUpper()))
             .Any();
         
         if (alreadyExists)
