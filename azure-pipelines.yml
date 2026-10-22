@@ -47,11 +47,22 @@ stages:
         version: $(dotnetSdkVersion)
         installationPath: $(Agent.ToolsDirectory)/dotnet
 
-    # Install Node.js (required for npm)
+    # Install the browser-build runtime declared in the repository prerequisites.
     - task: UseNode@1
-      displayName: 'Install Node.js'
+      displayName: 'Install Node.js 22'
       inputs:
-        version: '18.x'
+        version: '22.x'
+
+    # Recreate and bundle the browser assets from the committed lockfile before
+    # building the application. This verifies the assets that will be published.
+    - task: PowerShell@2
+      displayName: 'Install and build browser assets'
+      inputs:
+        targetType: 'inline'
+        workingDirectory: 'src/AppLogistics.Web'
+        script: |
+          npm ci
+          npm run build
 
     # Restore NuGet packages
     - task: DotNetCoreCLI@2
